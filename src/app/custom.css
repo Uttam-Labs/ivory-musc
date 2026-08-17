@@ -1,0 +1,17 @@
+/*
+ * Designer overrides
+ * ------------------
+ * Minor visual adjustments should be added in this file.
+ * It is loaded after globals.css, so matching selectors here override the
+ * existing project styles without changing the component source files.
+ *
+ * Examples:
+ *
+ * .about-page h1 {
+ *   font-size: 36px;
+ * }
+ *
+ * footer {
+ *   padding-top: 72px;
+ * }
+ */
