@@ -138,7 +138,7 @@ export function Header({
         className={`${overlaysHero ? "absolute text-white" : "relative text-[var(--foreground)]"} z-50 w-full`}
       >
         <div className="mx-auto grid h-[76px] max-w-[1440px] grid-cols-[1fr_auto_1fr] items-center px-5 lg:px-8">
-          <nav className="hidden items-center gap-7 text-[10px] lg:flex">
+          <nav className="hidden header__nav items-center gap-7 text-[10px] lg:flex">
             {navigation.map((item) =>
               item.href && item.label ? (
                 <Link
@@ -148,7 +148,7 @@ export function Header({
                       ? "page"
                       : undefined
                   }
-                  className={`border-b pb-1 transition-colors ${
+                  className={`menu-link border-b pb-1 transition-colors ${
                     pathname === item.href ||
                     (item.href !== "/" && pathname.startsWith(`${item.href}/`))
                       ? "border-current"
@@ -173,7 +173,7 @@ export function Header({
           )}
           <Link
             href="/"
-            className="mt-1 flex h-[76px] min-w-[92px] self-start items-start justify-center overflow-visible"
+            className="heading-logo-link mt-1 flex h-[76px] min-w-[92px] self-start items-start justify-center overflow-visible"
           >
             {logoUrl ? (
               <Image
@@ -194,10 +194,10 @@ export function Header({
               <span className="font-heading text-2xl">{title}</span>
             ) : null}
           </Link>
-          <div className="flex justify-self-end gap-0.5">
+          <div className="header__icons flex justify-self-end gap-0.5">
             {showSearch && (
               <button
-                className={iconClass}
+                className={`${iconClass} header--icon search-button`}
                 onClick={() => setSearchOpen(true)}
                 aria-label="Search"
               >
@@ -206,7 +206,7 @@ export function Header({
             )}
             {showAccount && accountHref && (
               <Link
-                className={iconClass}
+                className={`${iconClass} header--icon icon-account`}
                 href={accountHref}
                 aria-label="Account"
               >
@@ -215,7 +215,7 @@ export function Header({
             )}
             {showCart && (
               <button
-                className={`${iconClass} relative`}
+                className={`${iconClass} relative header--icon icon-cart`}
                 onClick={openCart}
                 aria-label="Cart"
               >

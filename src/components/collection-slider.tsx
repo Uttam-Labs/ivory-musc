@@ -32,12 +32,12 @@ export function CollectionSlider({
 }) {
   const plugins = autoSlide
     ? [
-        Autoplay({
-          delay: slideInterval,
-          stopOnInteraction: true,
-          stopOnMouseEnter: true,
-        }),
-      ]
+      Autoplay({
+        delay: slideInterval,
+        stopOnInteraction: true,
+        stopOnMouseEnter: true,
+      }),
+    ]
     : [];
   const [ref, api] = useEmblaCarousel(
     { loop: products.length > 3, align: "start" },
@@ -50,13 +50,13 @@ export function CollectionSlider({
           {products.map((p) => (
             <article
               key={p.id}
-              className="min-w-0 flex-[0_0_88%] pl-8 sm:flex-[0_0_50%] lg:flex-[0_0_33.333%]"
+              className="bestseller-card min-w-0 flex-[0_0_88%] pl-8 sm:flex-[0_0_50%] lg:flex-[0_0_33.333%]"
             >
               <Link
                 href={`/products/${p.handle}`}
                 className="block text-center"
               >
-                <div className="bg-[var(--surface)] p-7 lg:p-8">
+                <div className="bg-[white] p-7 lg:p-8">
                   <div className="relative aspect-[.79] overflow-hidden">
                     {p.featuredImage && (
                       <Image
@@ -69,17 +69,19 @@ export function CollectionSlider({
                     )}
                   </div>
                 </div>
-                <h3 className="mt-5 font-heading text-lg text-[var(--accent)]">
-                  {p.title}
-                </h3>
-              {metafieldText(p.featuredDescription) && (
-                <p className="mx-auto mt-2 line-clamp-2 max-w-sm text-[10px] leading-4">
-                  {metafieldText(p.featuredDescription)}
-                </p>
-              )}
-                <span className="mt-3 inline-block text-[9px] text-[var(--accent)] underline decoration-[var(--accent)] decoration-[1px] underline-offset-[3px] transition-opacity duration-300 group-hover:opacity-65">
-                  Explore {p.title}
-                </span>
+                <div className="bestseller-card-content pt-8">
+                  <h3 className="mt-5 font-heading text-[var(--accent)]">
+                    {p.title}
+                  </h3>
+                  {metafieldText(p.featuredDescription) && (
+                    <p className="mx-auto mt-2 line-clamp-2 max-w-[374px] leading-4">
+                      {metafieldText(p.featuredDescription)}
+                    </p>
+                  )}
+                  <span className="explore--link inline-block text-[var(--accent)] underline decoration-[var(--accent)] decoration-[1px] underline-offset-[3px] transition-opacity duration-300 group-hover:opacity-65">
+                    Explore {p.title}
+                  </span>
+                </div>
               </Link>
             </article>
           ))}
@@ -90,14 +92,14 @@ export function CollectionSlider({
           <button
             aria-label="Previous product"
             onClick={() => api?.scrollPrev()}
-            className="absolute left-0 top-[42%] flex size-10 -translate-x-1/2 items-center justify-center rounded-full bg-[var(--accent)] text-white"
+            className="slider--button slider-button--prev cursor-pointer absolute left-8 lg:-left-12 top-[42%] flex size-14 lg:size-20 -translate-x-1/2 items-center justify-center rounded-full bg-[var(--accent)] text-white"
           >
             <ChevronLeft size={18} />
           </button>
           <button
             aria-label="Next product"
             onClick={() => api?.scrollNext()}
-            className="absolute right-0 top-[42%] flex size-10 translate-x-1/2 items-center justify-center rounded-full bg-[var(--accent)] text-white"
+            className="slider--button slider-button--next cursor-pointer absolute right-8 lg:-right-12 top-[42%] flex size-14 lg:size-20 translate-x-1/2 items-center justify-center rounded-full bg-[var(--accent)] text-white"
           >
             <ChevronRight size={18} />
           </button>

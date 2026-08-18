@@ -37,11 +37,13 @@ function Button({
   href,
   light = false,
   variant = "primary",
+  className = "",
 }: {
   label?: string;
   href?: string;
   light?: boolean;
   variant?: "primary" | "secondary" | "solid";
+  className?: string;
 }) {
   if (!label || !href) return null;
   const primary = light
@@ -57,7 +59,7 @@ function Button({
   return (
     <Link
       href={href}
-      className={`mt-6 inline-flex h-[38px] items-center justify-center border px-7 text-center text-[10px] font-medium uppercase tracking-[.12em] transition-all duration-300 ${buttonStyle}`}
+      className={`mt-6 inline-flex h-[38px] items-center justify-center border px-7 text-center text-[10px] font-medium uppercase tracking-[.12em] transition-all duration-300 ${buttonStyle} ${className}`}
     >
       {label}
     </Link>
@@ -98,29 +100,33 @@ export default async function Home() {
                 />
               )}
               <div className="absolute inset-0 bg-black/15" />
-              <div className="relative mx-auto w-full max-w-[1440px] px-6 pb-16 md:pb-20 lg:px-8">
-                {section.heading && (
-                  <h1 className="max-w-full text-[25px] uppercase leading-tight sm:text-[28px] lg:whitespace-nowrap">
-                    {section.heading}
-                  </h1>
-                )}
-                {section.body && (
-                  <p className="mt-3 max-w-[620px] whitespace-pre-line text-[11px] leading-5 sm:text-xs">
-                    {section.body}
-                  </p>
-                )}
-                <div className="flex flex-wrap gap-3">
-                  <Button
-                    label={section.buttonLabel}
-                    href={section.buttonHref}
-                    light
-                  />
-                  <Button
-                    label={section.secondaryButtonLabel}
-                    href={section.secondaryButtonHref}
-                    light
-                    variant="secondary"
-                  />
+              <div className="home-hero-content relative mx-auto w-full max-w-[1440px] px-6 pb-16 md:pb-20 lg:px-8 lg:pb-36">
+                <div className="home-hero__content-wrap w-full md:w-3/4">
+                  {section.heading && (
+                    <h1 className="hero-title max-w-full text-[25px] uppercase leading-tight sm:text-[28px] lg:whitespace-nowrap">
+                      {section.heading}
+                    </h1>
+                  )}
+                  {section.body && (
+                    <p className="mt-3 max-w-[620px] whitespace-pre-line text-[11px] leading-5 sm:text-xs">
+                      {section.body}
+                    </p>
+                  )}
+                  <div className="home-hero__buttons flex flex-wrap gap-3">
+                    <Button
+                      label={section.buttonLabel}
+                      href={section.buttonHref}
+                      className="button custom-button btn-white"
+                      light
+                    />
+                    <Button
+                      label={section.secondaryButtonLabel}
+                      href={section.secondaryButtonHref}
+                      className="button custom-button btn-transparent"
+                      light
+                      variant="secondary"
+                    />
+                  </div>
                 </div>
               </div>
             </section>
@@ -130,10 +136,10 @@ export default async function Home() {
           return (
             <section
               key={key}
-              className="home-bestseller mx-auto max-w-[1440px] bg-[#fff9f3] px-5 py-16 sm:px-7 lg:px-12 lg:py-24"
+              className="home-bestseller mx-auto max-w-[1440px] bg-[#fff9f3] px-5 py-16 sm:px-7 lg:px-24 lg:py-36"
             >
               {(section.heading || section.intro) && (
-                <header className="mb-10 text-center">
+                <header className="section__heading mb-10 text-center">
                   {section.heading && (
                     <h2 className="text-[20px] uppercase text-[var(--accent)]">
                       {section.heading}
@@ -160,21 +166,23 @@ export default async function Home() {
           return (
             <section
               key={key}
-              className="home-story mx-auto max-w-[1180px] bg-[#fff9f3] px-6 py-16 text-center sm:px-8 lg:py-24"
+              className="home-story mx-auto max-w-[1180px] bg-[#fff9f3] px-6 py-16 text-center sm:px-8 lg:py-36"
             >
-              {section.heading && (
-                <h2 className="text-[22px] uppercase text-[var(--accent)]">
-                  {section.heading}
-                </h2>
-              )}
-              {storyParagraphs?.length ? (
-                <div className="mt-4 space-y-3 text-[11px] leading-5">
-                  {storyParagraphs.map((paragraph, paragraphIndex) => (
-                    <p key={paragraphIndex}>{paragraph}</p>
-                  ))}
-                </div>
-              ) : null}
-              <Button label={section.buttonLabel} href={section.buttonHref} />
+              <header className="section__heading mb-0 text-center">
+                {section.heading && (
+                  <h2 className="text-[22px] uppercase text-[var(--accent)]">
+                    {section.heading}
+                  </h2>
+                )}
+                {storyParagraphs?.length ? (
+                  <div className="mt-5 mb-5 space-y-3">
+                    {storyParagraphs.map((paragraph, paragraphIndex) => (
+                      <p key={paragraphIndex}>{paragraph}</p>
+                    ))}
+                  </div>
+                ) : null}
+                <Button className="custom-button" label={section.buttonLabel} href={section.buttonHref} />
+              </header>
             </section>
           );
         }
@@ -182,40 +190,43 @@ export default async function Home() {
           return (
             <section
               key={key}
-              className="home-guide mx-auto max-w-[1440px] bg-[#fff9f3] px-5 py-16 text-center sm:px-6 lg:py-24"
+              className="home-guide mx-auto max-w-[1440px] bg-[#fff9f3] px-5 py-16 text-center sm:px-6 lg:py-36"
             >
-              {section.heading && (
-                <h2 className="text-[22px] uppercase text-[var(--accent)]">
-                  {section.heading}
-                </h2>
-              )}
-              {section.body && (
-                <p className="mx-auto mt-4 max-w-3xl whitespace-pre-line text-xs leading-6">
-                  {section.body}
-                </p>
-              )}
-              <Button
-                label={section.buttonLabel}
-                href={section.buttonHref}
-                variant="solid"
-              />
+              <div className="max-w-[1050px] mx-auto">
+                {section.heading && (
+                  <h2 className="text-[22px] uppercase text-[var(--accent)] common-heading">
+                    {section.heading}
+                  </h2>
+                )}
+                {section.body && (
+                  <p className="">
+                    {section.body}
+                  </p>
+                )}
+                <Button
+                  label={section.buttonLabel}
+                  href={section.buttonHref}
+                  className="custom-button"
+                  variant="solid"
+                />
+              </div>
               {section.features?.length ? (
-                <div className="mt-14 grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-6">
+                <div className="text-icons mt-12 lg:mt-36 grid grid-cols-2 gap-8 lg:gap-12 sm:grid-cols-3 lg:grid-cols-6">
                   {section.features.map((feature, i) => (
                     <div key={feature.title || i}>
                       {feature.icon && (
-                        <div className="relative mx-auto size-12">
+                        <div className="relative mx-auto size-18 md:size-18 xl:size-36">
                           <Image
                             fill
-                            src={sanityImageUrl(feature.icon, 120)}
+                            src={sanityImageUrl(feature.icon, 90)}
                             alt=""
                             className="object-contain"
-                            sizes="48px"
+                            sizes="90px"
                           />
                         </div>
                       )}
                       {feature.title && (
-                        <p className="mt-4 text-[10px] text-[var(--accent)]">
+                        <p className="icon-text-title text-[var(--accent)]">
                           {feature.title}
                         </p>
                       )}
@@ -229,23 +240,25 @@ export default async function Home() {
           return (
             <section
               key={key}
-              className="home-newsletter grid bg-[#fff9f3] md:min-h-[430px] md:grid-cols-[45%_55%]"
+              className="home-newsletter grid bg-[#fff9f3] md:min-h-[659px] md:grid-cols-[45%_55%]"
             >
               <div className="flex flex-col items-center justify-center bg-[#fff5ea] px-6 py-14 text-center sm:px-8 md:py-16 lg:px-14">
-                {section.heading && (
-                  <h2 className="text-[22px] uppercase text-[var(--accent)]">
-                    {section.heading}
-                  </h2>
-                )}
-                {section.body && (
-                  <p className="mt-4 max-w-md whitespace-pre-line text-xs leading-6">
-                    {section.body}
-                  </p>
-                )}
-                <NewsletterForm
-                  placeholder={section.emailPlaceholder}
-                  submitLabel={section.submitLabel}
-                />
+                <div className="newsletter-wrapper max-w-[570px] mx-auto">
+                  {section.heading && (
+                    <h2 className="common-heading text-[var(--accent)]">
+                      {section.heading}
+                    </h2>
+                  )}
+                  {section.body && (
+                    <p className="">
+                      {section.body}
+                    </p>
+                  )}
+                  <NewsletterForm
+                    placeholder={section.emailPlaceholder}
+                    submitLabel={section.submitLabel}
+                  />
+                </div>
               </div>
               {section.image && (
                 <div className="relative min-h-[280px] sm:min-h-80">
@@ -279,20 +292,21 @@ export default async function Home() {
                   />
                 )}
                 <div className="absolute inset-0 bg-black/15" />
-                <div className="relative flex w-full flex-col items-center px-8 text-center md:w-1/2 lg:px-14">
+                <div className="home-campaign-text relative flex w-full flex-col items-center px-8 text-center md:w-1/2 lg:px-14">
                   {section.heading && (
-                    <h2 className="max-w-[620px] text-[24px] uppercase leading-[1.2] lg:text-[27px]">
+                    <h2 className="common-heading max-w-[620] mx-auto">
                       {section.heading}
                     </h2>
                   )}
                   {section.body && (
-                    <p className="mx-auto mt-4 max-w-lg text-[11px] leading-5">
+                    <p>
                       {section.body}
                     </p>
                   )}
                   <Button
                     label={section.buttonLabel}
                     href={section.buttonHref}
+                    className="custom-button btn-white"
                     light
                   />
                 </div>
@@ -303,11 +317,11 @@ export default async function Home() {
           return (
             <section
               key={key}
-              className={`home-split mx-auto grid max-w-[1440px] items-start bg-[#fff9f3] md:grid-cols-2 ${isChosen ? "home-chosen pt-20 sm:pt-24 lg:pt-36" : "home-philosophy"}`}
+              className={`home-split mx-auto grid max-w-[100%] items-start bg-[#fff9f3] md:grid-cols-2 ${isChosen ? "home-chosen pt-20 sm:pt-24 lg:pt-36" : "home-philosophy"}`}
             >
               {section.image && (
                 <div
-                  className={`relative aspect-[1.65/1] w-full ${reverse ? "md:order-2" : ""}`}
+                  className={`home-split-image relative aspect-[1.65/1] w-full ${reverse ? "md:order-2" : ""}`}
                 >
                   <Image
                     fill
@@ -319,19 +333,21 @@ export default async function Home() {
                 </div>
               )}
               <div
-                className={`px-6 pb-14 pt-8 sm:px-8 md:pb-10 lg:px-12 lg:pt-3 ${!section.image ? "md:col-span-2 mx-auto max-w-4xl text-center" : ""}`}
+                className={`home-split-content px-6 pb-14 pt-8 sm:px-8 md:pb-10 lg:px-12 lg:pt-3 ${!section.image ? "md:col-span-2 mx-auto max-w-4xl text-center" : ""}`}
               >
-                {(section.eyebrow || section.heading) && (
-                  <h2 className="text-[22px] uppercase text-[var(--accent)] sm:text-[24px] lg:text-[30px]">
-                    {section.eyebrow || section.heading}
-                  </h2>
-                )}
-                {section.body && (
-                  <p className="mt-5 whitespace-pre-line text-[11px] leading-6">
-                    {section.body}
-                  </p>
-                )}
-                <Button label={section.buttonLabel} href={section.buttonHref} />
+                <div className="home-split-innerbox">
+                  {(section.eyebrow || section.heading) && (
+                    <h2 className="title text-[22px] uppercase text-[var(--accent)] sm:text-[24px] lg:text-[30px]">
+                      {section.eyebrow || section.heading}
+                    </h2>
+                  )}
+                  {section.body && (
+                    <p className="mt-5 whitespace-pre-line text-[11px] leading-6">
+                      {section.body}
+                    </p>
+                  )}
+                  <Button className="custom-button" label={section.buttonLabel} href={section.buttonHref} />
+                </div>
               </div>
             </section>
           );

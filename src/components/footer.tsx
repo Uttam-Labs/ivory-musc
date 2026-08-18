@@ -28,14 +28,14 @@ export function Footer({
     String(new Date().getFullYear()),
   );
   return (
-    <footer className="bg-[#fff9f3] px-5 pt-20 text-[var(--foreground)] md:px-8">
-      <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-8 border-t border-[var(--foreground)]/20 px-5 py-10 text-center text-xs md:py-12">
+    <footer className="footer bg-[#fff9f3] text-[var(--foreground)] pt-20 sm:pt-24 lg:pt-36">
+      <div className="footer__top mx-auto flex max-w-[1440px] flex-col items-center gap-12 border-t border-[var(--foreground)]/20 px-5 py-10 text-center md:py-12">
         {columns.map((column, index) => (
           <div key={column.heading || index}>
             {column.heading && (
-              <h3 className="mb-3 font-heading text-base">{column.heading}</h3>
+              <h3 className="mb-3 footer--heading text-base">{column.heading}</h3>
             )}
-            <div className="flex flex-wrap items-center justify-center gap-x-9 gap-y-2">
+            <div className="footer--links flex flex-wrap items-center justify-center gap-x-10 lg:gap-x-20 gap-y-2">
               {column.links?.map((link, i) =>
                 link.href && link.label ? (
                   <Link
@@ -53,15 +53,15 @@ export function Footer({
         {email && (
           <div>
             {contactHeading && (
-              <h3 className="mb-3 font-heading text-base">{contactHeading}</h3>
+              <h3 className="mb-3 footer--heading text-base">{contactHeading}</h3>
             )}
             <p>Email - {email}</p>
           </div>
         )}
         {(instagram || facebook) && (
-          <div>
+          <div className="footer__socials lg:pt-12">
             {socialHeading && (
-              <h3 className="mb-3 font-heading text-base">{socialHeading}</h3>
+              <h3 className="mb-3 footer--heading text-base">{socialHeading}</h3>
             )}
             <div className="flex justify-center gap-3">
               {facebook && (
@@ -72,7 +72,7 @@ export function Footer({
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <FacebookIcon className="size-[50px]" />
+                  <FacebookIcon className="size-[30px] lg:size-[50px]" />
                 </a>
               )}
               {instagram && (
@@ -83,7 +83,7 @@ export function Footer({
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <InstagramIcon className="size-[50px]" />
+                  <InstagramIcon className="size-[30px] lg:size-[50px]" />
                 </a>
               )}
             </div>
@@ -91,7 +91,7 @@ export function Footer({
         )}
       </div>
       {dynamicCopyright && (
-        <div className="mx-auto max-w-[1440px] border-t border-[var(--foreground)]/20 px-6 py-5 text-center text-[10px]">
+        <div className="footer__bottom mx-auto max-w-[1440px] border-t border-[var(--foreground)]/20 px-6 py-10 text-center">
           {dynamicCopyright}
         </div>
       )}

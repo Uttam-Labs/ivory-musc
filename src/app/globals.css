@@ -76,6 +76,7 @@ header :is(a, button)[aria-label="Cart"] svg {
 }
 html {
   scroll-behavior: smooth;
+  font-size: 62.5%;
 }
 body {
   margin: 0;

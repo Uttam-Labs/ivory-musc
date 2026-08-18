@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Montserrat } from "next/font/google";
 import "./globals.css";
 import "./custom.css";
+import "./responsive.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { env } from "@/lib/env";
