@@ -46,6 +46,7 @@ export function Header({
   const [cart, setCart] = useState<Cart | null>(null);
   const [cartLoading, setCartLoading] = useState(false);
   const searchInput = useRef<HTMLInputElement>(null);
+  const menuCloseButton = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const onCartUpdated = (event: Event) => {
@@ -77,6 +78,11 @@ export function Header({
   useEffect(() => {
     if (searchOpen) window.setTimeout(() => searchInput.current?.focus(), 150);
   }, [searchOpen]);
+
+  useEffect(() => {
+    if (menuOpen)
+      window.setTimeout(() => menuCloseButton.current?.focus(), 180);
+  }, [menuOpen]);
 
   useEffect(() => {
     if (!searchOpen || query.trim().length < 2) {
@@ -164,11 +170,13 @@ export function Header({
           </nav>
           {navigation.length > 0 && (
             <button
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
-              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Open menu"
+              aria-expanded={menuOpen}
+              aria-controls="mobile-navigation-drawer"
+              onClick={() => setMenuOpen(true)}
               className={`${iconClass} justify-self-start lg:hidden`}
             >
-              {menuOpen ? <X size={20} /> : <Menu size={20} />}
+              <Menu size={20} />
             </button>
           )}
           <Link
@@ -229,8 +237,40 @@ export function Header({
             )}
           </div>
         </div>
-        {menuOpen && (
-          <nav className="absolute left-0 top-[76px] w-full bg-[var(--surface)] p-6 text-[var(--foreground)] shadow-xl lg:hidden">
+      </header>
+
+      <div
+        aria-hidden={!menuOpen}
+        className={`fixed inset-0 z-[70] transition-[visibility,background-color] duration-500 lg:hidden ${
+          menuOpen
+            ? "visible bg-black/45"
+            : "pointer-events-none invisible bg-black/0"
+        }`}
+        onMouseDown={() => setMenuOpen(false)}
+      >
+        <aside
+          id="mobile-navigation-drawer"
+          aria-label="Mobile navigation"
+          aria-modal="true"
+          role="dialog"
+          className={`flex h-dvh w-[84vw] max-w-[340px] flex-col bg-[#fff9f3] text-stone-900 shadow-[18px_0_45px_rgba(0,0,0,.2)] transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${
+            menuOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+          onMouseDown={(event) => event.stopPropagation()}
+        >
+          <div className="flex h-[76px] shrink-0 items-center justify-between border-b border-stone-900/10 px-6">
+            <p className="font-heading text-xl text-[var(--accent)]">Menu</p>
+            <button
+              ref={menuCloseButton}
+              aria-label="Close menu"
+              onClick={() => setMenuOpen(false)}
+              className="inline-flex size-10 items-center justify-center rounded-full transition-colors hover:bg-black/5 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2"
+            >
+              <X size={21} />
+            </button>
+          </div>
+
+          <nav className="flex-1 overflow-y-auto px-6 py-7">
             {navigation.map((item) =>
               item.href && item.label ? (
                 <Link
@@ -241,11 +281,11 @@ export function Header({
                       ? "page"
                       : undefined
                   }
-                  className={`block border-b py-4 ${
+                  className={`block border-b border-stone-900/10 py-3.5 text-[15px] tracking-[.01em] transition-colors hover:text-[var(--accent)] ${
                     pathname === item.href ||
                     (item.href !== "/" && pathname.startsWith(`${item.href}/`))
-                      ? "border-current"
-                      : "border-current/10"
+                      ? "text-[var(--accent)]"
+                      : "text-stone-800"
                   }`}
                   key={item.href}
                   href={item.href}
@@ -255,8 +295,14 @@ export function Header({
               ) : null,
             )}
           </nav>
-        )}
-      </header>
+
+          {title && (
+            <div className="border-t border-stone-900/10 px-6 py-6 text-center font-heading text-sm tracking-[.16em] text-stone-500 uppercase">
+              {title}
+            </div>
+          )}
+        </aside>
+      </div>
 
       {searchOpen && (
         <div
@@ -336,104 +382,110 @@ export function Header({
         </div>
       )}
 
-      {cartOpen && (
-        <div
-          className="fixed inset-0 z-[90] bg-black/40"
-          onMouseDown={() => setCartOpen(false)}
+      <div
+        aria-hidden={!cartOpen}
+        className={`fixed inset-0 z-[90] transition-[visibility,background-color] duration-500 ${
+          cartOpen
+            ? "visible bg-black/40"
+            : "pointer-events-none invisible bg-black/0"
+        }`}
+        onMouseDown={() => setCartOpen(false)}
+      >
+        <aside
+          aria-label="Shopping cart"
+          aria-modal="true"
+          role="dialog"
+          className={`ml-auto flex h-dvh w-full max-w-[430px] flex-col bg-[#fffaf5] shadow-2xl transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${
+            cartOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+          onMouseDown={(event) => event.stopPropagation()}
         >
-          <aside
-            className="cart-drawer-enter ml-auto flex h-full w-full max-w-[430px] flex-col bg-[#fffaf5] shadow-2xl"
-            onMouseDown={(event) => event.stopPropagation()}
-          >
-            <div className="flex h-20 items-center justify-between border-b border-stone-300 px-6">
-              <h2 className="font-heading text-2xl text-[var(--accent)]">
-                Your cart {cart?.totalQuantity ? `(${cart.totalQuantity})` : ""}
-              </h2>
-              <button
-                aria-label="Close cart"
-                onClick={() => setCartOpen(false)}
-                className="rounded-full p-2 hover:bg-black/5"
-              >
-                <X size={22} />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto px-6 py-6">
-              {cartLoading ? (
-                <div className="flex h-full items-center justify-center">
-                  <LoaderCircle className="animate-spin" />
-                </div>
-              ) : cart?.lines.nodes.length ? (
-                <div className="space-y-6">
-                  {cart.lines.nodes.map((line) => (
-                    <div
-                      key={line.id}
-                      className="grid grid-cols-[88px_1fr] gap-4"
-                    >
-                      {line.merchandise.image && (
-                        <Image
-                          src={line.merchandise.image.url}
-                          alt={
-                            line.merchandise.image.altText ||
-                            line.merchandise.product.title
-                          }
-                          width={176}
-                          height={220}
-                          className="aspect-[4/5] w-full object-cover"
-                        />
-                      )}
-                      <div>
-                        <Link
-                          onClick={() => setCartOpen(false)}
-                          href={`/products/${line.merchandise.product.handle}`}
-                          className="font-heading text-lg text-[var(--accent)]"
-                        >
-                          {line.merchandise.product.title}
-                        </Link>
-                        {line.merchandise.title !== "Default Title" && (
-                          <p className="mt-1 text-[10px] text-stone-500">
-                            {line.merchandise.title}
-                          </p>
-                        )}
-                        <p className="mt-2 text-xs">Qty: {line.quantity}</p>
-                        <p className="mt-2 text-xs">
-                          {formatMoney(line.merchandise.price)}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex h-full flex-col items-center justify-center text-center">
-                  <CartIcon className="h-10 w-9 text-stone-400" />
-                  <p className="mt-5 font-heading text-xl">
-                    Your cart is empty
-                  </p>
-                  <button
-                    onClick={() => setCartOpen(false)}
-                    className="mt-5 border border-[var(--accent)] px-6 py-3 text-[10px] uppercase tracking-wider"
-                  >
-                    Continue shopping
-                  </button>
-                </div>
-              )}
-            </div>
-            {cart?.lines.nodes.length ? (
-              <div className="border-t border-stone-300 p-6">
-                <div className="mb-5 flex justify-between text-sm">
-                  <span>Subtotal</span>
-                  <strong>{formatMoney(cart.cost.subtotalAmount)}</strong>
-                </div>
-                <a
-                  href={cart.checkoutUrl}
-                  className="flex h-12 items-center justify-center bg-[#a95850] text-xs uppercase tracking-[.14em] text-white transition hover:bg-[#8f453f]"
-                >
-                  Checkout
-                </a>
+          <div className="flex h-20 items-center justify-between border-b border-stone-300 px-6">
+            <h2 className="font-heading text-2xl text-[var(--accent)]">
+              Your cart {cart?.totalQuantity ? `(${cart.totalQuantity})` : ""}
+            </h2>
+            <button
+              aria-label="Close cart"
+              onClick={() => setCartOpen(false)}
+              className="rounded-full p-2 hover:bg-black/5"
+            >
+              <X size={22} />
+            </button>
+          </div>
+          <div className="flex-1 overflow-y-auto px-6 py-6">
+            {cartLoading ? (
+              <div className="flex h-full items-center justify-center">
+                <LoaderCircle className="animate-spin" />
               </div>
-            ) : null}
-          </aside>
-        </div>
-      )}
+            ) : cart?.lines.nodes.length ? (
+              <div className="space-y-6">
+                {cart.lines.nodes.map((line) => (
+                  <div
+                    key={line.id}
+                    className="grid grid-cols-[88px_1fr] gap-4"
+                  >
+                    {line.merchandise.image && (
+                      <Image
+                        src={line.merchandise.image.url}
+                        alt={
+                          line.merchandise.image.altText ||
+                          line.merchandise.product.title
+                        }
+                        width={176}
+                        height={220}
+                        className="aspect-[4/5] w-full object-cover"
+                      />
+                    )}
+                    <div>
+                      <Link
+                        onClick={() => setCartOpen(false)}
+                        href={`/products/${line.merchandise.product.handle}`}
+                        className="font-heading text-lg text-[var(--accent)]"
+                      >
+                        {line.merchandise.product.title}
+                      </Link>
+                      {line.merchandise.title !== "Default Title" && (
+                        <p className="mt-1 text-[10px] text-stone-500">
+                          {line.merchandise.title}
+                        </p>
+                      )}
+                      <p className="mt-2 text-xs">Qty: {line.quantity}</p>
+                      <p className="mt-2 text-xs">
+                        {formatMoney(line.merchandise.price)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex h-full flex-col items-center justify-center text-center">
+                <CartIcon className="h-10 w-9 text-stone-400" />
+                <p className="mt-5 font-heading text-xl">Your cart is empty</p>
+                <button
+                  onClick={() => setCartOpen(false)}
+                  className="mt-5 border border-[var(--accent)] px-6 py-3 text-[10px] uppercase tracking-wider"
+                >
+                  Continue shopping
+                </button>
+              </div>
+            )}
+          </div>
+          {cart?.lines.nodes.length ? (
+            <div className="border-t border-stone-300 p-6">
+              <div className="mb-5 flex justify-between text-sm">
+                <span>Subtotal</span>
+                <strong>{formatMoney(cart.cost.subtotalAmount)}</strong>
+              </div>
+              <a
+                href={cart.checkoutUrl}
+                className="flex h-12 items-center justify-center bg-[#a95850] text-xs uppercase tracking-[.14em] text-white transition hover:bg-[#8f453f]"
+              >
+                Checkout
+              </a>
+            </div>
+          ) : null}
+        </aside>
+      </div>
     </>
   );
 }
