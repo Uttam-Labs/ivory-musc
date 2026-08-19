@@ -1,12 +1,12 @@
-@media only screen and (max-width:1440px){
-    :root{
-        --body-font-size:16px;
-        --button-font-size:14px;
+@media only screen and (max-width:1440px) {
+    :root {
+        --body-font-size: 16px;
+        --button-font-size: 14px;
     }
 }
 
-@media only screen and (max-width:1024px){
-    .header__icons .header--icon{
+@media only screen and (max-width:1024px) {
+    .header__icons .header--icon {
         width: 3rem;
         height: 3rem;
         flex: 0 0 3rem;
@@ -16,11 +16,11 @@
         padding-bottom: 0;
         border-bottom: 0;
     }
-    .newsletter-form__wrapper .field__input{
-        height:4rem;
+    .newsletter-form__wrapper .field__input {
+        height: 4rem;
         width: 100%;
-        padding: 2rem 2rem;
-        border:0.1rem solid var(--theme-red);
+        padding: 0.75rem 2rem;
+        border: 0.1rem solid var(--theme-red);
     }
     .newsletter-form__wrapper .newsletter-button {
         border: .1rem solid var(--theme-red);
@@ -33,5 +33,4 @@
         background: var(--theme-red);
         color: var(--white);
     }
-    
 }

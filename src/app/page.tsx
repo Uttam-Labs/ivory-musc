@@ -100,7 +100,7 @@ export default async function Home() {
                 />
               )}
               <div className="absolute inset-0 bg-black/15" />
-              <div className="home-hero-content relative mx-auto w-full max-w-[1440px] px-6 pb-16 md:pb-20 lg:px-8 lg:pb-36">
+              <div className="home-hero-content relative mx-auto w-full max-w-[1920] px-6 sm:px-12 xl:px-24 pb-16 md:pb-20 lg:pb-36">
                 <div className="home-hero__content-wrap w-full md:w-3/4">
                   {section.heading && (
                     <h1 className="hero-title max-w-full text-[25px] uppercase leading-tight sm:text-[28px] lg:whitespace-nowrap">
@@ -136,7 +136,7 @@ export default async function Home() {
           return (
             <section
               key={key}
-              className="home-bestseller mx-auto max-w-[1440px] bg-[#fff9f3] px-5 py-16 sm:px-7 lg:px-24 lg:py-36"
+              className="home-bestseller mx-auto max-w-[1920] px-6 sm:px-12 lg:px-28 bg-[#fff9f3] py-16 lg:py-36"
             >
               {(section.heading || section.intro) && (
                 <header className="section__heading mb-10 text-center">
@@ -166,7 +166,7 @@ export default async function Home() {
           return (
             <section
               key={key}
-              className="home-story mx-auto max-w-[1180px] bg-[#fff9f3] px-6 py-16 text-center sm:px-8 lg:py-36"
+              className="home-story mx-auto max-w-[1440px] bg-[#fff9f3] px-6 sm:px-12 xl:px-24 py-16 text-center lg:py-36"
             >
               <header className="section__heading mb-0 text-center">
                 {section.heading && (
@@ -190,7 +190,7 @@ export default async function Home() {
           return (
             <section
               key={key}
-              className="home-guide mx-auto max-w-[1440px] bg-[#fff9f3] px-5 py-16 text-center sm:px-6 lg:py-36"
+              className="home-guide mx-auto max-w-[1920] px-6 sm:px-12 xl:px-24 bg-[#fff9f3] py-16 text-center lg:py-36"
             >
               <div className="max-w-[1050px] mx-auto">
                 {section.heading && (
@@ -215,7 +215,7 @@ export default async function Home() {
                   {section.features.map((feature, i) => (
                     <div key={feature.title || i}>
                       {feature.icon && (
-                        <div className="relative mx-auto size-18 md:size-18 xl:size-36">
+                        <div className="relative mx-auto size-[45px] xl:size-[90px]">
                           <Image
                             fill
                             src={sanityImageUrl(feature.icon, 90)}
@@ -242,7 +242,7 @@ export default async function Home() {
               key={key}
               className="home-newsletter grid bg-[#fff9f3] md:min-h-[659px] md:grid-cols-[45%_55%]"
             >
-              <div className="flex flex-col items-center justify-center bg-[#fff5ea] px-6 py-14 text-center sm:px-8 md:py-16 lg:px-14">
+              <div className="flex flex-col items-center justify-center bg-[#fff5ea] px-6 sm:px-12 xl:px-24 py-14 text-center md:py-16">
                 <div className="newsletter-wrapper max-w-[570px] mx-auto">
                   {section.heading && (
                     <h2 className="common-heading text-[var(--accent)]">
@@ -292,7 +292,8 @@ export default async function Home() {
                   />
                 )}
                 <div className="absolute inset-0 bg-black/15" />
-                <div className="home-campaign-text relative flex w-full flex-col items-center px-8 text-center md:w-1/2 lg:px-14">
+                <div className="home-campaign-text relative mx-auto w-[100%] max-w-[1920] px-6 sm:px-12 xl:px-24 text-center">
+                  <div className="flex flex-col items-center w-full md:w-[450] md:ml-auto lg:w-1/2">
                   {section.heading && (
                     <h2 className="common-heading max-w-[620] mx-auto">
                       {section.heading}
@@ -309,6 +310,7 @@ export default async function Home() {
                     className="custom-button btn-white"
                     light
                   />
+                  </div>
                 </div>
               </section>
             );
@@ -317,7 +319,7 @@ export default async function Home() {
           return (
             <section
               key={key}
-              className={`home-split mx-auto grid max-w-[100%] items-start bg-[#fff9f3] md:grid-cols-2 ${isChosen ? "home-chosen pt-20 sm:pt-24 lg:pt-36" : "home-philosophy"}`}
+              className={`home-split mx-auto grid max-w-[100%] items-start bg-[#fff9f3] lg:grid-cols-2 ${isChosen ? "home-chosen pt-20 pb-10 sm:pt-24 lg:pt-36 lg:pb-0" : "home-philosophy"}`}
             >
               {section.image && (
                 <div
@@ -333,7 +335,7 @@ export default async function Home() {
                 </div>
               )}
               <div
-                className={`home-split-content px-6 pb-14 pt-8 sm:px-8 md:pb-10 lg:px-12 lg:pt-3 ${!section.image ? "md:col-span-2 mx-auto max-w-4xl text-center" : ""}`}
+                className={`home-split-content px-6 sm:px-12 xl:px-24 py-8 lg:py-0 ${!section.image ? "md:col-span-2 mx-auto max-w-4xl text-center" : ""}`}
               >
                 <div className="home-split-innerbox">
                   {(section.eyebrow || section.heading) && (

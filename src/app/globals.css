@@ -81,14 +81,7 @@ html {
 body {
   margin: 0;
 }
-body {
-  font-family: var(--cms-body-font), sans-serif;
-}
-.font-heading,
-h1,
-h2 {
-  font-family: var(--cms-heading-font), serif;
-}
+
 a {
   text-underline-offset: 4px;
 }

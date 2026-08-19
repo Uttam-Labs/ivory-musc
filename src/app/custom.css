@@ -44,7 +44,7 @@ img{
     max-width: 100%;
     height: auto;
 }
-h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6 {
+h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6, .font-heading {
   padding: 0;
   margin-top: 0;
   margin-bottom: 0;
@@ -57,7 +57,7 @@ h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6 {
 }
 
 p {
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
   font-size: inherit;
   line-height: inherit;
 }
@@ -87,6 +87,7 @@ a{
 .custom-button:hover{
     background: var(--theme-red);
     color: var(--white);
+    transform: none !important;
 }
 .btn-white{
     border-color: var(--white) !important;
@@ -109,6 +110,13 @@ a{
 .section__heading.mb-0{
     margin-bottom: 0;
 }
+.explore--link{
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-size: var(--button-font-size);
+    color: var(--theme-red);
+    transform: none !important;
+}
 
 /* End common css */
 
@@ -123,6 +131,9 @@ a{
     line-height: 1.2;
     display: flex;
     align-items: center;
+}
+.heading-logo-link img{
+    width: 100%;
 }
 .header__icons{
     display: flex;
@@ -139,14 +150,19 @@ a{
     border-radius: 50%;
     cursor: pointer;
 }
+.search-panel-enter form input {
+    height: 4rem;
+    font-size: var(--button-font-size);
+}
+.search-panel-enter form svg{
+    width: 16px;
+    height: 16px;
+}
 
 /* End Header */
 
 /* Hero banner */
-.home-hero {
-    width: 100%;
-}
-.home-hero img{
+.home-hero, .home-hero img {
     width: 100%;
 }
 .home-hero-content{
@@ -196,6 +212,9 @@ a{
     .home-split-content {
         padding-left: 6rem;
         padding-right: 10rem;
+    }
+    .about-image-split .home-split-content{
+        padding-right: 0;
     }
 }
 .home-split-content .title{
@@ -301,3 +320,27 @@ a{
     height: 20px;
 }
 /* End Bestseller */
+
+/* Start About page */
+.abt-icon__title{
+    margin: 1.5rem 0;
+    font-family: var(--primary-font);
+    font-size: clamp(1.6rem, 1.2vw, 2.2rem);
+    line-height: 1.12;
+}
+.abt-icon__texts{
+    line-height: 1.34;
+    font-size: var(--body-font-size);
+}
+.about-image__icontext .abt-icon__title{
+    font-size: clamp(1.6rem, 1vw, 1.8rem);
+}
+.vision-card__item .abt-icon__title {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+.vscard-text{
+    margin-top: 1.5rem;
+}
+
+/* End About page */

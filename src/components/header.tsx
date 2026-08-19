@@ -143,7 +143,7 @@ export function Header({
       <header
         className={`${overlaysHero ? "absolute text-white" : "relative text-[var(--foreground)]"} z-50 w-full`}
       >
-        <div className="mx-auto grid h-[76px] max-w-[1440px] grid-cols-[1fr_auto_1fr] items-center px-5 lg:px-8">
+        <div className="mx-auto grid h-[76px] max-w-[1920] px-6 sm:px-12 xl:px-24 grid-cols-[1fr_auto_1fr] items-center">
           <nav className="hidden header__nav items-center gap-7 text-[10px] lg:flex">
             {navigation.map((item) =>
               item.href && item.label ? (

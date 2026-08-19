@@ -50,7 +50,7 @@ export function CollectionSlider({
           {products.map((p) => (
             <article
               key={p.id}
-              className="bestseller-card min-w-0 flex-[0_0_88%] pl-8 sm:flex-[0_0_50%] lg:flex-[0_0_33.333%]"
+              className="bestseller-card min-w-0 flex-[0_0_100%] pl-8 sm:flex-[0_0_50%] lg:flex-[0_0_33.333%]"
             >
               <Link
                 href={`/products/${p.handle}`}
