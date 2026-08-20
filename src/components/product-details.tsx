@@ -80,8 +80,8 @@ export function ProductDetails({ product, initialSelection, settings, relatedHea
           <h1 className="product__title">{product.title}</h1>
           {product.description && <p className={`${styles.description} product-description`}>{product.description}</p>}
           <div className={`${styles.priceRow} product-details__price-row`}>{variant?.compareAtPrice && Number(variant.compareAtPrice.amount) > Number(price.amount) && <del>{formatMoney(variant.compareAtPrice)}</del>}<p className={`${styles.price} product-details__price`}>{formatMoney(price)}</p>{settings?.perUnitLabel && <small className="label-unit">{settings.perUnitLabel}</small>}</div>
-          {(product.options || []).filter((option) => option.name !== "Title").map((option) => <fieldset key={option.id} className={`${styles.options} product-details__options`}>
-            <legend className="option-label">{option.name}</legend>
+          {(product.options || []).filter((option) => option.name !== "Title").map((option) => <fieldset key={option.id} aria-label={option.name} className={`${styles.options} product-details__options`}>
+            {!isColor(option.name) && <legend className="option-label">{option.name}</legend>}
             <div className={isColor(option.name) ? styles.colorOptions : styles.optionList}>{option.optionValues.map((value) => isColor(option.name) ? <button key={value.id} type="button" title={value.name} aria-label={`${option.name}: ${value.name}`} aria-pressed={selected[option.name] === value.name} className={`${styles.swatch} ${selected[option.name] === value.name ? styles.selectedSwatch : ""}`} onClick={() => choose(option.name, value.name)}><span style={swatchStyle(value)} /><small>{value.name}</small></button> : <button key={value.id} type="button" aria-pressed={selected[option.name] === value.name} className={`${styles.optionButton} ${selected[option.name] === value.name ? styles.selectedOption : ""}`} onClick={() => choose(option.name, value.name)}>{value.name}</button>)}</div>
           </fieldset>)}
           <div className={`${styles.purchaseRow} product-details__purchase-row`}>
@@ -101,7 +101,7 @@ export function ProductDetails({ product, initialSelection, settings, relatedHea
         </div>
         </div>
       </section>
-      {relatedProducts.length > 0 && <section className={styles.related}>{relatedHeading && <h2>{relatedHeading}</h2>}<CollectionProductGrid products={relatedProducts} /></section>}
+      {relatedProducts.length > 0 && <section className={styles.related}>{relatedHeading && <h2 className="common-heading">{relatedHeading}</h2>}<div className={styles.relatedGrid}><CollectionProductGrid products={relatedProducts} /></div></section>}
     </SiteContainer>
   </main>;
 }

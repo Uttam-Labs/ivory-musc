@@ -202,8 +202,8 @@ function ProductQuickView({
                 <span>per meter</span>
               </div>
               {(product.options || []).filter((option) => option.name !== "Title").map((option) => (
-                <fieldset className={styles.optionGroup} key={option.id}>
-                  <legend>{option.name}</legend>
+                <fieldset className={styles.optionGroup} key={option.id} aria-label={option.name}>
+                  {!isColorOption(option.name) && <legend>{option.name}</legend>}
                   <div className={isColorOption(option.name) ? styles.swatchList : styles.optionList}>
                     {option.optionValues.map((value) => {
                       const active = selected[option.name] === value.name;
