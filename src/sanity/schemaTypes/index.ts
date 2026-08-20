@@ -6,4 +6,6 @@ import { headerSettings } from "./headerSettings";
 import { footerSettings } from "./footerSettings";
 import { productPage } from "./productPage";
 import { collectionPage } from "./collectionPage";
-export const schemaTypes = [siteSettings, headerSettings, footerSettings, homePage, aboutPage, collectionPage, productPage, page];
+import { faqPage } from "./faqPage";
+import { contactPage } from "./contactPage";
+export const schemaTypes = [siteSettings, headerSettings, footerSettings, homePage, aboutPage, collectionPage, productPage, faqPage, contactPage, page];
