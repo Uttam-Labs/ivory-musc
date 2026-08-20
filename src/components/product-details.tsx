@@ -63,40 +63,42 @@ export function ProductDetails({ product, initialSelection, settings, relatedHea
   }
 
   return <main className={styles.page}>
-    <SiteContainer className={styles.container}>
+    <SiteContainer className={`${styles.container} product__details`}>
       <nav className={styles.breadcrumb} aria-label="Breadcrumb">
         {settings?.homeLabel && settings.homeHref && <Link href={settings.homeHref}>{settings.homeLabel}</Link>}
         {settings?.collectionLabel && settings.collectionHref && <><span>/</span><Link href={settings.collectionHref}>{settings.collectionLabel}</Link></>}
         <span>/</span><span>{product.title}</span>
       </nav>
-      <section className={styles.productSection}>
-        <div className={styles.gallery}>
+      <section className={`${styles.productSection} product-info-details__columns`}>
+        <div className={`${styles.gallery} product-info-details__gallery`}>
           <div className={styles.mainImage}>{activeImage && <Image src={activeImage.url} alt={activeImage.altText || product.title} fill priority sizes="(min-width:768px) 50vw, 100vw" />}</div>
-          {product.images.nodes.length > 1 && <div className={styles.thumbnails}>{product.images.nodes.map((image) => <button key={image.url} aria-label={`View ${image.altText || product.title}`} className={activeImage?.url === image.url ? styles.activeThumb : undefined} onClick={() => setManualImage(image.url)}><Image src={image.url} alt={image.altText || product.title} fill sizes="(min-width: 1200px) 12vw, (min-width: 768px) 20vw, 45vw" /></button>)}</div>}
+          {product.images.nodes.length > 1 && <div className={`${styles.thumbnails} product-details__thumbnails`}>{product.images.nodes.map((image) => <button key={image.url} aria-label={`View ${image.altText || product.title}`} className={activeImage?.url === image.url ? styles.activeThumb : undefined} onClick={() => setManualImage(image.url)}><Image src={image.url} alt={image.altText || product.title} fill sizes="(min-width: 1200px) 12vw, (min-width: 768px) 20vw, 45vw" /></button>)}</div>}
         </div>
-        <div className={styles.info}>
-          {product.featuredTitle?.value && <p className={styles.eyebrow}>{product.featuredTitle.value}</p>}
-          <h1>{product.title}</h1>
-          {product.description && <p className={styles.description}>{product.description}</p>}
-          <div className={styles.priceRow}>{variant?.compareAtPrice && Number(variant.compareAtPrice.amount) > Number(price.amount) && <del>{formatMoney(variant.compareAtPrice)}</del>}<p className={styles.price}>{formatMoney(price)}</p>{settings?.perUnitLabel && <small>{settings.perUnitLabel}</small>}</div>
-          {(product.options || []).filter((option) => option.name !== "Title").map((option) => <fieldset key={option.id} className={styles.options}>
-            <legend>{option.name}</legend>
+        <div className={`${styles.info} product-info-details__wrapper`}>
+          <div className="product--info__container">
+          {product.featuredTitle?.value && <p className={`${styles.eyebrow} product-eyebrow`}>{product.featuredTitle.value}</p>}
+          <h1 className="product__title">{product.title}</h1>
+          {product.description && <p className={`${styles.description} product-description`}>{product.description}</p>}
+          <div className={`${styles.priceRow} product-details__price-row`}>{variant?.compareAtPrice && Number(variant.compareAtPrice.amount) > Number(price.amount) && <del>{formatMoney(variant.compareAtPrice)}</del>}<p className={`${styles.price} product-details__price`}>{formatMoney(price)}</p>{settings?.perUnitLabel && <small className="label-unit">{settings.perUnitLabel}</small>}</div>
+          {(product.options || []).filter((option) => option.name !== "Title").map((option) => <fieldset key={option.id} className={`${styles.options} product-details__options`}>
+            <legend className="option-label">{option.name}</legend>
             <div className={isColor(option.name) ? styles.colorOptions : styles.optionList}>{option.optionValues.map((value) => isColor(option.name) ? <button key={value.id} type="button" title={value.name} aria-label={`${option.name}: ${value.name}`} aria-pressed={selected[option.name] === value.name} className={`${styles.swatch} ${selected[option.name] === value.name ? styles.selectedSwatch : ""}`} onClick={() => choose(option.name, value.name)}><span style={swatchStyle(value)} /><small>{value.name}</small></button> : <button key={value.id} type="button" aria-pressed={selected[option.name] === value.name} className={`${styles.optionButton} ${selected[option.name] === value.name ? styles.selectedOption : ""}`} onClick={() => choose(option.name, value.name)}>{value.name}</button>)}</div>
           </fieldset>)}
-          <div className={styles.purchaseRow}>
-            <div>{settings?.quantityLabel && <span className={styles.fieldLabel}>{settings.quantityLabel}</span>}<div className={styles.quantityPicker}><button onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label="Decrease quantity"><Minus size={15} /></button><output>{quantity}</output><button onClick={() => setQuantity((value) => Math.min(20, value + 1))} aria-label="Increase quantity"><Plus size={15} /></button></div></div>
-            <div className={styles.total}>{settings?.totalLabel && <span>{settings.totalLabel}</span>}<strong>{formatMoney(total)}</strong></div>
+          <div className={`${styles.purchaseRow} product-details__purchase-row`}>
+            <div className="product-details__options">{settings?.quantityLabel && <span className={`${styles.fieldLabel} option-label`}>{settings.quantityLabel}</span>}<div className={`${styles.quantityPicker} product-details__quantity`}><button onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label="Decrease quantity"><Minus size={15} /></button><output>{quantity}</output><button onClick={() => setQuantity((value) => Math.min(20, value + 1))} aria-label="Increase quantity"><Plus size={15} /></button></div></div>
+            <div className={`${styles.total} product-details__total`}>{settings?.totalLabel && <span>{settings.totalLabel}</span>}<strong>{formatMoney(total)}</strong></div>
             {settings?.minimumPurchaseText && <p>{settings.minimumPurchaseText}</p>}
           </div>
           {!variant && <p className={styles.unavailable}>This combination is unavailable.</p>}
-          <div className={styles.actions}>
-            {settings?.buyNowLabel && <button className={styles.buyButton} onClick={() => submit("buy")} disabled={!variant?.availableForSale || action === "buy"}>{action === "buy" ? <LoaderCircle className="animate-spin" size={17} /> : settings.buyNowLabel}</button>}
-            {settings?.addToCartLabel && <button className={styles.cartButton} onClick={() => submit("cart")} disabled={!variant?.availableForSale || action === "cart"}>{action === "cart" ? <LoaderCircle className="animate-spin" size={17} /> : action === "added" ? <><Check size={17} /> {settings.addToCartLabel}</> : settings.addToCartLabel}</button>}
-            {settings?.purchaseSampleLabel && settings.purchaseSampleHref && <Link className={styles.sampleButton} href={settings.purchaseSampleHref}>{settings.purchaseSampleLabel}</Link>}
+          <div className={`${styles.actions} product-details__actions`}>
+            {settings?.buyNowLabel && <button className={`${styles.buyButton} button buy-button`} onClick={() => submit("buy")} disabled={!variant?.availableForSale || action === "buy"}>{action === "buy" ? <LoaderCircle className="animate-spin" size={17} /> : settings.buyNowLabel}</button>}
+            {settings?.addToCartLabel && <button className={`${styles.cartButton} button button-add-to-cart`} onClick={() => submit("cart")} disabled={!variant?.availableForSale || action === "cart"}>{action === "cart" ? <LoaderCircle className="animate-spin" size={17} /> : action === "added" ? <><Check size={17} /> {settings.addToCartLabel}</> : settings.addToCartLabel}</button>}
+            {settings?.purchaseSampleLabel && settings.purchaseSampleHref && <Link className={`${styles.sampleButton} button button-sample`} href={settings.purchaseSampleHref}>{settings.purchaseSampleLabel}</Link>}
           </div>
           {action === "error" && <p className={styles.unavailable}>Please try again.</p>}
-          {settings?.shippingText && <div className={styles.shipping}><Truck size={17} strokeWidth={1.5} /><span>{settings.shippingText}</span></div>}
-          {specifications.length > 0 && <div className={styles.specifications}>{settings?.specificationsHeading && <h2>{settings.specificationsHeading}</h2>}{specifications.map(([label, value]) => <div key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>}
+          {settings?.shippingText && <div className={`${styles.shipping} product-details__shippings`}><Truck size={17} strokeWidth={1.5} /><span>{settings.shippingText}</span></div>}
+          {specifications.length > 0 && <div className={`${styles.specifications} product-details__specifications`}>{settings?.specificationsHeading && <h2>{settings.specificationsHeading}</h2>}{specifications.map(([label, value]) => <div className="spec" key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>}
+        </div>
         </div>
       </section>
       {relatedProducts.length > 0 && <section className={styles.related}>{relatedHeading && <h2>{relatedHeading}</h2>}<CollectionProductGrid products={relatedProducts} /></section>}
