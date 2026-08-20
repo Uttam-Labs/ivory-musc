@@ -1,11 +1,33 @@
 import Link from "next/link";
-import Image from "next/image";
+import { CollectionProductGrid } from "@/components/collection-product-grid";
+import { SiteContainer } from "@/components/site-container";
 import { SetupNotice } from "@/components/setup-notice";
 import { isShopifyConfigured } from "@/lib/env";
-import { getCollections } from "@/lib/shopify";
-export const metadata = { title: "Collections" };
-export default async function CollectionsPage() {
-  if (!isShopifyConfigured) return <main className="flex-1 px-5 py-20"><SetupNotice /></main>;
-  const collections = await getCollections();
-  return <main className="mx-auto w-full max-w-7xl flex-1 px-5 py-16"><h1 className="text-4xl font-medium">Collections</h1><div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{collections.map((collection) => <Link key={collection.id} href={`/collections/${collection.handle}`} className="group"><div className="overflow-hidden rounded-2xl bg-stone-100">{collection.image ? <Image src={collection.image.url} alt={collection.image.altText || collection.title} width={collection.image.width} height={collection.image.height} className="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-[1.03]" /> : <div className="aspect-[4/3]" />}</div><h2 className="mt-3 text-xl">{collection.title}</h2></Link>)}</div></main>;
+import { getProducts } from "@/lib/shopify";
+import styles from "./collection.module.css";
+
+export const metadata = { title: "Collection" };
+const PAGE_SIZE = 12;
+
+export default async function CollectionsPage({ searchParams }: PageProps<"/collections">) {
+  if (!isShopifyConfigured) return <main className={styles.page}><SetupNotice /></main>;
+  const { page: requestedPage } = await searchParams;
+  const products = await getProducts(250);
+  const totalPages = Math.max(1, Math.ceil(products.length / PAGE_SIZE));
+  const parsed = Number.parseInt(typeof requestedPage === "string" ? requestedPage : "1", 10) || 1;
+  const page = Math.min(Math.max(parsed, 1), totalPages);
+  const visibleProducts = products.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const start = Math.max(1, Math.min(page - 1, totalPages - 3));
+  const pages = Array.from({ length: Math.min(4, totalPages) }, (_, index) => start + index);
+  return <main className={styles.page}><SiteContainer className={styles.inner}>
+    <h1 className={styles.heading}>Collection</h1>
+    <CollectionProductGrid products={visibleProducts} />
+    {totalPages > 1 && <nav className={styles.pagination} aria-label="Collection pagination">
+      {page > 1 && <Link className={styles.arrow} href={`/collections?page=${page - 1}`} aria-label="Previous page">‹</Link>}
+      {start > 1 && <><Link href="/collections?page=1">1</Link>{start > 2 && <span>…</span>}</>}
+      {pages.map((item) => <Link key={item} className={item === page ? styles.active : undefined} href={`/collections?page=${item}`} aria-current={item === page ? "page" : undefined}>{item}</Link>)}
+      {pages.at(-1)! < totalPages && <>{pages.at(-1)! < totalPages - 1 && <span>…</span>}<Link href={`/collections?page=${totalPages}`}>{totalPages}</Link></>}
+      {page < totalPages && <Link className={styles.arrow} href={`/collections?page=${page + 1}`} aria-label="Next page">›</Link>}
+    </nav>}
+  </SiteContainer></main>;
 }

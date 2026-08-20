@@ -1,5 +1,5 @@
 import { shopifyFetch } from "./client";
-import { COLLECTION_QUERY, COLLECTIONS_QUERY, PRODUCT_QUERY, PRODUCTS_QUERY } from "./queries";
+import { COLLECTION_QUERY, COLLECTIONS_QUERY, PRODUCT_QUERY, PRODUCT_RECOMMENDATIONS_QUERY, PRODUCTS_QUERY } from "./queries";
 import type { Collection, Product } from "./types";
 
 export async function getProducts(first = 12, query?: string) {
@@ -9,6 +9,14 @@ export async function getProducts(first = 12, query?: string) {
 export async function getProduct(handle: string) {
   const data = await shopifyFetch<{ product: Product | null }>({ query: PRODUCT_QUERY, variables: { handle }, tags: ["shopify", `product:${handle}`] });
   return data.product;
+}
+export async function getProductRecommendations(productId: string) {
+  const data = await shopifyFetch<{ productRecommendations: Product[] }>({
+    query: PRODUCT_RECOMMENDATIONS_QUERY,
+    variables: { productId },
+    tags: ["shopify", "product-recommendations", `product:${productId}`],
+  });
+  return data.productRecommendations;
 }
 export async function getCollections(first = 20) {
   const data = await shopifyFetch<{ collections: { nodes: Collection[] } }>({ query: COLLECTIONS_QUERY, variables: { first }, tags: ["shopify", "collections"] });

@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { LoaderCircle, Menu, X } from "lucide-react";
-import { usePathname } from "next/navigation";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { LoaderCircle, Menu, Minus, Plus, Trash2, X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { formatMoney } from "@/lib/format";
 import type { Cart, Product } from "@/lib/shopify/types";
 import { AccountIcon, CartIcon, SearchIcon } from "./header-icons";
@@ -36,6 +36,7 @@ export function Header({
   showCart = false,
 }: Props) {
   const pathname = usePathname();
+  const router = useRouter();
   const overlaysHero = pathname === "/" || pathname === "/about";
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -45,17 +46,59 @@ export function Header({
   const [searching, setSearching] = useState(false);
   const [cart, setCart] = useState<Cart | null>(null);
   const [cartLoading, setCartLoading] = useState(false);
+  const [updatingLines, setUpdatingLines] = useState<string[]>([]);
+  const [cartError, setCartError] = useState("");
   const searchInput = useRef<HTMLInputElement>(null);
   const menuCloseButton = useRef<HTMLButtonElement>(null);
+
+  const refreshCart = useCallback(async () => {
+    const cartId = localStorage.getItem("shopify-cart-id");
+    if (!cartId) {
+      setCart(null);
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/cart?id=${encodeURIComponent(cartId)}`, {
+        cache: "no-store",
+      });
+      const payload = await response.json();
+      if (!response.ok || !payload.cart) {
+        localStorage.removeItem("shopify-cart-id");
+        setCart(null);
+        return;
+      }
+      setCart(payload.cart);
+    } catch {
+      // Keep the last known cart state when a background refresh is interrupted.
+    }
+  }, []);
 
   useEffect(() => {
     const onCartUpdated = (event: Event) => {
       setCart((event as CustomEvent<Cart>).detail);
       setCartOpen(true);
     };
+    const onCartChanged = (event: Event) => {
+      setCart((event as CustomEvent<Cart>).detail);
+    };
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === "shopify-cart-id") void refreshCart();
+    };
+
+    const hydrationTimer = window.setTimeout(() => void refreshCart(), 0);
     window.addEventListener("cart:updated", onCartUpdated);
-    return () => window.removeEventListener("cart:updated", onCartUpdated);
-  }, []);
+    window.addEventListener("cart:changed", onCartChanged);
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("focus", refreshCart);
+    return () => {
+      window.clearTimeout(hydrationTimer);
+      window.removeEventListener("cart:updated", onCartUpdated);
+      window.removeEventListener("cart:changed", onCartChanged);
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("focus", refreshCart);
+    };
+  }, [refreshCart]);
 
   useEffect(() => {
     if (!searchOpen && !cartOpen && !menuOpen) return;
@@ -86,8 +129,6 @@ export function Header({
 
   useEffect(() => {
     if (!searchOpen || query.trim().length < 2) {
-      setResults([]);
-      setSearching(false);
       return;
     }
     const controller = new AbortController();
@@ -114,24 +155,40 @@ export function Header({
 
   async function openCart() {
     setCartOpen(true);
-    const cartId = localStorage.getItem("shopify-cart-id");
-    if (!cartId) return setCart(null);
     setCartLoading(true);
     try {
-      const response = await fetch(
-        `/api/cart?id=${encodeURIComponent(cartId)}`,
-      );
-      const payload = await response.json();
-      setCart(payload.cart || null);
+      await refreshCart();
     } finally {
       setCartLoading(false);
+    }
+  }
+
+  async function changeCartLine(lineId: string, quantity?: number) {
+    if (!cart?.id || updatingLines.includes(lineId)) return;
+    const action = quantity === undefined ? "remove" : "update";
+    setUpdatingLines((lines) => [...lines, lineId]);
+    setCartError("");
+    try {
+      const response = await fetch("/api/cart", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ action, cartId: cart.id, lineId, quantity }),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "Cart could not be updated");
+      setCart(payload.cart);
+      window.dispatchEvent(new CustomEvent("cart:changed", { detail: payload.cart }));
+    } catch (error) {
+      setCartError(error instanceof Error ? error.message : "Please try again");
+    } finally {
+      setUpdatingLines((lines) => lines.filter((id) => id !== lineId));
     }
   }
 
   function submitSearch(event: FormEvent) {
     event.preventDefault();
     if (query.trim())
-      window.location.assign(`/search?q=${encodeURIComponent(query.trim())}`);
+      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
   }
 
   if (!title && !logoUrl && !navigation.length) return null;
@@ -181,7 +238,7 @@ export function Header({
           )}
           <Link
             href="/"
-            className="heading-logo-link mt-1 flex h-[76px] min-w-[92px] self-start items-start justify-center overflow-visible"
+            className="heading-logo-link flex h-[76px] w-[110px] min-w-[110px] max-w-[110px] self-center items-center justify-center overflow-visible"
           >
             {logoUrl ? (
               <Image
@@ -196,7 +253,11 @@ export function Header({
                     "--logo-scale-desktop": logoSizeDesktop / 100,
                   } as React.CSSProperties
                 }
-                className="header-logo h-[86px] w-[92px] object-contain drop-shadow-[0_1px_1px_rgba(0,0,0,.1)]"
+                className={`header-logo h-auto max-h-[72px] w-full origin-center object-contain transition-[filter,opacity] duration-300 ${
+                  overlaysHero
+                    ? "drop-shadow-[0_1px_1px_rgba(0,0,0,.12)]"
+                    : "brightness-0 opacity-40"
+                }`}
               />
             ) : title ? (
               <span className="font-heading text-2xl">{title}</span>
@@ -206,7 +267,11 @@ export function Header({
             {showSearch && (
               <button
                 className={`${iconClass} header--icon search-button`}
-                onClick={() => setSearchOpen(true)}
+                onClick={() => {
+                  setResults([]);
+                  setSearching(false);
+                  setSearchOpen(true);
+                }}
                 aria-label="Search"
               >
                 <SearchIcon className="size-[18px]" />
@@ -229,7 +294,7 @@ export function Header({
               >
                 <CartIcon className="h-[19px] w-[17px]" />
                 {cart?.totalQuantity ? (
-                  <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-white text-[9px] text-stone-900">
+                  <span className="pointer-events-none absolute right-[-3px] top-[-4px] z-10 flex h-[18px] min-w-[18px] items-center justify-center rounded-full border border-[#fff9f3] bg-[#a95850] px-[4px] text-[11px] font-medium leading-none text-white shadow-[0_2px_7px_rgba(80,35,31,.25)] [font-variant-numeric:tabular-nums]">
                     {cart.totalQuantity}
                   </span>
                 ) : null}
@@ -384,7 +449,7 @@ export function Header({
 
       <div
         aria-hidden={!cartOpen}
-        className={`fixed inset-0 z-[90] transition-[visibility,background-color] duration-500 ${
+        className={`fixed inset-0 z-[120] transition-[visibility,background-color] duration-500 ${
           cartOpen
             ? "visible bg-black/40"
             : "pointer-events-none invisible bg-black/0"
@@ -395,34 +460,34 @@ export function Header({
           aria-label="Shopping cart"
           aria-modal="true"
           role="dialog"
-          className={`ml-auto flex h-dvh w-full max-w-[430px] flex-col bg-[#fffaf5] shadow-2xl transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${
+          className={`ml-auto flex h-dvh w-full max-w-[480px] flex-col bg-[#fffaf5] shadow-2xl transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${
             cartOpen ? "translate-x-0" : "translate-x-full"
           }`}
           onMouseDown={(event) => event.stopPropagation()}
         >
-          <div className="flex h-20 items-center justify-between border-b border-stone-300 px-6">
-            <h2 className="font-heading text-2xl text-[var(--accent)]">
+          <div className="flex h-[72px] shrink-0 items-center justify-between border-b border-stone-300 px-7">
+            <h2 className="font-heading text-[22px] text-[var(--accent)]">
               Your cart {cart?.totalQuantity ? `(${cart.totalQuantity})` : ""}
             </h2>
             <button
               aria-label="Close cart"
               onClick={() => setCartOpen(false)}
-              className="rounded-full p-2 hover:bg-black/5"
+              className="cursor-pointer rounded-full p-2 transition hover:bg-black/5"
             >
               <X size={22} />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto px-6 py-6">
+          <div className="flex-1 overflow-y-auto px-7 py-7">
             {cartLoading ? (
               <div className="flex h-full items-center justify-center">
                 <LoaderCircle className="animate-spin" />
               </div>
             ) : cart?.lines.nodes.length ? (
-              <div className="space-y-6">
+              <div className="space-y-7">
                 {cart.lines.nodes.map((line) => (
                   <div
                     key={line.id}
-                    className="grid grid-cols-[88px_1fr] gap-4"
+                    className="grid grid-cols-[104px_1fr] gap-5 border-b border-stone-200 pb-7 last:border-0"
                   >
                     {line.merchandise.image && (
                       <Image
@@ -433,25 +498,78 @@ export function Header({
                         }
                         width={176}
                         height={220}
-                        className="aspect-[4/5] w-full object-cover"
+                        className="aspect-[4/5] w-full bg-stone-100 object-cover"
                       />
                     )}
-                    <div>
+                    <div className="min-w-0">
+                      <div className="flex items-start justify-between gap-2">
                       <Link
                         onClick={() => setCartOpen(false)}
                         href={`/products/${line.merchandise.product.handle}`}
-                        className="font-heading text-lg text-[var(--accent)]"
+                        className="font-heading text-[17px] leading-tight text-[var(--accent)] hover:opacity-70"
                       >
                         {line.merchandise.product.title}
                       </Link>
+                      <button
+                        type="button"
+                        aria-label={`Remove ${line.merchandise.product.title}`}
+                        title="Remove item"
+                        disabled={updatingLines.includes(line.id)}
+                        onClick={() => changeCartLine(line.id)}
+                        className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-full text-stone-500 transition hover:bg-red-50 hover:text-[#a95850] disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        {updatingLines.includes(line.id) ? <LoaderCircle size={15} className="animate-spin" /> : <Trash2 size={16} strokeWidth={1.5} />}
+                      </button>
+                      </div>
                       {line.merchandise.title !== "Default Title" && (
-                        <p className="mt-1 text-[10px] text-stone-500">
+                        <p className="mt-2 text-[14px] leading-snug text-stone-500">
                           {line.merchandise.title}
                         </p>
                       )}
-                      <p className="mt-2 text-xs">Qty: {line.quantity}</p>
-                      <p className="mt-2 text-xs">
-                        {formatMoney(line.merchandise.price)}
+                      <div className="mt-4 flex h-[38px] w-[126px] items-center border border-stone-300 bg-white/50">
+                        <button
+                          type="button"
+                          aria-label={`Decrease ${line.merchandise.product.title} quantity`}
+                          disabled={line.quantity <= 1 || updatingLines.includes(line.id)}
+                          onClick={() => changeCartLine(line.id, line.quantity - 1)}
+                          className="grid h-full w-10 cursor-pointer place-items-center transition hover:bg-stone-100 disabled:cursor-not-allowed disabled:opacity-35"
+                        ><Minus size={13} /></button>
+                        <input
+                          key={`${line.id}-${line.quantity}`}
+                          aria-label={`${line.merchandise.product.title} quantity`}
+                          type="number"
+                          min={1}
+                          max={20}
+                          defaultValue={line.quantity}
+                          disabled={updatingLines.includes(line.id)}
+                          onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }}
+                          onBlur={(event) => {
+                            const next = Math.min(20, Math.max(1, Number.parseInt(event.currentTarget.value, 10) || line.quantity));
+                            event.currentTarget.value = String(next);
+                            if (next !== line.quantity) changeCartLine(line.id, next);
+                          }}
+                          className="h-full min-w-0 flex-1 appearance-none border-x border-stone-300 bg-transparent text-center text-[14px] outline-none [font-variant-numeric:tabular-nums] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                        />
+                        <button
+                          type="button"
+                          aria-label={`Increase ${line.merchandise.product.title} quantity`}
+                          disabled={line.quantity >= 20 || updatingLines.includes(line.id)}
+                          onClick={() => changeCartLine(line.id, line.quantity + 1)}
+                          className="grid h-full w-10 cursor-pointer place-items-center transition hover:bg-stone-100 disabled:cursor-not-allowed disabled:opacity-35"
+                        ><Plus size={13} /></button>
+                      </div>
+                      <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                        {line.merchandise.compareAtPrice && Number(line.merchandise.compareAtPrice.amount) > Number(line.merchandise.price.amount) && (
+                          <span className="text-[14px] text-stone-400 line-through">
+                            {formatMoney({ ...line.merchandise.compareAtPrice, amount: String(Number(line.merchandise.compareAtPrice.amount) * line.quantity) })}
+                          </span>
+                        )}
+                        <strong className="text-[18px] font-normal text-stone-800">
+                          {formatMoney(line.cost.totalAmount)}
+                        </strong>
+                      </div>
+                      <p className="mt-1 text-[12px] text-stone-500">
+                        {line.quantity} {line.quantity === 1 ? "meter" : "meters"} × {formatMoney(line.cost.amountPerQuantity)}
                       </p>
                     </div>
                   </div>
@@ -469,16 +587,17 @@ export function Header({
                 </button>
               </div>
             )}
+            {cartError && <p role="alert" className="mt-4 text-[13px] text-red-600">{cartError}</p>}
           </div>
           {cart?.lines.nodes.length ? (
-            <div className="border-t border-stone-300 p-6">
-              <div className="mb-5 flex justify-between text-sm">
+            <div className="border-t border-stone-300 px-7 py-6">
+              <div className="mb-5 flex justify-between text-[14px]">
                 <span>Subtotal</span>
                 <strong>{formatMoney(cart.cost.subtotalAmount)}</strong>
               </div>
               <a
                 href={cart.checkoutUrl}
-                className="flex h-12 items-center justify-center bg-[#a95850] text-xs uppercase tracking-[.14em] text-white transition hover:bg-[#8f453f]"
+                className="flex h-[58px] cursor-pointer items-center justify-center bg-[#a95850] text-[14px] font-medium uppercase tracking-[.14em] text-white transition hover:bg-[#8f453f]"
               >
                 Checkout
               </a>

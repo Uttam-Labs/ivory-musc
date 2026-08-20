@@ -5,3 +5,5 @@ export const FOOTER_SETTINGS_QUERY = defineQuery(`*[_id == "footerSettings"][0]{
 export const HOME_PAGE_QUERY = defineQuery(`*[_type == "homePage"][0]{_updatedAt, title, sections[]{..., collectionHandle, image{..., alt}, features[]{..., icon}}}`);
 export const ABOUT_PAGE_QUERY = defineQuery(`*[_id == "aboutPage"][0]{_updatedAt,title,sections[]{...,image{...,alt},items[]{...,icon{...,alt}},cards[]{...,image{...,alt}}}}`);
 export const PAGE_QUERY = defineQuery(`*[_type == "page" && slug.current == $slug][0]{title, seoDescription, body}`);
+export const PRODUCT_PAGE_QUERY = defineQuery(`*[_id == "productPage" && _type == "productPage"][0]{_updatedAt,title,sections[]{...}}`);
+export const COLLECTION_PAGE_QUERY = defineQuery(`*[_id == "collectionPage" && _type == "collectionPage"][0]{_updatedAt,heading}`);
