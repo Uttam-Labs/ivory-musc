@@ -20,7 +20,7 @@ export function FaqAccordion({ items, defaultOpenItem = 1 }: { items: FaqItem[];
         const open = openIndex === index;
         const id = `faq-answer-${item._key || index}`;
         return (
-          <article className={`${styles.item} ${open ? styles.itemOpen : ""}`} key={item._key || index}>
+          <article className={`${styles.item} faq-mod__item ${open ? styles.itemOpen : ""}`} key={item._key || index}>
             <h3>
               <button type="button" aria-expanded={open} aria-controls={id} onClick={() => setOpenIndex(open ? null : index)}>
                 <span>{item.question}</span>

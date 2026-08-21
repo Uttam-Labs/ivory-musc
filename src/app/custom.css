@@ -26,6 +26,7 @@
     --body-bg-color: #FFF9F3;
     --pdp-text: #706E6E;
     --common-heading: clamp(2.6rem, 2vw, 3rem);
+    --font-size-20: clamp(1.6rem, 1.2vw, 2rem);
     --secondary-font: "Times New Roman", Times, serif;
     --primary-font: Arial, Helvetica, sans-serif;
 }
@@ -339,7 +340,7 @@ a {
     font-size: var(--button-font-size);
 }
 .bestseller-card-content h3 {
-    font-size: clamp(1.6rem, 1.2vw, 2rem);
+    font-size: var(--font-size-20);
     font-family: var(--primary-font);
 }
 .bestseller-card-content>*:not(:last-child) {
@@ -356,7 +357,7 @@ a {
 .abt-icon__title {
     margin: 1.5rem 0;
     font-family: var(--primary-font);
-    font-size: clamp(1.6rem, 1.2vw, 2.2rem);
+    font-size: var(--font-size-20);
     line-height: 1.12;
 }
 .abt-icon__texts {
@@ -474,8 +475,6 @@ a {
     padding-top: 0;
 }
 
-
-
 /* Tablet / Desktop */
 @media screen and (min-width: 768px) {
     .product__details .product-info-details__columns {
@@ -513,3 +512,34 @@ a {
 }
 
 /* END PDP */
+
+
+/* Start FAQ */
+
+.faq--hero .home-hero-content p, .contact--hero .home-hero-content p{
+    max-width: 70ch;
+}
+.faq-section__main .faq-mod__item{
+    border-bottom: 1px solid #E1E1E1;
+}
+.faq-section__main .faq-mod__item button{
+    font-size: var(--font-size-20);
+    font-family: var(--primary-font);
+    color: var(--theme-red);
+}
+.faq-mod__cta .faq__cta-content{
+    max-width: 120rem;
+    margin-inline: auto;
+}
+.faq-mod__cta .faq__cta-content h2{
+    font-size: var(--common-heading);
+    text-transform: uppercase;
+    color: var(--theme-red);
+}
+.faq-mod__cta .faq__cta-content p{
+    max-width: 86rem;
+    margin: 2rem auto 0 auto;
+}
+
+/* End FAQ */
+

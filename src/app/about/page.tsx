@@ -89,7 +89,7 @@ export default async function AboutPage() {
   return (
     <main className="about-page flex-1 overflow-hidden bg-[#fff9f3] text-[#333]">
       {hero && (
-        <section className="about-hero relative flex min-h-[600px] items-end text-white lg:min-h-[652px]">
+        <section className="about-hero relative flex min-h-[600px] items-end text-white md:min-h-[450px] lg:min-h-[652px]">
           {hero.image && (
             <Image
               fill
