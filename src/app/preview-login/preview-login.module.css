@@ -1,0 +1,38 @@
+:global(body:has(.preview-login-page) > header),
+:global(body:has(.preview-login-page) > footer) { display: none; }
+
+.page {
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  padding: 28px 18px;
+  background:
+    radial-gradient(circle at 15% 18%, rgba(255,255,255,.9), transparent 32%),
+    radial-gradient(circle at 86% 82%, rgba(174,112,91,.2), transparent 35%),
+    linear-gradient(135deg, #fff9f3, #ead7c5);
+}
+
+.card {
+  width: min(100%, 540px);
+  padding: clamp(38px, 7vw, 64px);
+  border: 1px solid rgba(155,80,74,.2);
+  background: rgba(255,249,243,.94);
+  box-shadow: 0 28px 70px rgba(77,52,40,.13);
+  text-align: center;
+}
+
+.logo { display: flex; min-height: 90px; align-items: center; justify-content: center; margin-bottom: 22px; }
+.logo img { width: auto; max-height: 100px; object-fit: contain; }
+.logo span { font: 24px/1.2 var(--secondary-font); letter-spacing: .28em; color: #9b504a; }
+.eyebrow { margin: 0 0 12px; font: 600 10px/1.4 var(--primary-font); letter-spacing: .2em; text-transform: uppercase; color: #9b504a; }
+.card h1 { margin: 0; font: 400 clamp(34px, 6vw, 46px)/1.08 var(--secondary-font); color: #9b504a; }
+.intro { margin: 16px 0 30px; font: 13px/1.7 var(--primary-font); color: #70665f; }
+
+:global(.preview-login-form) { display: grid; gap: 18px; text-align: left; }
+:global(.preview-login-form label) { display: block; margin-bottom: 7px; font: 600 10px/1.4 var(--primary-font); letter-spacing: .1em; text-transform: uppercase; color: #765f58; }
+:global(.preview-login-form input) { width: 100%; border: 1px solid #dbc7bb; background: #fffdf9; padding: 14px 15px; outline: none; font: 14px var(--primary-font); color: #333; transition: border-color .2s, box-shadow .2s; }
+:global(.preview-login-form input:focus) { border-color: #9b504a; box-shadow: 0 0 0 3px rgba(155,80,74,.1); }
+:global(.preview-login-form button) { margin-top: 4px; border: 1px solid #9b504a; background: #9b504a; padding: 15px 20px; cursor: pointer; color: #fff; font: 600 11px var(--primary-font); letter-spacing: .1em; text-transform: uppercase; transition: opacity .2s, transform .2s; }
+:global(.preview-login-form button:hover:not(:disabled)) { opacity: .88; transform: translateY(-1px); }
+:global(.preview-login-form button:disabled) { cursor: wait; opacity: .55; }
+:global(.preview-login-form [role="alert"]) { margin: 0; text-align: center; font: 12px/1.5 var(--primary-font); color: #a13d36; }

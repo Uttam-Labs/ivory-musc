@@ -1,0 +1,47 @@
+import { NextResponse } from "next/server";
+import type { SanityImageSource } from "@sanity/image-url";
+import { z } from "zod";
+import { env, isSanityConfigured } from "@/lib/env";
+import { sendWaitlistEmails } from "@/lib/waitlist/email";
+import { syncWaitlistCustomerToShopify } from "@/lib/waitlist/shopify-customer";
+import { markWelcomeEmailSent, storeWaitlistSubscriber } from "@/lib/waitlist/store";
+import { sanityFetch } from "@/sanity/lib/client";
+import { sanityImageUrl } from "@/sanity/lib/image";
+import { HEADER_SETTINGS_QUERY } from "@/sanity/lib/queries";
+
+const schema = z.object({
+  email: z.string().trim().email().max(254),
+  marketingConsent: z.literal(true),
+  website: z.string().max(0).optional().default(""),
+});
+
+export async function POST(request: Request) {
+  try {
+    const input = schema.parse(await request.json());
+    const stored = await storeWaitlistSubscriber(input.email);
+    await syncWaitlistCustomerToShopify(input.email);
+
+    if (stored.welcomeEmailSent) {
+      return NextResponse.json({ success: true, alreadySubscribed: true });
+    }
+
+    const header = isSanityConfigured
+      ? await sanityFetch<{ logo?: SanityImageSource }>(HEADER_SETTINGS_QUERY).catch(() => null)
+      : null;
+    await sendWaitlistEmails(input.email, {
+      logoUrl: header?.logo ? sanityImageUrl(header.logo, 320) : undefined,
+      siteUrl: env.NEXT_PUBLIC_SITE_URL,
+    });
+    await markWelcomeEmailSent(stored.id);
+    return NextResponse.json(
+      { success: true, alreadySubscribed: stored.alreadySubscribed },
+      { status: stored.alreadySubscribed ? 200 : 201 },
+    );
+  } catch (error) {
+    console.error("Waitlist submission failed:", error);
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: "Please enter a valid email and accept the marketing consent." }, { status: 400 });
+    }
+    return NextResponse.json({ error: "We could not complete your registration. Please try again." }, { status: 500 });
+  }
+}

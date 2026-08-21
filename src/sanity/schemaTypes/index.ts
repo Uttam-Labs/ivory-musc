@@ -10,4 +10,5 @@ import { faqPage } from "./faqPage";
 import { contactPage } from "./contactPage";
 import { blogPage } from "./blogPage";
 import { articlePage } from "./articlePage";
-export const schemaTypes = [siteSettings, headerSettings, footerSettings, homePage, aboutPage, collectionPage, productPage, faqPage, contactPage, blogPage, articlePage, page];
+import { waitlistSubscriber } from "./waitlistSubscriber";
+export const schemaTypes = [siteSettings, headerSettings, footerSettings, homePage, aboutPage, collectionPage, productPage, faqPage, contactPage, blogPage, articlePage, waitlistSubscriber, page];

@@ -4,6 +4,7 @@ import { defineConfig } from "sanity";
 import { structureTool, type StructureBuilder } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
 import { schemaTypes } from "./src/sanity/schemaTypes";
+import { DeleteWaitlistSubscriberAction } from "./src/sanity/actions/deleteWaitlistSubscriberAction";
 
 const singletonPage = (S: StructureBuilder, title: string, schemaType: string, documentId: string) =>
   S.listItem()
@@ -50,9 +51,17 @@ export default defineConfig({
                     singletonPage(S, "Article page settings", "articlePage", "articlePage"),
                   ]),
               ),
+            S.divider(),
+            S.documentTypeListItem("waitlistSubscriber").title("Waitlist subscribers"),
           ]),
     }),
     visionTool(),
   ],
   schema: { types: schemaTypes },
+  document: {
+    actions: (previousActions, context) =>
+      context.schemaType === "waitlistSubscriber"
+        ? [...previousActions, DeleteWaitlistSubscriberAction]
+        : previousActions,
+  },
 });
