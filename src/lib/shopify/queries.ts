@@ -79,6 +79,35 @@ export const COLLECTION_QUERY = `#graphql
   }
 `;
 
+export const ARTICLE_FRAGMENT = `#graphql
+  fragment ArticleFields on Article {
+    id handle title excerpt excerptHtml content contentHtml publishedAt tags
+    image { url altText width height }
+    authorV2 { name }
+    blog { handle title }
+    seo { title description }
+  }
+`;
+
+export const ARTICLES_QUERY = `#graphql
+  ${ARTICLE_FRAGMENT}
+  query Articles($first: Int!, $after: String) {
+    articles(first: $first, after: $after, sortKey: PUBLISHED_AT, reverse: true) {
+      nodes { ...ArticleFields }
+      pageInfo { hasNextPage endCursor }
+    }
+  }
+`;
+
+export const ARTICLE_QUERY = `#graphql
+  ${ARTICLE_FRAGMENT}
+  query BlogArticle($blogHandle: String!, $articleHandle: String!) {
+    blog(handle: $blogHandle) {
+      articleByHandle(handle: $articleHandle) { ...ArticleFields }
+    }
+  }
+`;
+
 export const CART_FRAGMENT = `#graphql
   fragment CartDetails on Cart {
     id checkoutUrl totalQuantity

@@ -8,4 +8,6 @@ import { productPage } from "./productPage";
 import { collectionPage } from "./collectionPage";
 import { faqPage } from "./faqPage";
 import { contactPage } from "./contactPage";
-export const schemaTypes = [siteSettings, headerSettings, footerSettings, homePage, aboutPage, collectionPage, productPage, faqPage, contactPage, page];
+import { blogPage } from "./blogPage";
+import { articlePage } from "./articlePage";
+export const schemaTypes = [siteSettings, headerSettings, footerSettings, homePage, aboutPage, collectionPage, productPage, faqPage, contactPage, blogPage, articlePage, page];

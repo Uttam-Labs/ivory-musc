@@ -1,6 +1,6 @@
 import { shopifyFetch } from "./client";
-import { COLLECTION_QUERY, COLLECTIONS_QUERY, PRODUCT_QUERY, PRODUCT_RECOMMENDATIONS_QUERY, PRODUCTS_QUERY } from "./queries";
-import type { Collection, Product } from "./types";
+import { ARTICLE_QUERY, ARTICLES_QUERY, COLLECTION_QUERY, COLLECTIONS_QUERY, PRODUCT_QUERY, PRODUCT_RECOMMENDATIONS_QUERY, PRODUCTS_QUERY } from "./queries";
+import type { Collection, Product, ShopifyArticle } from "./types";
 
 export async function getProducts(first = 12, query?: string) {
   const data = await shopifyFetch<{ products: { nodes: Product[] } }>({ query: PRODUCTS_QUERY, variables: { first, query }, tags: ["shopify", "products"] });
@@ -25,4 +25,29 @@ export async function getCollections(first = 20) {
 export async function getCollection(handle: string, first = 24) {
   const data = await shopifyFetch<{ collection: (Collection & { products: { nodes: Product[] } }) | null }>({ query: COLLECTION_QUERY, variables: { handle, first }, tags: ["shopify", `collection:${handle}`] });
   return data.collection;
+}
+export async function getArticles() {
+  const articles: ShopifyArticle[] = [];
+  let after: string | null = null;
+  let hasNextPage = true;
+  while (hasNextPage) {
+    const data: { articles: { nodes: ShopifyArticle[]; pageInfo: { hasNextPage: boolean; endCursor: string | null } } } = await shopifyFetch({
+      query: ARTICLES_QUERY,
+      variables: { first: 100, after },
+      tags: ["shopify", "articles"],
+    });
+    articles.push(...data.articles.nodes);
+    hasNextPage = data.articles.pageInfo.hasNextPage;
+    after = data.articles.pageInfo.endCursor;
+    if (hasNextPage && !after) break;
+  }
+  return articles;
+}
+export async function getArticle(blogHandle: string, articleHandle: string) {
+  const data = await shopifyFetch<{ blog: { articleByHandle: ShopifyArticle | null } | null }>({
+    query: ARTICLE_QUERY,
+    variables: { blogHandle, articleHandle },
+    tags: ["shopify", "articles", `article:${articleHandle}`],
+  });
+  return data.blog?.articleByHandle || null;
 }

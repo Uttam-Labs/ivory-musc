@@ -30,10 +30,10 @@ export default async function ContactPage() {
   const formSection = page.sections?.find((section) => section._type === "contactFormSection") as FormSection | undefined;
   return (
     <main className={styles.page}>
-      {hero && <section className={styles.hero}>
+      {hero && <section className={`${styles.hero} about-hero`}>
         {hero.image && <Image fill priority src={sanityImageUrl(hero.image, 2400)} alt={hero.image.alt || hero.heading || ""} className={styles.heroImage} sizes="100vw" />}
         <div className={styles.heroShade} style={{ backgroundColor: `rgba(0,0,0,${Math.min(Math.max(hero.overlayOpacity || 0, 0), 100) / 100})` }} />
-        <SiteContainer className={styles.heroContent}><div className={styles.heroText}>{hero.heading && <h1>{hero.heading}</h1>}{hero.body && <p>{hero.body}</p>}</div></SiteContainer>
+        <SiteContainer className={`${styles.heroContent} home-hero-content about-hero-content`}><div className={`${styles.heroText} home-hero__content-wrap about-hero__content-wrap`}>{hero.heading && <h1 className="hero-title max-w-[640px] font-heading text-[34px] uppercase leading-tight lg:text-[40px]">{hero.heading}</h1>}{hero.body && <p className="mt-4 max-w-[660px] text-[11px] leading-5 lg:text-xs">{hero.body}</p>}</div></SiteContainer>
       </section>}
       {formSection && <SiteContainer as="section" className={styles.contactSection}>
         {formSection.image && <div className={styles.imageWrap}><Image fill src={sanityImageUrl(formSection.image, 1400)} alt={formSection.image.alt || formSection.heading || ""} className={styles.sectionImage} sizes="(min-width:901px) 50vw, 100vw" /></div>}

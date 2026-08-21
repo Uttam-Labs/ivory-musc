@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
+import type { SanityImageSource } from "@sanity/image-url";
 import { z } from "zod";
-import { env } from "@/lib/env";
+import { sendContactEmail } from "@/lib/contact/email";
+import { storeContactEnquiry } from "@/lib/contact/shopify-metaobject";
+import { env, isSanityConfigured } from "@/lib/env";
+import { sanityFetch } from "@/sanity/lib/client";
+import { sanityImageUrl } from "@/sanity/lib/image";
+import { HEADER_SETTINGS_QUERY } from "@/sanity/lib/queries";
 
 const contactSchema = z.object({
   firstName: z.string().trim().min(1).max(80),
@@ -13,28 +19,20 @@ const contactSchema = z.object({
 
 export async function POST(request: Request) {
   try {
-    if (!env.SHOPIFY_STORE_DOMAIN) {
-      return NextResponse.json({ error: "Contact service is not configured." }, { status: 503 });
-    }
     const input = contactSchema.parse(await request.json());
-    const body = new URLSearchParams({
-      form_type: "contact",
-      utf8: "✓",
-      "contact[first_name]": input.firstName,
-      "contact[last_name]": input.lastName,
-      "contact[email]": input.email,
-      "contact[phone]": input.phone,
-      "contact[body]": input.message,
-    });
-    const response = await fetch(`https://${env.SHOPIFY_STORE_DOMAIN}/contact`, {
-      method: "POST",
-      headers: { "content-type": "application/x-www-form-urlencoded" },
-      body,
-      redirect: "manual",
-      cache: "no-store",
-    });
-    if (!(response.ok || response.status === 302 || response.status === 303)) {
-      throw new Error("Shopify contact submission failed.");
+    const submission = { ...input, submittedAt: new Date().toISOString() };
+    const header = isSanityConfigured
+      ? await sanityFetch<{ logo?: SanityImageSource }>(HEADER_SETTINGS_QUERY).catch(() => null)
+      : null;
+    const logoUrl = header?.logo ? sanityImageUrl(header.logo, 320) : undefined;
+    const deliveries = await Promise.allSettled([
+      storeContactEnquiry(submission),
+      sendContactEmail(submission, { logoUrl, siteUrl: env.NEXT_PUBLIC_SITE_URL }),
+    ]);
+    const failures = deliveries.filter((result): result is PromiseRejectedResult => result.status === "rejected");
+    if (failures.length) {
+      failures.forEach(({ reason }) => console.error("Contact delivery failed:", reason));
+      return NextResponse.json({ error: "Contact delivery is not fully configured or temporarily unavailable." }, { status: 502 });
     }
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {

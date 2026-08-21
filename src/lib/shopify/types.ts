@@ -41,6 +41,21 @@ export type Product = {
   images: { nodes: ShopifyImage[] };
 };
 export type Collection = { id: string; handle: string; title: string; description: string; image: ShopifyImage | null };
+export type ShopifyArticle = {
+  id: string;
+  handle: string;
+  title: string;
+  excerpt: string | null;
+  excerptHtml: string | null;
+  content: string;
+  contentHtml: string;
+  publishedAt: string;
+  tags: string[];
+  image: ShopifyImage | null;
+  authorV2: { name: string } | null;
+  blog: { handle: string; title: string };
+  seo: { title: string | null; description: string | null } | null;
+};
 export type Cart = {
   id: string;
   checkoutUrl: string;

@@ -37,7 +37,7 @@ export function Header({
 }: Props) {
   const pathname = usePathname();
   const router = useRouter();
-  const overlaysHero = pathname === "/" || pathname === "/about" || pathname === "/faq" || pathname === "/contact";
+  const overlaysHero = pathname === "/" || pathname === "/about" || pathname === "/faq" || pathname === "/contact" || pathname === "/blog";
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);

@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { cache } from "react";
 import { Cormorant_Garamond, Montserrat } from "next/font/google";
 import "./globals.css";
 import "./custom.css";
@@ -26,13 +27,17 @@ const headingFont = Cormorant_Garamond({
   weight: ["400", "500", "600"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
-  title: { default: "Ivory Muse", template: "%s | Ivory Muse" },
-  description: "Ivory Muse headless Shopify storefront.",
-};
-
 type Settings = {
+  title?: string;
+  description?: string;
+  titleTemplate?: string;
+  favicon?: SanityImageSource;
+  socialImage?: SanityImageSource & { alt?: string };
+  keywords?: string[];
+  locale?: string;
+  themeColor?: string;
+  allowIndex?: boolean;
+  allowFollow?: boolean;
   theme?: {
     headingFont?: string;
     bodyFont?: string;
@@ -40,8 +45,59 @@ type Settings = {
     foreground?: string;
     accent?: string;
     surface?: string;
+    pdpText?: string;
+    white?: string;
+    black?: string;
+    bodyFontSize?: number;
+    buttonFontSize?: number;
+    bodyLineHeight?: number;
+    commonHeadingSize?: string;
   };
 } | null;
+
+const getDefaultSettings = cache(async () =>
+  isSanityConfigured ? sanityFetch<Settings>(SITE_SETTINGS_QUERY) : null,
+);
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getDefaultSettings();
+  const siteTitle = settings?.title || "Ivory Muse";
+  const description = settings?.description || "Ivory Muse headless Shopify storefront.";
+  const favicon = settings?.favicon ? sanityImageUrl(settings.favicon, 512) : undefined;
+  const socialImage = settings?.socialImage ? sanityImageUrl(settings.socialImage, 1200) : undefined;
+
+  return {
+    metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
+    applicationName: siteTitle,
+    title: { default: siteTitle, template: settings?.titleTemplate || `%s | ${siteTitle}` },
+    description,
+    keywords: settings?.keywords,
+    icons: favicon ? { icon: favicon, shortcut: favicon, apple: favicon } : undefined,
+    robots: {
+      index: settings?.allowIndex !== false,
+      follow: settings?.allowFollow !== false,
+    },
+    openGraph: {
+      type: "website",
+      siteName: siteTitle,
+      title: siteTitle,
+      description,
+      locale: settings?.locale || "en_AU",
+      images: socialImage ? [{ url: socialImage, alt: settings?.socialImage?.alt || siteTitle }] : undefined,
+    },
+    twitter: {
+      card: socialImage ? "summary_large_image" : "summary",
+      title: siteTitle,
+      description,
+      images: socialImage ? [socialImage] : undefined,
+    },
+  };
+}
+
+export async function generateViewport(): Promise<Viewport> {
+  const settings = await getDefaultSettings();
+  return { colorScheme: "light", themeColor: settings?.themeColor || settings?.theme?.background || "#FFF9F3" };
+}
 type HeaderData = {
   title?: string;
   logo?: SanityImageSource;
@@ -70,7 +126,7 @@ type FooterData = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const [settings, header, footer] = isSanityConfigured
     ? await Promise.all([
-        sanityFetch<Settings>(SITE_SETTINGS_QUERY),
+        getDefaultSettings(),
         sanityFetch<HeaderData>(HEADER_SETTINGS_QUERY),
         sanityFetch<FooterData>(FOOTER_SETTINGS_QUERY),
       ])
@@ -109,10 +165,22 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${bodyFont.variable} ${headingFont.variable} h-full antialiased`}
       style={
         {
-          "--background": settings?.theme?.background || "#ffffff",
-          "--foreground": settings?.theme?.foreground || "#000000",
-          "--accent": settings?.theme?.accent || "#000000",
-          "--surface": settings?.theme?.surface || "#ffffff",
+          "--background": settings?.theme?.background || "#FFF9F3",
+          "--foreground": settings?.theme?.foreground || "#333333",
+          "--accent": settings?.theme?.accent || "#9B504A",
+          "--surface": settings?.theme?.surface || "#FFF5EA",
+          "--theme-red": settings?.theme?.accent || "#9B504A",
+          "--primary-color": settings?.theme?.foreground || "#333333",
+          "--body-bg-color": settings?.theme?.background || "#FFF9F3",
+          "--pdp-text": settings?.theme?.pdpText || "#706E6E",
+          "--white": settings?.theme?.white || "#FFFFFF",
+          "--black": settings?.theme?.black || "#000000",
+          "--body-font-size": `${settings?.theme?.bodyFontSize || 18}px`,
+          "--button-font-size": `${settings?.theme?.buttonFontSize || 16}px`,
+          "--common-heading": settings?.theme?.commonHeadingSize || "clamp(2.6rem, 2vw, 3rem)",
+          "--primary-font": settings?.theme?.bodyFont || "Arial, Helvetica, sans-serif",
+          "--secondary-font": settings?.theme?.headingFont || '"Times New Roman", Times, serif',
+          "--body-line-height": settings?.theme?.bodyLineHeight || 1.5,
           "--cms-heading-font":
             settings?.theme?.headingFont === "Cormorant Garamond"
               ? "var(--font-heading)"

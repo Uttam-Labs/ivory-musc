@@ -1,0 +1,66 @@
+import { defineField, defineType } from "sanity";
+
+export const articlePage = defineType({
+  name: "articlePage",
+  title: "Article page settings",
+  type: "document",
+  fields: [
+    defineField({
+      name: "shopifyBlogHandle",
+      title: "Limit recent articles to Shopify blog handle",
+      description: "Optional. Leave blank to use articles from every published Shopify blog.",
+      type: "string",
+    }),
+    defineField({ name: "recentLimit", title: "Maximum recent articles", type: "number", initialValue: 7, validation: (rule) => rule.min(1).max(12).integer() }),
+    defineField({
+      name: "visibility",
+      title: "Article content visibility",
+      type: "object",
+      options: { collapsible: true, collapsed: false },
+      fields: [
+        defineField({ name: "showBreadcrumbs", title: "Show breadcrumbs", type: "boolean", initialValue: true }),
+        defineField({ name: "showBlogName", title: "Show Shopify blog name", type: "boolean", initialValue: true }),
+        defineField({ name: "showAuthor", title: "Show author", description: "Disabled by default.", type: "boolean", initialValue: false }),
+        defineField({ name: "showDate", title: "Show published date", type: "boolean", initialValue: true }),
+        defineField({ name: "showReadingTime", title: "Show estimated reading time", type: "boolean", initialValue: true }),
+        defineField({ name: "showFeaturedImage", title: "Show featured image", type: "boolean", initialValue: true }),
+        defineField({ name: "showTags", title: "Show article tags", type: "boolean", initialValue: true }),
+        defineField({ name: "showSocialShare", title: "Show social sharing", type: "boolean", initialValue: false, hidden: true }),
+        defineField({ name: "showRecent", title: "Show recent articles", type: "boolean", initialValue: true }),
+        defineField({ name: "showBackLink", title: "Show back to blog link", type: "boolean", initialValue: true }),
+      ],
+    }),
+    defineField({
+      name: "labels",
+      title: "Labels",
+      type: "object",
+      options: { collapsible: true, collapsed: false },
+      fields: [
+        defineField({ name: "homeBreadcrumb", title: "Home breadcrumb", type: "string", initialValue: "Home" }),
+        defineField({ name: "blogBreadcrumb", title: "Blog breadcrumb", type: "string", initialValue: "Blog" }),
+        defineField({ name: "authorPrefix", title: "Author prefix", type: "string", initialValue: "By" }),
+        defineField({ name: "readingTimeSuffix", title: "Reading time suffix", type: "string", initialValue: "min read" }),
+        defineField({ name: "shareHeading", title: "Social share heading", type: "string", initialValue: "Share this article", hidden: true }),
+        defineField({ name: "recentHeading", title: "Recent articles heading", type: "string", initialValue: "Recent articles" }),
+        defineField({ name: "backLabel", title: "Back link label", type: "string", initialValue: "Back to all articles" }),
+        defineField({ name: "copySuccessLabel", title: "Copy link success message", type: "string", initialValue: "Link copied", hidden: true }),
+      ],
+    }),
+    defineField({
+      name: "sharing",
+      title: "Social sharing channels",
+      type: "object",
+      hidden: true,
+      options: { collapsible: true, collapsed: false },
+      fields: [
+        defineField({ name: "facebook", title: "Facebook", type: "boolean", initialValue: true }),
+        defineField({ name: "x", title: "X / Twitter", type: "boolean", initialValue: true }),
+        defineField({ name: "linkedin", title: "LinkedIn", type: "boolean", initialValue: true }),
+        defineField({ name: "pinterest", title: "Pinterest", type: "boolean", initialValue: true }),
+        defineField({ name: "email", title: "Email", type: "boolean", initialValue: true }),
+        defineField({ name: "copyLink", title: "Copy link", type: "boolean", initialValue: true }),
+      ],
+    }),
+  ],
+  preview: { prepare: () => ({ title: "Article page settings", subtitle: "Visibility, labels and social sharing" }) },
+});
