@@ -71,7 +71,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         {visibility?.showRecent !== false && <>
         {recent.map((item) => <article className={styles.recentItem} key={item.id}>
           {item.image && <Link className={styles.recentImage} href={href(item)}><Image fill src={item.image.url} alt={item.image.altText || item.title} sizes="100px" /></Link>}
-          <div><Link className={styles.recentTitle} href={href(item)}>{item.title}</Link><div className={styles.recentDate}>{formatDate(item.publishedAt)}</div></div>
+          <div><Link className={styles.recentTitle} href={href(item)}>{item.title}</Link><div className={styles.recentDate}><CalendarIcon />{formatDate(item.publishedAt)}</div></div>
         </article>)}
         </>}
         {visibility?.showBackLink !== false && <Link className={styles.back} href="/blog">{labels?.backLabel || "Back to all articles"}</Link>}

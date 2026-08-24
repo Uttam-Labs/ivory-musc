@@ -101,14 +101,14 @@ export default async function Home() {
               )}
               <div className="absolute inset-0 bg-black/15" />
               <div className="home-hero-content relative mx-auto w-full max-w-[1920] px-6 sm:px-12 xl:px-24 pb-16 md:pb-20 lg:pb-36">
-                <div className="home-hero__content-wrap w-full md:w-3/4">
+                <div className="home-hero__content-wrap w-full md:w-4/5 xl:w-1/2">
                   {section.heading && (
                     <h1 className="hero-title max-w-full text-[25px] uppercase leading-tight sm:text-[28px] lg:whitespace-nowrap">
                       {section.heading}
                     </h1>
                   )}
                   {section.body && (
-                    <p className="mt-3 max-w-[620px] whitespace-pre-line text-[11px] leading-5 sm:text-xs">
+                    <p className="mt-3 w-full max-w-[100%] whitespace-pre-line text-[11px] leading-5 sm:text-xs">
                       {section.body}
                     </p>
                   )}

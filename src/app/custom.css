@@ -206,7 +206,6 @@ a {
 
 .home-hero-content p {
     font-size: var(--body-font-size);
-    max-width: 80ch;
     margin-top: 1.2rem;
 }
 .home-hero__buttons {
@@ -516,9 +515,6 @@ a {
 
 /* Start FAQ */
 
-.faq--hero .home-hero-content p, .contact--hero .home-hero-content p{
-    max-width: 70ch;
-}
 .faq-section__main .faq-mod__item{
     border-bottom: 1px solid #E1E1E1;
 }

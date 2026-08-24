@@ -72,10 +72,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   const visiblePages = Array.from({ length: Math.min(4, totalPages) }, (_, index) => pageStart + index);
 
   return <main className={styles.page}>
-    {hero && hero.enabled !== false && <section className={`${styles.hero} about-hero`}>
+    {hero && hero.enabled !== false && <section className={`blog--hero about-hero relative flex min-h-[600px] items-end text-white md:min-h-[450px] xl:min-h-[652px]`}>
       {hero.image && <Image fill priority src={sanityImageUrl(hero.image, 2400)} alt={hero.image.alt || hero.heading || ""} className={styles.heroImage} sizes="100vw" />}
       <div className={styles.heroShade} style={{ backgroundColor: `rgba(0,0,0,${Math.min(Math.max(hero.overlayOpacity || 0, 0), 100) / 100})` }} />
-      <SiteContainer className={`${styles.heroContent} home-hero-content about-hero-content`}><div className={`${styles.heroText} home-hero__content-wrap about-hero__content-wrap`}>{hero.heading && <h1 className="hero-title max-w-[640px] font-heading text-[34px] uppercase leading-tight lg:text-[40px]">{hero.heading}</h1>}{hero.body && <p className="mt-4 max-w-[660px] text-[11px] leading-5 lg:text-xs">{hero.body}</p>}</div></SiteContainer>
+      <SiteContainer className={`${styles.heroContent} home-hero-content about-hero-content`}><div className={`home-hero__content-wrap about-hero__content-wrap w-full md:w-4/5 xl:w-1/2`}>{hero.heading && <h1 className="hero-title max-w-[640px] font-heading text-[34px] uppercase leading-tight lg:text-[40px]">{hero.heading}</h1>}{hero.body && <p className="mt-4 w-full max-w-[700px] text-[11px] leading-5 lg:text-xs">{hero.body}</p>}</div></SiteContainer>
     </section>}
     <SiteContainer as="section" id="blog-listing" className={styles.listing}>
       {visibility?.showHeading !== false && settings?.heading && <h2 className={styles.sectionHeading}>{settings.heading}</h2>}

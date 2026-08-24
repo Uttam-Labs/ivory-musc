@@ -89,7 +89,7 @@ export default async function AboutPage() {
   return (
     <main className="about-page flex-1 overflow-hidden bg-[#fff9f3] text-[#333]">
       {hero && (
-        <section className="about-hero relative flex min-h-[600px] items-end text-white md:min-h-[450px] lg:min-h-[652px]">
+        <section className="about-hero relative flex min-h-[600px] items-end text-white md:min-h-[450px] xl:min-h-[652px]">
           {hero.image && (
             <Image
               fill
@@ -102,11 +102,11 @@ export default async function AboutPage() {
           )}
           <div className="absolute inset-0 bg-black/20" />
           <div className="home-hero-content about-hero-content relative mx-auto w-full max-w-[1920] px-6 sm:px-12 xl:px-24 pb-16 md:pb-20 lg:pb-36">
-            <div className="home-hero__content-wrap about-hero__content-wrap w-full sm:w-[600px] lg:w-1/2">
+            <div className="home-hero__content-wrap about-hero__content-wrap w-full md:w-4/5 xl:w-1/2">
               <h1 className="hero-title max-w-[640px] font-heading text-[34px] uppercase leading-tight lg:text-[40px]">
                 {hero.heading}
               </h1>
-              <p className="mt-4 max-w-[660px] text-[11px] leading-5 lg:text-xs">
+              <p className="mt-4 w-full max-w-[700px] text-[11px] leading-5 lg:text-xs">
                 {hero.body}
               </p>
               <div className="home-hero__buttons mt-7 flex flex-wrap gap-5">
