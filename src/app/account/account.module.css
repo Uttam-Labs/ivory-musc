@@ -4,6 +4,13 @@
 .authPage{--account-accent:#9b504a;min-height:calc(100dvh - 100px);background:#fff9f3;color:#333;font-family:var(--primary-font,Arial,Helvetica,sans-serif)}
 .authPanel{display:grid;min-height:inherit;place-items:center;padding:clamp(7rem,8vw,13rem) 2.4rem}
 .authPanelInner{width:min(76rem,100%);background:#fff5ea;padding:clamp(4rem,5vw,7rem);text-align:left}
+.loginPanel{width:min(76rem,100%);padding-block:clamp(3.5rem,4vw,5rem);text-align:center}
+.loginPanel .authIntro{margin-inline:auto}
+.loginPanel .authForm{gap:1.8rem;margin-top:3rem}
+.loginPanel .formMeta{margin-top:.2rem}
+.loginPanel .authForm>.primary{width:100%;text-align:center}
+.loginPanel .switchText{text-align:center}
+.loginPanel .notice{text-align:center}
 .registerPanel{width:min(72rem,100%)}
 .authPanel .eyebrow{margin:0 0 1.6rem;color:#9b504a;font-size:1.2rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase}
 .authPanel h1{margin:0;color:var(--account-accent);font-family:var(--secondary-font,"Times New Roman",serif);font-size:clamp(3.8rem,4vw,5.6rem);font-weight:400;line-height:1.05;text-transform:uppercase}

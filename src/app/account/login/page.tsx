@@ -9,7 +9,7 @@ export default async function LoginPage() {
   return (
     <main className={styles.authPage}>
       <section className={styles.authPanel}>
-        <div className={styles.authPanelInner}>
+        <div className={`${styles.authPanelInner} ${styles.loginPanel}`}>
           <p className={styles.eyebrow}>Customer account</p>
           <h1>Welcome back</h1>
           <p className={styles.authIntro}>Sign in to review your orders, manage addresses and continue your Ivory Muse experience.</p>
