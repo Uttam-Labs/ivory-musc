@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import {
   loginAction,
   recoverAction,
@@ -84,13 +84,7 @@ export function RegisterForm({ content }: { content: RegisterContent }) {
         type="email"
         autoComplete="email"
       />
-      <Field
-        name="password"
-        label={content.passwordLabel}
-        type="password"
-        autoComplete="new-password"
-        hint={content.passwordHint}
-      />
+      <PasswordStrengthField content={content} />
       <Field
         name="confirmPassword"
         label={content.confirmPasswordLabel}
@@ -129,6 +123,71 @@ export function RecoverForm({ content }: { content: RecoveryContent }) {
         <Link href="/account/login">{content.backLabel}</Link>
       </p>
     </form>
+  );
+}
+function PasswordStrengthField({ content }: { content: RegisterContent }) {
+  const [password, setPassword] = useState("");
+  const checks = [
+    password.length >= 8,
+    /[a-z]/.test(password) && /[A-Z]/.test(password),
+    /\d/.test(password),
+    /[^A-Za-z0-9]/.test(password),
+  ];
+  const score = checks.filter(Boolean).length;
+  const labels = [
+    "",
+    content.strengthWeak,
+    content.strengthFair,
+    content.strengthGood,
+    content.strengthStrong,
+  ];
+  const requirements = [
+    content.requirementLength,
+    content.requirementCase,
+    content.requirementNumber,
+    content.requirementSymbol,
+  ];
+  return (
+    <label className={styles.authField}>
+      <span>{content.passwordLabel}</span>
+      <input
+        required
+        name="password"
+        type="password"
+        autoComplete="new-password"
+        value={password}
+        onChange={(event) => setPassword(event.target.value)}
+        aria-describedby="password-strength"
+      />
+      <div
+        id="password-strength"
+        className={styles.passwordStrength}
+        data-score={password ? score : 0}
+      >
+        <div className={styles.strengthHeading}>
+          <small>{content.passwordStrengthLabel}</small>
+          <strong aria-live="polite">
+            {password ? labels[Math.max(1, score)] : content.passwordHint}
+          </strong>
+        </div>
+        <div className={styles.strengthTrack} aria-hidden="true">
+          <span
+            style={{ width: `${password ? Math.max(1, score) * 25 : 0}%` }}
+          />
+        </div>
+        <ul>
+          {requirements.map((requirement, index) => (
+            <li
+              className={checks[index] ? styles.requirementMet : undefined}
+              key={requirement}
+            >
+              <span aria-hidden="true">{checks[index] ? "✓" : "○"}</span>
+              {requirement}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </label>
   );
 }
 function Field({
