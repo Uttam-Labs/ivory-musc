@@ -40,6 +40,10 @@ export function ProductDetails({ product, initialSelection, settings, relatedHea
   const price = variant?.price || product.priceRange.minVariantPrice;
   const total = { ...price, amount: String(Number(price.amount) * quantity) };
   const specifications = [[settings?.compositionLabel, product.composition?.value], [settings?.weightLabel, product.fabricWeight?.value], [settings?.widthLabel, product.fabricWidth?.value], [settings?.careLabel, product.care?.value]].filter((item): item is [string, string] => Boolean(item[0] && item[1]));
+  const breadcrumbItems = [
+    settings?.homeLabel?.trim() ? { label: settings.homeLabel.trim(), href: settings.homeHref?.trim() || "/" } : null,
+    settings?.collectionLabel?.trim() ? { label: settings.collectionLabel.trim(), href: settings.collectionHref?.trim() || "/collections" } : null,
+  ].filter((item): item is { label: string; href: string } => Boolean(item));
 
   function choose(name: string, value: string) {
     const requested = { ...selected, [name]: value };
@@ -65,9 +69,9 @@ export function ProductDetails({ product, initialSelection, settings, relatedHea
   return <main className={styles.page}>
     <SiteContainer className={`${styles.container} product__details`}>
       <nav className={styles.breadcrumb} aria-label="Breadcrumb">
-        {settings?.homeLabel && settings.homeHref && <Link href={settings.homeHref}>{settings.homeLabel}</Link>}
-        {settings?.collectionLabel && settings.collectionHref && <><span>/</span><Link href={settings.collectionHref}>{settings.collectionLabel}</Link></>}
-        <span>/</span><span>{product.title}</span>
+        {breadcrumbItems.map((item, index) => <span key={`${item.href}-${item.label}`} className={styles.breadcrumbItem}>{index > 0 && <span aria-hidden="true">/</span>}<Link href={item.href}>{item.label}</Link></span>)}
+        {breadcrumbItems.length > 0 && <span aria-hidden="true">/</span>}
+        <span aria-current="page">{product.title}</span>
       </nav>
       <section className={`${styles.productSection} product-info-details__columns`}>
         <div className={`${styles.gallery} product-info-details__gallery`}>

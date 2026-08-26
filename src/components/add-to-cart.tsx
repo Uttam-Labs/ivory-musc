@@ -10,6 +10,8 @@ export function AddToCart({
   const [state, setState] = useState<"idle" | "loading" | "added" | "error">(
     "idle",
   );
+
+  
   async function add() {
     setState("loading");
     try {
