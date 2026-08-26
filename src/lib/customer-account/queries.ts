@@ -1,25 +1,25 @@
-export const ADDRESS_FIELDS = `id firstName lastName company address1 address2 city province zoneCode country territoryCode zip phoneNumber formatted(withName: true, withCompany: true)`;
+export const ADDRESS_FIELDS = `id firstName lastName company address1 address2 city province provinceCode country countryCodeV2 zip phone formatted`;
 
-export const ACCOUNT_QUERY = `query AccountOverview {
-  customer {
+export const ACCOUNT_QUERY = `query AccountOverview($customerAccessToken: String!) {
+  customer(customerAccessToken: $customerAccessToken) {
     id displayName firstName lastName
-    emailAddress { emailAddress }
+    email
     defaultAddress { ${ADDRESS_FIELDS} }
     addresses(first: 20) { nodes { ${ADDRESS_FIELDS} } }
     orders(first: 5, reverse: true) { nodes { id name processedAt financialStatus fulfillmentStatus totalPrice { amount currencyCode } } }
   }
 }`;
 
-export const ORDERS_QUERY = `query CustomerOrders($first: Int!) {
-  customer { orders(first: $first, reverse: true) { nodes { id name processedAt financialStatus fulfillmentStatus totalPrice { amount currencyCode } } } }
+export const ORDERS_QUERY = `query CustomerOrders($first: Int!, $customerAccessToken: String!) {
+  customer(customerAccessToken: $customerAccessToken) { orders(first: $first, reverse: true, sortKey: PROCESSED_AT) { nodes { id name processedAt financialStatus fulfillmentStatus totalPrice { amount currencyCode } } } }
 }`;
 
-export const ORDER_QUERY = `query CustomerOrder($query: String!) {
-  customer { orders(first: 1, query: $query) { nodes {
-    id name processedAt financialStatus fulfillmentStatus statusPageUrl
+export const ORDER_QUERY = `query CustomerOrder($customerAccessToken: String!) {
+  customer(customerAccessToken: $customerAccessToken) { orders(first: 100, reverse: true) { nodes {
+    id name processedAt financialStatus fulfillmentStatus statusUrl
     totalPrice { amount currencyCode }
-    subtotal { amount currencyCode }
-    totalShipping { amount currencyCode }
+    subtotalPrice { amount currencyCode }
+    totalShippingPrice { amount currencyCode }
     totalTax { amount currencyCode }
     shippingAddress { ${ADDRESS_FIELDS} }
     billingAddress { ${ADDRESS_FIELDS} }
@@ -27,4 +27,4 @@ export const ORDER_QUERY = `query CustomerOrder($query: String!) {
   } } }
 }`;
 
-export const ADDRESSES_QUERY = `query CustomerAddresses { customer { defaultAddress { id } addresses(first: 50) { nodes { ${ADDRESS_FIELDS} } } } }`;
+export const ADDRESSES_QUERY = `query CustomerAddresses($customerAccessToken: String!) { customer(customerAccessToken: $customerAccessToken) { defaultAddress { id } addresses(first: 50) { nodes { ${ADDRESS_FIELDS} } } }`;

@@ -29,17 +29,12 @@ Run `npm run check` before deployment. Deploy comfortably to Vercel or any Node.
 
 ## Shopify Customer Accounts
 
-The `/account` area uses Shopify's Customer Account API with OAuth 2.0 and PKCE. Enable new customer accounts and Customer Account API access in the Shopify Headless channel, request protected customer data, and grant `customer_read_customers`, `customer_write_customers`, and `customer_read_orders` scopes.
+The `/account` area uses Shopify's legacy Storefront API customer flow so login and registration forms can remain inside the themed headless storefront. Enable **Legacy customer accounts** in Shopify and give the Storefront API token unauthenticated customer read/write permissions.
 
-Add these server-side variables locally and in Vercel:
+Alongside the existing `SHOPIFY_STORE_DOMAIN` and `SHOPIFY_STOREFRONT_ACCESS_TOKEN`, add this server-only variable locally and in Vercel:
 
 ```text
-SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID=<Headless channel customer account client ID>
 CUSTOMER_ACCOUNT_SESSION_SECRET=<at least 32 random characters>
 ```
 
-Register the exact callback URL for each storefront environment in Shopify:
-
-```text
-https://your-storefront-domain.com/api/customer-account/callback
-```
+Customer access tokens are encrypted in an HTTP-only, secure cookie and revoked at logout.

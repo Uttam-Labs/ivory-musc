@@ -11,7 +11,6 @@ const schema = z.object({
   SHOPIFY_ADMIN_ACCESS_TOKEN: z.string().optional(),
   SHOPIFY_ADMIN_API_VERSION: z.string().default("2026-07"),
   SHOPIFY_CONTACT_METAOBJECT_TYPE: z.string().default("contact_enquiry"),
-  SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID: z.string().optional(),
   CUSTOMER_ACCOUNT_SESSION_SECRET: z.string().min(32).optional(),
   SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.coerce.number().int().positive().default(587),

@@ -1,49 +1,31 @@
 import "server-only";
-import { env } from "@/lib/env";
+import { env, isShopifyConfigured } from "@/lib/env";
 import { getCustomerSession } from "./session";
-
-type OpenIdConfiguration = {
-  authorization_endpoint: string;
-  token_endpoint: string;
-  end_session_endpoint?: string;
-};
-type ApiConfiguration = { graphql_api: string };
 type GraphqlResponse<T> = { data?: T; errors?: Array<{ message: string }> };
 
 export function isCustomerAccountConfigured() {
-  return Boolean(env.SHOPIFY_STORE_DOMAIN && env.SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID && env.CUSTOMER_ACCOUNT_SESSION_SECRET);
+  return Boolean(isShopifyConfigured && env.CUSTOMER_ACCOUNT_SESSION_SECRET);
 }
 
-export async function getOpenIdConfiguration() {
-  if (!env.SHOPIFY_STORE_DOMAIN) throw new Error("Shopify store domain is not configured");
-  const response = await fetch(`https://${env.SHOPIFY_STORE_DOMAIN}/.well-known/openid-configuration`, { next: { revalidate: 3600 } });
-  if (!response.ok) throw new Error("Could not discover Shopify customer authentication endpoints");
-  return response.json() as Promise<OpenIdConfiguration>;
-}
-
-async function getApiConfiguration() {
-  if (!env.SHOPIFY_STORE_DOMAIN) throw new Error("Shopify store domain is not configured");
-  const response = await fetch(`https://${env.SHOPIFY_STORE_DOMAIN}/.well-known/customer-account-api`, { next: { revalidate: 3600 } });
-  if (!response.ok) throw new Error("Could not discover Shopify Customer Account API");
-  return response.json() as Promise<ApiConfiguration>;
+export async function storefrontCustomerFetch<T>(query: string, variables: Record<string, unknown> = {}) {
+  if (!isShopifyConfigured) throw new Error("Shopify Storefront API is not configured");
+  const response = await fetch(`https://${env.SHOPIFY_STORE_DOMAIN}/api/${env.SHOPIFY_STOREFRONT_API_VERSION}/graphql.json`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Shopify-Storefront-Access-Token": env.SHOPIFY_STOREFRONT_ACCESS_TOKEN! },
+    body: JSON.stringify({ query, variables }),
+    cache: "no-store",
+  });
+  const result = (await response.json()) as GraphqlResponse<T>;
+  if (!response.ok || result.errors?.length || !result.data) {
+    throw new Error(result.errors?.map(({ message }) => message).join("; ") || `Shopify Storefront API failed (${response.status})`);
+  }
+  return result.data;
 }
 
 export async function customerAccountFetch<T>(query: string, variables: Record<string, unknown> = {}) {
   const session = await getCustomerSession();
   if (!session) throw new Error("CUSTOMER_AUTH_REQUIRED");
-  const { graphql_api } = await getApiConfiguration();
-  const response = await fetch(graphql_api, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: session.accessToken },
-    body: JSON.stringify({ query, variables }),
-    cache: "no-store",
-  });
-  const result = (await response.json()) as GraphqlResponse<T>;
-  if (response.status === 401) throw new Error("CUSTOMER_AUTH_REQUIRED");
-  if (!response.ok || result.errors?.length || !result.data) {
-    throw new Error(result.errors?.map(({ message }) => message).join("; ") || `Customer Account API failed (${response.status})`);
-  }
-  return result.data;
+  return storefrontCustomerFetch<T>(query, { ...variables, customerAccessToken: session.accessToken });
 }
 
 export function encodeCustomerId(id: string) { return Buffer.from(id).toString("base64url"); }

@@ -1,11 +1,10 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCustomerSession } from "@/lib/customer-account/session";
+import { LoginForm } from "../auth-form";
 import styles from "../account.module.css";
 
 export const metadata = { title: "Sign in | Ivory Muse" };
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+export default async function LoginPage() {
   if (await getCustomerSession()) redirect("/account");
-  const { error } = await searchParams;
-  return <main className={styles.shell}><div className={styles.authCard}><p className={styles.eyebrow}>Customer account</p><h1 className={styles.title}>Welcome back</h1><p className={styles.intro}>Sign in securely with the email connected to your Ivory Muse orders. Shopify will email you a one-time verification code.</p>{error && <p className={`${styles.notice} ${styles.error}`}>{error === "configuration" ? "Customer accounts need to be connected in Shopify before sign-in is available." : "We could not complete sign-in. Please try again."}</p>}<div className={styles.actions}><Link className={styles.primary} href="/api/customer-account/auth?returnTo=/account">Continue to sign in</Link><Link className={styles.secondary} href="/account/register">Create an account</Link></div></div></main>;
+  return <main className={styles.authPage}><section className={styles.authVisual}><div><p className={styles.eyebrow}>The Ivory Muse collection</p><h1>Designed for those who value exceptional materials.</h1><p>Save addresses, review orders and enjoy a considered shopping experience.</p></div></section><section className={styles.authPanel}><div className={styles.authPanelInner}><p className={styles.eyebrow}>Customer account</p><h2>Welcome back</h2><p className={styles.muted}>Sign in to continue to your account.</p><LoginForm/></div></section></main>;
 }
