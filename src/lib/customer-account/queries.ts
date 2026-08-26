@@ -27,4 +27,4 @@ export const ORDER_QUERY = `query CustomerOrder($customerAccessToken: String!) {
   } } }
 }`;
 
-export const ADDRESSES_QUERY = `query CustomerAddresses($customerAccessToken: String!) { customer(customerAccessToken: $customerAccessToken) { defaultAddress { id } addresses(first: 50) { nodes { ${ADDRESS_FIELDS} } } }`;
+export const ADDRESSES_QUERY = `query CustomerAddresses($customerAccessToken: String!) { customer(customerAccessToken: $customerAccessToken) { defaultAddress { id } addresses(first: 50) { nodes { ${ADDRESS_FIELDS} } } } }`;
