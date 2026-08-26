@@ -226,6 +226,9 @@ export const accountProfilePage = defineType({
       "Leave blank to keep your current password. Use at least 8 characters.",
     saveDetailsLabel: "Save details",
     savePasswordLabel: "Update password",
+    confirmDetailsMessage: "Save these changes to your profile?",
+    confirmPasswordMessage:
+      "Update your account password? You will use the new password next time you sign in.",
   },
   fields: [
     text("seoTitle", "SEO title"),
@@ -248,6 +251,8 @@ export const accountProfilePage = defineType({
     text("passwordHint", "Password helper text"),
     text("saveDetailsLabel", "Save details button"),
     text("savePasswordLabel", "Save password button"),
+    text("confirmDetailsMessage", "Profile update confirmation"),
+    text("confirmPasswordMessage", "Password update confirmation"),
   ],
 });
 
@@ -331,6 +336,9 @@ export const accountAddressesPage = defineType({
     saveLabel: "Save changes",
     addLabel: "Add address",
     cancelLabel: "Cancel",
+    confirmUpdateMessage: "Save these changes to your address?",
+    confirmDefaultMessage: "Make this your default delivery address?",
+    confirmDeleteMessage: "Delete this address? This action cannot be undone.",
   },
   fields: [
     text("seoTitle", "SEO title"),
@@ -356,5 +364,8 @@ export const accountAddressesPage = defineType({
     text("saveLabel", "Save changes button"),
     text("addLabel", "Add address button"),
     text("cancelLabel", "Cancel button"),
+    text("confirmUpdateMessage", "Update confirmation message"),
+    text("confirmDefaultMessage", "Set default confirmation message"),
+    text("confirmDeleteMessage", "Delete confirmation message"),
   ],
 });

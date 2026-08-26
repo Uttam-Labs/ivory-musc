@@ -3,6 +3,7 @@ import { getAccountContent } from "@/lib/customer-account/content";
 import { PROFILE_QUERY } from "@/lib/customer-account/queries";
 import { updatePassword, updateProfile } from "../../profile-actions";
 import styles from "../../account.module.css";
+import { ConfirmSubmitButton } from "../../confirm-submit-button";
 
 type Customer = {
   firstName?: string;
@@ -45,6 +46,9 @@ export default async function ProfilePage({
       "Leave blank to keep your current password. Use at least 8 characters.",
     saveDetailsLabel: "Save details",
     savePasswordLabel: "Update password",
+    confirmDetailsMessage: "Save these changes to your profile?",
+    confirmPasswordMessage:
+      "Update your account password? You will use the new password next time you sign in.",
     ...cms,
   };
   return (
@@ -99,9 +103,12 @@ export default async function ProfilePage({
               />{" "}
               {c.marketingLabel}
             </label>
-            <button className={`${styles.primary} ${styles.full}`}>
+            <ConfirmSubmitButton
+              className={`${styles.primary} ${styles.full}`}
+              message={c.confirmDetailsMessage}
+            >
               {c.saveDetailsLabel}
-            </button>
+            </ConfirmSubmitButton>
           </form>
         </article>
         <article className={styles.card}>
@@ -115,9 +122,12 @@ export default async function ProfilePage({
               required
               hint={c.passwordHint}
             />
-            <button className={`${styles.primary} ${styles.full}`}>
+            <ConfirmSubmitButton
+              className={`${styles.primary} ${styles.full}`}
+              message={c.confirmPasswordMessage}
+            >
               {c.savePasswordLabel}
-            </button>
+            </ConfirmSubmitButton>
           </form>
         </article>
       </div>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   customerAccountFetch,
+  decodeCustomerId,
   encodeCustomerId,
 } from "@/lib/customer-account/client";
 import { ADDRESSES_QUERY } from "@/lib/customer-account/queries";
@@ -11,6 +12,7 @@ import {
   setDefaultAddress,
 } from "../../storefront-actions";
 import styles from "../../account.module.css";
+import { ConfirmSubmitButton } from "../../confirm-submit-button";
 type Address = {
   id: string;
   firstName?: string;
@@ -32,7 +34,9 @@ type Data = {
   };
 };
 export async function generateMetadata() {
-  const content = await getAccountContent<Record<string, string>>("accountAddressesPage");
+  const content = await getAccountContent<Record<string, string>>(
+    "accountAddressesPage",
+  );
   return { title: content.seoTitle || "Addresses | Ivory Muse" };
 }
 export default async function AddressesPage({
@@ -68,13 +72,22 @@ export default async function AddressesPage({
     saveLabel: "Save changes",
     addLabel: "Add address",
     cancelLabel: "Cancel",
+    confirmUpdateMessage: "Save these changes to your address?",
+    confirmDefaultMessage: "Make this your default delivery address?",
+    confirmDeleteMessage: "Delete this address? This action cannot be undone.",
     ...cms,
   };
-  const edit = params.edit
-    ? customer.addresses.nodes.find(
-        (a) => encodeCustomerId(a.id) === params.edit,
-      )
-    : undefined;
+  let edit: Address | undefined;
+  if (params.edit) {
+    try {
+      const addressId = decodeCustomerId(params.edit);
+      edit = customer.addresses.nodes.find(
+        (address) => address.id === addressId,
+      );
+    } catch {
+      edit = undefined;
+    }
+  }
   return (
     <>
       <header className={styles.header}>
@@ -109,14 +122,22 @@ export default async function AddressesPage({
                 {!isDefault && (
                   <form action={setDefaultAddress}>
                     <input type="hidden" name="id" value={id} />
-                    <button className={styles.secondary}>
+                    <ConfirmSubmitButton
+                      className={styles.secondary}
+                      message={c.confirmDefaultMessage}
+                    >
                       {c.setDefaultLabel}
-                    </button>
+                    </ConfirmSubmitButton>
                   </form>
                 )}
                 <form action={deleteAddress}>
                   <input type="hidden" name="id" value={id} />
-                  <button className={styles.danger}>{c.deleteLabel}</button>
+                  <ConfirmSubmitButton
+                    className={styles.danger}
+                    message={c.confirmDeleteMessage}
+                  >
+                    {c.deleteLabel}
+                  </ConfirmSubmitButton>
                 </form>
               </div>
             </article>
@@ -129,7 +150,11 @@ export default async function AddressesPage({
         style={{ marginTop: "2rem" }}
       >
         <h2>{edit ? c.editHeading : c.addHeading}</h2>
-        <form className={styles.form} action={saveAddress}>
+        <form
+          key={edit?.id || "new-address"}
+          className={styles.form}
+          action={saveAddress}
+        >
           {edit && (
             <input type="hidden" name="id" value={encodeCustomerId(edit.id)} />
           )}
@@ -191,9 +216,16 @@ export default async function AddressesPage({
             className={`${styles.actions} ${styles.full}`}
             style={{ justifyContent: "flex-start" }}
           >
-            <button className={styles.primary}>
-              {edit ? c.saveLabel : c.addLabel}
-            </button>
+            {edit ? (
+              <ConfirmSubmitButton
+                className={styles.primary}
+                message={c.confirmUpdateMessage}
+              >
+                {c.saveLabel}
+              </ConfirmSubmitButton>
+            ) : (
+              <button className={styles.primary}>{c.addLabel}</button>
+            )}
             {edit && (
               <Link className={styles.secondary} href="/account/addresses">
                 {c.cancelLabel}
