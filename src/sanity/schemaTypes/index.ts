@@ -11,5 +11,38 @@ import { contactPage } from "./contactPage";
 import { blogPage } from "./blogPage";
 import { articlePage } from "./articlePage";
 import { waitlistSubscriber } from "./waitlistSubscriber";
-import { accountAddressesPage, accountDashboardPage, accountLoginPage, accountNavigation, accountOrderDetailsPage, accountOrdersPage, accountRecoveryPage, accountRegisterPage } from "./accountPages";
-export const schemaTypes = [siteSettings, headerSettings, footerSettings, homePage, aboutPage, collectionPage, productPage, faqPage, contactPage, blogPage, articlePage, accountNavigation, accountLoginPage, accountRegisterPage, accountRecoveryPage, accountDashboardPage, accountOrdersPage, accountOrderDetailsPage, accountAddressesPage, waitlistSubscriber, page];
+import {
+  accountAddressesPage,
+  accountDashboardPage,
+  accountLoginPage,
+  accountNavigation,
+  accountOrderDetailsPage,
+  accountOrdersPage,
+  accountProfilePage,
+  accountRecoveryPage,
+  accountRegisterPage,
+} from "./accountPages";
+export const schemaTypes = [
+  siteSettings,
+  headerSettings,
+  footerSettings,
+  homePage,
+  aboutPage,
+  collectionPage,
+  productPage,
+  faqPage,
+  contactPage,
+  blogPage,
+  articlePage,
+  accountNavigation,
+  accountLoginPage,
+  accountRegisterPage,
+  accountRecoveryPage,
+  accountDashboardPage,
+  accountProfilePage,
+  accountOrdersPage,
+  accountOrderDetailsPage,
+  accountAddressesPage,
+  waitlistSubscriber,
+  page,
+];

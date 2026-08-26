@@ -6,10 +6,17 @@ import { visionTool } from "@sanity/vision";
 import { schemaTypes } from "./src/sanity/schemaTypes";
 import { DeleteWaitlistSubscriberAction } from "./src/sanity/actions/deleteWaitlistSubscriberAction";
 
-const singletonPage = (S: StructureBuilder, title: string, schemaType: string, documentId: string) =>
+const singletonPage = (
+  S: StructureBuilder,
+  title: string,
+  schemaType: string,
+  documentId: string,
+) =>
   S.listItem()
     .title(title)
-    .child(S.document().title(title).schemaType(schemaType).documentId(documentId));
+    .child(
+      S.document().title(title).schemaType(schemaType).documentId(documentId),
+    );
 
 export default defineConfig({
   name: "default",
@@ -29,9 +36,24 @@ export default defineConfig({
                 S.list()
                   .title("Global settings")
                   .items([
-                    singletonPage(S, "Default settings", "siteSettings", "siteSettings"),
-                    singletonPage(S, "Header", "headerSettings", "headerSettings"),
-                    singletonPage(S, "Footer", "footerSettings", "footerSettings"),
+                    singletonPage(
+                      S,
+                      "Default settings",
+                      "siteSettings",
+                      "siteSettings",
+                    ),
+                    singletonPage(
+                      S,
+                      "Header",
+                      "headerSettings",
+                      "headerSettings",
+                    ),
+                    singletonPage(
+                      S,
+                      "Footer",
+                      "footerSettings",
+                      "footerSettings",
+                    ),
                   ]),
               ),
             S.divider(),
@@ -43,12 +65,32 @@ export default defineConfig({
                   .items([
                     singletonPage(S, "Home page", "homePage", "homePage"),
                     singletonPage(S, "About page", "aboutPage", "aboutPage"),
-                    singletonPage(S, "Collection page", "collectionPage", "collectionPage"),
-                    singletonPage(S, "Product details page", "productPage", "productPage"),
+                    singletonPage(
+                      S,
+                      "Collection page",
+                      "collectionPage",
+                      "collectionPage",
+                    ),
+                    singletonPage(
+                      S,
+                      "Product details page",
+                      "productPage",
+                      "productPage",
+                    ),
                     singletonPage(S, "FAQ page", "faqPage", "faqPage"),
-                    singletonPage(S, "Contact page", "contactPage", "contactPage"),
+                    singletonPage(
+                      S,
+                      "Contact page",
+                      "contactPage",
+                      "contactPage",
+                    ),
                     singletonPage(S, "Blog page", "blogPage", "blogPage"),
-                    singletonPage(S, "Article page settings", "articlePage", "articlePage"),
+                    singletonPage(
+                      S,
+                      "Article page settings",
+                      "articlePage",
+                      "articlePage",
+                    ),
                   ]),
               ),
             S.divider(),
@@ -58,18 +100,66 @@ export default defineConfig({
                 S.list()
                   .title("Account")
                   .items([
-                    singletonPage(S, "Navigation", "accountNavigation", "accountNavigation"),
-                    singletonPage(S, "Login page", "accountLoginPage", "accountLoginPage"),
-                    singletonPage(S, "Registration page", "accountRegisterPage", "accountRegisterPage"),
-                    singletonPage(S, "Password recovery page", "accountRecoveryPage", "accountRecoveryPage"),
-                    singletonPage(S, "Dashboard page", "accountDashboardPage", "accountDashboardPage"),
-                    singletonPage(S, "Orders page", "accountOrdersPage", "accountOrdersPage"),
-                    singletonPage(S, "Order details page", "accountOrderDetailsPage", "accountOrderDetailsPage"),
-                    singletonPage(S, "Addresses page", "accountAddressesPage", "accountAddressesPage"),
+                    singletonPage(
+                      S,
+                      "Navigation",
+                      "accountNavigation",
+                      "accountNavigation",
+                    ),
+                    singletonPage(
+                      S,
+                      "Login page",
+                      "accountLoginPage",
+                      "accountLoginPage",
+                    ),
+                    singletonPage(
+                      S,
+                      "Registration page",
+                      "accountRegisterPage",
+                      "accountRegisterPage",
+                    ),
+                    singletonPage(
+                      S,
+                      "Password recovery page",
+                      "accountRecoveryPage",
+                      "accountRecoveryPage",
+                    ),
+                    singletonPage(
+                      S,
+                      "Dashboard page",
+                      "accountDashboardPage",
+                      "accountDashboardPage",
+                    ),
+                    singletonPage(
+                      S,
+                      "Profile page",
+                      "accountProfilePage",
+                      "accountProfilePage",
+                    ),
+                    singletonPage(
+                      S,
+                      "Orders page",
+                      "accountOrdersPage",
+                      "accountOrdersPage",
+                    ),
+                    singletonPage(
+                      S,
+                      "Order details page",
+                      "accountOrderDetailsPage",
+                      "accountOrderDetailsPage",
+                    ),
+                    singletonPage(
+                      S,
+                      "Addresses page",
+                      "accountAddressesPage",
+                      "accountAddressesPage",
+                    ),
                   ]),
               ),
             S.divider(),
-            S.documentTypeListItem("waitlistSubscriber").title("Waitlist subscribers"),
+            S.documentTypeListItem("waitlistSubscriber").title(
+              "Waitlist subscribers",
+            ),
           ]),
     }),
     visionTool(),

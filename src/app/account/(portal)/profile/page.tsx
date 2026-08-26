@@ -1,0 +1,157 @@
+import { customerAccountFetch } from "@/lib/customer-account/client";
+import { getAccountContent } from "@/lib/customer-account/content";
+import { PROFILE_QUERY } from "@/lib/customer-account/queries";
+import { updatePassword, updateProfile } from "../../profile-actions";
+import styles from "../../account.module.css";
+
+type Customer = {
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  phone?: string;
+  acceptsMarketing: boolean;
+};
+type Data = { customer: Customer };
+export async function generateMetadata() {
+  const c =
+    await getAccountContent<Record<string, string>>("accountProfilePage");
+  return { title: c.seoTitle || "Profile | Ivory Muse" };
+}
+
+export default async function ProfilePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ success?: string; error?: string }>;
+}) {
+  const [{ customer }, params, cms] = await Promise.all([
+    customerAccountFetch<Data>(PROFILE_QUERY),
+    searchParams,
+    getAccountContent<Record<string, string>>("accountProfilePage"),
+  ]);
+  const c = {
+    eyebrow: "Personal details",
+    heading: "Your profile",
+    description:
+      "Update the information associated with your customer account.",
+    detailsHeading: "Contact information",
+    securityHeading: "Password",
+    firstNameLabel: "First name",
+    lastNameLabel: "Last name",
+    emailLabel: "Email address",
+    phoneLabel: "Phone",
+    marketingLabel: "Receive news about collections and private offers",
+    passwordLabel: "New password",
+    passwordHint:
+      "Leave blank to keep your current password. Use at least 8 characters.",
+    saveDetailsLabel: "Save details",
+    savePasswordLabel: "Update password",
+    ...cms,
+  };
+  return (
+    <>
+      <header className={styles.header}>
+        <div>
+          <p className={styles.eyebrow}>{c.eyebrow}</p>
+          <h1 className={styles.title}>{c.heading}</h1>
+          <p className={styles.portalIntro}>{c.description}</p>
+        </div>
+      </header>
+      {params.success && <p className={styles.notice}>{params.success}</p>}
+      {params.error && (
+        <p className={`${styles.notice} ${styles.error}`}>{params.error}</p>
+      )}
+      <div className={styles.profileStack}>
+        <article className={styles.card}>
+          <h2>{c.detailsHeading}</h2>
+          <form className={styles.form} action={updateProfile}>
+            <Field
+              name="firstName"
+              label={c.firstNameLabel}
+              value={customer.firstName}
+              required
+            />
+            <Field
+              name="lastName"
+              label={c.lastNameLabel}
+              value={customer.lastName}
+              required
+            />
+            <Field
+              full
+              name="email"
+              type="email"
+              label={c.emailLabel}
+              value={customer.email}
+              required
+            />
+            <Field
+              full
+              name="phone"
+              type="tel"
+              label={c.phoneLabel}
+              value={customer.phone}
+            />
+            <label className={`${styles.check} ${styles.full}`}>
+              <input
+                type="checkbox"
+                name="acceptsMarketing"
+                defaultChecked={customer.acceptsMarketing}
+              />{" "}
+              {c.marketingLabel}
+            </label>
+            <button className={`${styles.primary} ${styles.full}`}>
+              {c.saveDetailsLabel}
+            </button>
+          </form>
+        </article>
+        <article className={styles.card}>
+          <h2>{c.securityHeading}</h2>
+          <form className={styles.form} action={updatePassword}>
+            <Field
+              full
+              name="password"
+              type="password"
+              label={c.passwordLabel}
+              required
+              hint={c.passwordHint}
+            />
+            <button className={`${styles.primary} ${styles.full}`}>
+              {c.savePasswordLabel}
+            </button>
+          </form>
+        </article>
+      </div>
+    </>
+  );
+}
+function Field({
+  name,
+  label,
+  value,
+  type = "text",
+  required,
+  full,
+  hint,
+}: {
+  name: string;
+  label: string;
+  value?: string;
+  type?: string;
+  required?: boolean;
+  full?: boolean;
+  hint?: string;
+}) {
+  return (
+    <div className={`${styles.field} ${full ? styles.full : ""}`}>
+      <label htmlFor={name}>{label}</label>
+      <input
+        id={name}
+        name={name}
+        type={type}
+        defaultValue={value || ""}
+        required={required}
+      />
+      {hint && <small>{hint}</small>}
+    </div>
+  );
+}

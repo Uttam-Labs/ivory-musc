@@ -14,6 +14,8 @@ export default async function AccountPortalLayout({
     overviewLabel: "Overview",
     ordersLabel: "Orders",
     addressesLabel: "Addresses",
+    profileLabel: "Profile",
+    supportLabel: "Support",
     signOutLabel: "Sign out",
     ...(await getAccountContent<Record<string, string>>("accountNavigation")),
   };
@@ -24,7 +26,11 @@ export default async function AccountPortalLayout({
           <Link href="/account">{copy.overviewLabel}</Link>
           <Link href="/account/orders">{copy.ordersLabel}</Link>
           <Link href="/account/addresses">{copy.addressesLabel}</Link>
-          <Link href="/api/customer-account/logout">{copy.signOutLabel}</Link>
+          <Link href="/account/profile">{copy.profileLabel}</Link>
+          <Link href="/contact">{copy.supportLabel}</Link>
+          <Link className={styles.signOut} href="/api/customer-account/logout">
+            {copy.signOutLabel}
+          </Link>
         </nav>
         <section className={styles.content}>{children}</section>
       </div>
