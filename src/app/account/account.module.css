@@ -18,8 +18,10 @@
 .check{font-size:1.4rem;line-height:1.5}
 .check input{width:1.6rem;height:1.6rem;accent-color:var(--account-accent)}
 .formMeta a,.switchText a{color:var(--account-accent);font-weight:500}
-.authForm>.primary{width:min(30rem,100%);min-height:5.8rem;margin-top:1rem;padding:1.2rem 2.4rem;font-family:var(--primary-font,Arial,Helvetica,sans-serif);font-size:1.4rem;letter-spacing:.08em;transition:background-color .25s,color .25s}
-.authForm>.primary:hover{background:transparent;color:var(--account-accent)}
+.authForm>.primary{width:min(30rem,100%);min-height:5.8rem;margin-top:1rem;border-color:#a5534d;background:#a5534d;padding:1.2rem 2.4rem;color:#fff;font-family:var(--primary-font,Arial,Helvetica,sans-serif);font-size:1.4rem;letter-spacing:.08em;transition:background-color .25s,border-color .25s,color .25s}
+.authForm>.primary:hover{border-color:#8d443f;background:#8d443f;color:#fff}
+.authForm>.primary:focus-visible{outline:2px solid #a5534d;outline-offset:3px}
+.authForm>.primary:disabled{border-color:#caa19d;background:#caa19d;color:#fff;cursor:wait}
 .switchText{margin:0;color:#706a65;font-size:1.45rem;line-height:1.6;text-align:left}
 .authCard .authForm{text-align:left}
 @media(max-width:640px){.authPanel{padding:5rem 1.6rem}.authPanelInner{padding:3.5rem 2.2rem}.authGrid{grid-template-columns:1fr;gap:3rem}.formMeta{align-items:flex-start;flex-direction:column}.authPanel h1{font-size:3.6rem}.authIntro{font-size:1.5rem}}
