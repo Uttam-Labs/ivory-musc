@@ -11,3 +11,4 @@ export const FAQ_PAGE_QUERY = defineQuery(`*[_id == "faqPage" && _type == "faqPa
 export const CONTACT_PAGE_QUERY = defineQuery(`*[_id == "contactPage" && _type == "contactPage"][0]{_updatedAt,title,seoDescription,sections[]{...,image{...,alt}}}`);
 export const BLOG_PAGE_QUERY = defineQuery(`*[_type == "blogPage"] | order(_updatedAt desc)[0]{_updatedAt,title,seoDescription,sections[]{...,image{...,alt}}}`);
 export const ARTICLE_PAGE_QUERY = defineQuery(`*[_id == "articlePage" && _type == "articlePage"][0]{_updatedAt,shopifyBlogHandle,recentLimit,visibility,labels,sharing}`);
+export const ACCOUNT_CONTENT_QUERY = defineQuery(`*[_id == $id][0]{...}`);

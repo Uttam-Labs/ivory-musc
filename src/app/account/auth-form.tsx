@@ -1,11 +1,150 @@
 "use client";
 import Link from "next/link";
 import { useActionState } from "react";
-import { loginAction, recoverAction, registerAction, type AuthState } from "./auth-actions";
+import {
+  loginAction,
+  recoverAction,
+  registerAction,
+  type AuthState,
+} from "./auth-actions";
+import type {
+  LoginContent,
+  RecoveryContent,
+  RegisterContent,
+} from "@/lib/customer-account/content";
 import styles from "./account.module.css";
-const initial:AuthState={};
-function Submit({children}:{children:React.ReactNode}){return <button className={styles.primary} type="submit">{children}</button>}
-export function LoginForm(){const[state,action,pending]=useActionState(loginAction,initial);return <form action={action} className={styles.authForm}>{state.error&&<p className={`${styles.notice} ${styles.error}`}>{state.error}</p>}<Field name="email" label="Email address" type="email" autoComplete="email"/><Field name="password" label="Password" type="password" autoComplete="current-password"/><div className={styles.formMeta}><label className={styles.check}><input type="checkbox" name="remember"/> Remember me</label><Link href="/account/forgot-password">Forgot password?</Link></div><Submit>{pending?"Signing in…":"Sign in"}</Submit><p className={styles.switchText}>New to Ivory Muse? <Link href="/account/register">Create an account</Link></p></form>}
-export function RegisterForm(){const[state,action,pending]=useActionState(registerAction,initial);return <form action={action} className={styles.authForm}>{state.error&&<p className={`${styles.notice} ${styles.error}`}>{state.error}</p>}<div className={styles.authGrid}><Field name="firstName" label="First name" autoComplete="given-name"/><Field name="lastName" label="Last name" autoComplete="family-name"/></div><Field name="email" label="Email address" type="email" autoComplete="email"/><Field name="password" label="Password" type="password" autoComplete="new-password" hint="At least 8 characters"/><Field name="confirmPassword" label="Confirm password" type="password" autoComplete="new-password"/><label className={styles.check}><input type="checkbox" name="acceptsMarketing"/> Email me about new collections and private offers</label><Submit>{pending?"Creating account…":"Create account"}</Submit><p className={styles.switchText}>Already registered? <Link href="/account/login">Sign in</Link></p></form>}
-export function RecoverForm(){const[state,action,pending]=useActionState(recoverAction,initial);return <form action={action} className={styles.authForm}>{state.error&&<p className={`${styles.notice} ${styles.error}`}>{state.error}</p>}{state.success&&<p className={styles.notice}>{state.success}</p>}<Field name="email" label="Email address" type="email" autoComplete="email"/><Submit>{pending?"Sending…":"Send reset instructions"}</Submit><p className={styles.switchText}><Link href="/account/login">Back to sign in</Link></p></form>}
-function Field({name,label,type="text",autoComplete,hint}:{name:string;label:string;type?:string;autoComplete?:string;hint?:string}){return <label className={styles.authField}><span>{label}</span><input required name={name} type={type} autoComplete={autoComplete}/>{hint&&<small>{hint}</small>}</label>}
+const initial: AuthState = {};
+function Submit({ children }: { children: React.ReactNode }) {
+  return (
+    <button className={styles.primary} type="submit">
+      {children}
+    </button>
+  );
+}
+export function LoginForm({ content }: { content: LoginContent }) {
+  const [state, action, pending] = useActionState(loginAction, initial);
+  return (
+    <form action={action} className={styles.authForm}>
+      {state.error && (
+        <p className={`${styles.notice} ${styles.error}`}>{state.error}</p>
+      )}
+      <Field
+        name="email"
+        label={content.emailLabel}
+        type="email"
+        autoComplete="email"
+      />
+      <Field
+        name="password"
+        label={content.passwordLabel}
+        type="password"
+        autoComplete="current-password"
+      />
+      <div className={styles.formMeta}>
+        <label className={styles.check}>
+          <input type="checkbox" name="remember" /> {content.rememberLabel}
+        </label>
+        <Link href="/account/forgot-password">
+          {content.forgotPasswordLabel}
+        </Link>
+      </div>
+      <Submit>{pending ? content.submittingLabel : content.submitLabel}</Submit>
+      <p className={styles.switchText}>
+        {content.newCustomerText}{" "}
+        <Link href="/account/register">{content.registerLinkLabel}</Link>
+      </p>
+    </form>
+  );
+}
+export function RegisterForm({ content }: { content: RegisterContent }) {
+  const [state, action, pending] = useActionState(registerAction, initial);
+  return (
+    <form action={action} className={styles.authForm}>
+      {state.error && (
+        <p className={`${styles.notice} ${styles.error}`}>{state.error}</p>
+      )}
+      <div className={styles.authGrid}>
+        <Field
+          name="firstName"
+          label={content.firstNameLabel}
+          autoComplete="given-name"
+        />
+        <Field
+          name="lastName"
+          label={content.lastNameLabel}
+          autoComplete="family-name"
+        />
+      </div>
+      <Field
+        name="email"
+        label={content.emailLabel}
+        type="email"
+        autoComplete="email"
+      />
+      <Field
+        name="password"
+        label={content.passwordLabel}
+        type="password"
+        autoComplete="new-password"
+        hint={content.passwordHint}
+      />
+      <Field
+        name="confirmPassword"
+        label={content.confirmPasswordLabel}
+        type="password"
+        autoComplete="new-password"
+      />
+      <label className={styles.check}>
+        <input type="checkbox" name="acceptsMarketing" />{" "}
+        {content.marketingLabel}
+      </label>
+      <Submit>{pending ? content.submittingLabel : content.submitLabel}</Submit>
+      <p className={styles.switchText}>
+        {content.existingCustomerText}{" "}
+        <Link href="/account/login">{content.loginLinkLabel}</Link>
+      </p>
+    </form>
+  );
+}
+export function RecoverForm({ content }: { content: RecoveryContent }) {
+  const [state, action, pending] = useActionState(recoverAction, initial);
+  return (
+    <form action={action} className={styles.authForm}>
+      {state.error && (
+        <p className={`${styles.notice} ${styles.error}`}>{state.error}</p>
+      )}
+      {state.success && <p className={styles.notice}>{state.success}</p>}
+      <Field
+        name="email"
+        label={content.emailLabel}
+        type="email"
+        autoComplete="email"
+      />
+      <Submit>{pending ? content.submittingLabel : content.submitLabel}</Submit>
+      <p className={styles.switchText}>
+        <Link href="/account/login">{content.backLabel}</Link>
+      </p>
+    </form>
+  );
+}
+function Field({
+  name,
+  label,
+  type = "text",
+  autoComplete,
+  hint,
+}: {
+  name: string;
+  label: string;
+  type?: string;
+  autoComplete?: string;
+  hint?: string;
+}) {
+  return (
+    <label className={styles.authField}>
+      <span>{label}</span>
+      <input required name={name} type={type} autoComplete={autoComplete} />
+      {hint && <small>{hint}</small>}
+    </label>
+  );
+}

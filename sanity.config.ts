@@ -52,6 +52,23 @@ export default defineConfig({
                   ]),
               ),
             S.divider(),
+            S.listItem()
+              .title("Account")
+              .child(
+                S.list()
+                  .title("Account")
+                  .items([
+                    singletonPage(S, "Navigation", "accountNavigation", "accountNavigation"),
+                    singletonPage(S, "Login page", "accountLoginPage", "accountLoginPage"),
+                    singletonPage(S, "Registration page", "accountRegisterPage", "accountRegisterPage"),
+                    singletonPage(S, "Password recovery page", "accountRecoveryPage", "accountRecoveryPage"),
+                    singletonPage(S, "Dashboard page", "accountDashboardPage", "accountDashboardPage"),
+                    singletonPage(S, "Orders page", "accountOrdersPage", "accountOrdersPage"),
+                    singletonPage(S, "Order details page", "accountOrderDetailsPage", "accountOrderDetailsPage"),
+                    singletonPage(S, "Addresses page", "accountAddressesPage", "accountAddressesPage"),
+                  ]),
+              ),
+            S.divider(),
             S.documentTypeListItem("waitlistSubscriber").title("Waitlist subscribers"),
           ]),
     }),

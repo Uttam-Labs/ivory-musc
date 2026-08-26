@@ -1,9 +1,232 @@
 import Link from "next/link";
-import {customerAccountFetch,encodeCustomerId} from "@/lib/customer-account/client";
-import {ADDRESSES_QUERY} from "@/lib/customer-account/queries";
-import {deleteAddress,saveAddress,setDefaultAddress} from "../../storefront-actions";
+import {
+  customerAccountFetch,
+  encodeCustomerId,
+} from "@/lib/customer-account/client";
+import { ADDRESSES_QUERY } from "@/lib/customer-account/queries";
+import { getAccountContent } from "@/lib/customer-account/content";
+import {
+  deleteAddress,
+  saveAddress,
+  setDefaultAddress,
+} from "../../storefront-actions";
 import styles from "../../account.module.css";
-type Address={id:string;firstName?:string;lastName?:string;company?:string;address1?:string;address2?:string;city?:string;province?:string;country?:string;zip?:string;phone?:string;formatted:string[]};type Data={customer:{defaultAddress?:{id:string};addresses:{nodes:Address[]}}};
-export const metadata={title:"Addresses | Ivory Muse"};
-export default async function AddressesPage({searchParams}:{searchParams:Promise<{edit?:string;success?:string;error?:string}>}){const[{customer},params]=await Promise.all([customerAccountFetch<Data>(ADDRESSES_QUERY),searchParams]);const edit=params.edit?customer.addresses.nodes.find(a=>encodeCustomerId(a.id)===params.edit):undefined;return <><header className={styles.header}><div><p className={styles.eyebrow}>Address book</p><h1 className={styles.title}>Your addresses</h1></div></header>{params.success&&<p className={styles.notice}>{params.success}</p>}{params.error&&<p className={`${styles.notice} ${styles.error}`}>{params.error}</p>}<div className={styles.addressGrid}>{customer.addresses.nodes.map(address=>{const id=encodeCustomerId(address.id);const isDefault=customer.defaultAddress?.id===address.id;return <article className={styles.address} key={address.id}>{isDefault&&<span className={styles.badge}>Default</span>}{address.formatted.map(line=><p key={line}>{line}</p>)}<div className={styles.inlineActions}><Link className={styles.secondary} href={`/account/addresses?edit=${id}#address-form`}>Edit</Link>{!isDefault&&<form action={setDefaultAddress}><input type="hidden" name="id" value={id}/><button className={styles.secondary}>Set default</button></form>}<form action={deleteAddress}><input type="hidden" name="id" value={id}/><button className={styles.danger}>Delete</button></form></div></article>})}</div><article className={styles.card} id="address-form" style={{marginTop:"2rem"}}><h2>{edit?"Edit address":"Add a new address"}</h2><form className={styles.form} action={saveAddress}>{edit&&<input type="hidden" name="id" value={encodeCustomerId(edit.id)}/>}<Field name="firstName" label="First name" value={edit?.firstName}/><Field name="lastName" label="Last name" value={edit?.lastName}/><Field name="company" label="Company" value={edit?.company}/><Field name="phone" label="Phone (+country code)" value={edit?.phone}/><Field full name="address1" label="Address" value={edit?.address1} required/><Field full name="address2" label="Apartment, suite, etc." value={edit?.address2}/><Field name="city" label="City" value={edit?.city} required/><Field name="province" label="State / province" value={edit?.province}/><Field name="country" label="Country" value={edit?.country||"Australia"} required/><Field name="zip" label="Postal code" value={edit?.zip} required/><label className={`${styles.check} ${styles.full}`}><input type="checkbox" name="defaultAddress" defaultChecked={customer.addresses.nodes.length===0||Boolean(edit&&customer.defaultAddress?.id===edit.id)}/> Set as default address</label><div className={`${styles.actions} ${styles.full}`} style={{justifyContent:"flex-start"}}><button className={styles.primary}>{edit?"Save changes":"Add address"}</button>{edit&&<Link className={styles.secondary} href="/account/addresses">Cancel</Link>}</div></form></article></>}
-function Field({name,label,value,required,full}:{name:string;label:string;value?:string;required?:boolean;full?:boolean}){return <div className={`${styles.field} ${full?styles.full:""}`}><label htmlFor={name}>{label}</label><input id={name} name={name} defaultValue={value||""} required={required}/></div>}
+type Address = {
+  id: string;
+  firstName?: string;
+  lastName?: string;
+  company?: string;
+  address1?: string;
+  address2?: string;
+  city?: string;
+  province?: string;
+  country?: string;
+  zip?: string;
+  phone?: string;
+  formatted: string[];
+};
+type Data = {
+  customer: {
+    defaultAddress?: { id: string };
+    addresses: { nodes: Address[] };
+  };
+};
+export async function generateMetadata() {
+  const content = await getAccountContent<Record<string, string>>("accountAddressesPage");
+  return { title: content.seoTitle || "Addresses | Ivory Muse" };
+}
+export default async function AddressesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ edit?: string; success?: string; error?: string }>;
+}) {
+  const [{ customer }, params, cms] = await Promise.all([
+    customerAccountFetch<Data>(ADDRESSES_QUERY),
+    searchParams,
+    getAccountContent<Record<string, string>>("accountAddressesPage"),
+  ]);
+  const c = {
+    eyebrow: "Address book",
+    heading: "Your addresses",
+    defaultLabel: "Default",
+    editLabel: "Edit",
+    setDefaultLabel: "Set default",
+    deleteLabel: "Delete",
+    editHeading: "Edit address",
+    addHeading: "Add a new address",
+    firstNameLabel: "First name",
+    lastNameLabel: "Last name",
+    companyLabel: "Company",
+    phoneLabel: "Phone (+country code)",
+    address1Label: "Address",
+    address2Label: "Apartment, suite, etc.",
+    cityLabel: "City",
+    provinceLabel: "State / province",
+    countryLabel: "Country",
+    postalCodeLabel: "Postal code",
+    defaultAddressLabel: "Set as default address",
+    saveLabel: "Save changes",
+    addLabel: "Add address",
+    cancelLabel: "Cancel",
+    ...cms,
+  };
+  const edit = params.edit
+    ? customer.addresses.nodes.find(
+        (a) => encodeCustomerId(a.id) === params.edit,
+      )
+    : undefined;
+  return (
+    <>
+      <header className={styles.header}>
+        <div>
+          <p className={styles.eyebrow}>{c.eyebrow}</p>
+          <h1 className={styles.title}>{c.heading}</h1>
+        </div>
+      </header>
+      {params.success && <p className={styles.notice}>{params.success}</p>}
+      {params.error && (
+        <p className={`${styles.notice} ${styles.error}`}>{params.error}</p>
+      )}
+      <div className={styles.addressGrid}>
+        {customer.addresses.nodes.map((address) => {
+          const id = encodeCustomerId(address.id);
+          const isDefault = customer.defaultAddress?.id === address.id;
+          return (
+            <article className={styles.address} key={address.id}>
+              {isDefault && (
+                <span className={styles.badge}>{c.defaultLabel}</span>
+              )}
+              {address.formatted.map((line) => (
+                <p key={line}>{line}</p>
+              ))}
+              <div className={styles.inlineActions}>
+                <Link
+                  className={styles.secondary}
+                  href={`/account/addresses?edit=${id}#address-form`}
+                >
+                  {c.editLabel}
+                </Link>
+                {!isDefault && (
+                  <form action={setDefaultAddress}>
+                    <input type="hidden" name="id" value={id} />
+                    <button className={styles.secondary}>
+                      {c.setDefaultLabel}
+                    </button>
+                  </form>
+                )}
+                <form action={deleteAddress}>
+                  <input type="hidden" name="id" value={id} />
+                  <button className={styles.danger}>{c.deleteLabel}</button>
+                </form>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+      <article
+        className={styles.card}
+        id="address-form"
+        style={{ marginTop: "2rem" }}
+      >
+        <h2>{edit ? c.editHeading : c.addHeading}</h2>
+        <form className={styles.form} action={saveAddress}>
+          {edit && (
+            <input type="hidden" name="id" value={encodeCustomerId(edit.id)} />
+          )}
+          <Field
+            name="firstName"
+            label={c.firstNameLabel}
+            value={edit?.firstName}
+          />
+          <Field
+            name="lastName"
+            label={c.lastNameLabel}
+            value={edit?.lastName}
+          />
+          <Field name="company" label={c.companyLabel} value={edit?.company} />
+          <Field name="phone" label={c.phoneLabel} value={edit?.phone} />
+          <Field
+            full
+            name="address1"
+            label={c.address1Label}
+            value={edit?.address1}
+            required
+          />
+          <Field
+            full
+            name="address2"
+            label={c.address2Label}
+            value={edit?.address2}
+          />
+          <Field name="city" label={c.cityLabel} value={edit?.city} required />
+          <Field
+            name="province"
+            label={c.provinceLabel}
+            value={edit?.province}
+          />
+          <Field
+            name="country"
+            label={c.countryLabel}
+            value={edit?.country || "Australia"}
+            required
+          />
+          <Field
+            name="zip"
+            label={c.postalCodeLabel}
+            value={edit?.zip}
+            required
+          />
+          <label className={`${styles.check} ${styles.full}`}>
+            <input
+              type="checkbox"
+              name="defaultAddress"
+              defaultChecked={
+                customer.addresses.nodes.length === 0 ||
+                Boolean(edit && customer.defaultAddress?.id === edit.id)
+              }
+            />{" "}
+            {c.defaultAddressLabel}
+          </label>
+          <div
+            className={`${styles.actions} ${styles.full}`}
+            style={{ justifyContent: "flex-start" }}
+          >
+            <button className={styles.primary}>
+              {edit ? c.saveLabel : c.addLabel}
+            </button>
+            {edit && (
+              <Link className={styles.secondary} href="/account/addresses">
+                {c.cancelLabel}
+              </Link>
+            )}
+          </div>
+        </form>
+      </article>
+    </>
+  );
+}
+function Field({
+  name,
+  label,
+  value,
+  required,
+  full,
+}: {
+  name: string;
+  label: string;
+  value?: string;
+  required?: boolean;
+  full?: boolean;
+}) {
+  return (
+    <div className={`${styles.field} ${full ? styles.full : ""}`}>
+      <label htmlFor={name}>{label}</label>
+      <input
+        id={name}
+        name={name}
+        defaultValue={value || ""}
+        required={required}
+      />
+    </div>
+  );
+}
