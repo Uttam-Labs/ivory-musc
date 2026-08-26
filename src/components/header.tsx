@@ -37,7 +37,8 @@ export function Header({
 }: Props) {
   const pathname = usePathname();
   const router = useRouter();
-  const overlaysHero = pathname === "/" || pathname === "/about" || pathname === "/faq" || pathname === "/contact" || pathname === "/blog";
+  const normalizedPathname = pathname === "/index" ? "/" : pathname;
+  const overlaysHero = normalizedPathname === "/" || normalizedPathname === "/about" || normalizedPathname === "/faq" || normalizedPathname === "/contact" || normalizedPathname === "/blog";
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
@@ -206,14 +207,14 @@ export function Header({
               item.href && item.label ? (
                 <Link
                   aria-current={
-                    pathname === item.href ||
-                    (item.href !== "/" && pathname.startsWith(`${item.href}/`))
+                    normalizedPathname === item.href ||
+                    (item.href !== "/" && normalizedPathname.startsWith(`${item.href}/`))
                       ? "page"
                       : undefined
                   }
                   className={`menu-link border-b pb-1 transition-colors ${
-                    pathname === item.href ||
-                    (item.href !== "/" && pathname.startsWith(`${item.href}/`))
+                    normalizedPathname === item.href ||
+                    (item.href !== "/" && normalizedPathname.startsWith(`${item.href}/`))
                       ? "border-current"
                       : "border-transparent hover:border-current/50 hover:opacity-65"
                   }`}
@@ -341,14 +342,14 @@ export function Header({
                 <Link
                   onClick={() => setMenuOpen(false)}
                   aria-current={
-                    pathname === item.href ||
-                    (item.href !== "/" && pathname.startsWith(`${item.href}/`))
+                    normalizedPathname === item.href ||
+                    (item.href !== "/" && normalizedPathname.startsWith(`${item.href}/`))
                       ? "page"
                       : undefined
                   }
                   className={`block border-b border-stone-900/10 py-3.5 text-[15px] tracking-[.01em] transition-colors hover:text-[var(--accent)] ${
-                    pathname === item.href ||
-                    (item.href !== "/" && pathname.startsWith(`${item.href}/`))
+                    normalizedPathname === item.href ||
+                    (item.href !== "/" && normalizedPathname.startsWith(`${item.href}/`))
                       ? "text-[var(--accent)]"
                       : "text-stone-800"
                   }`}
