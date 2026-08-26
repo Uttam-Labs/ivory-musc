@@ -3,23 +3,23 @@
 @media(max-width:800px){.portal{grid-template-columns:1fr}.nav{flex-direction:row;overflow:auto}.nav a{flex:none}.grid,.addressGrid,.form{grid-template-columns:1fr}.full{grid-column:auto}.order{grid-template-columns:1fr 1fr}.header{align-items:flex-start;flex-direction:column}}
 .authPage{min-height:calc(100dvh - 100px);background:#fff9f3;color:#333;font-family:var(--primary-font,Arial,Helvetica,sans-serif)}
 .authPanel{display:grid;min-height:inherit;place-items:center;padding:clamp(7rem,8vw,13rem) 2.4rem}
-.authPanelInner{width:min(60rem,100%);border:1px solid #e2d7cf;background:#fffdf9;padding:clamp(4rem,5vw,7rem);box-shadow:0 2.4rem 7rem rgba(80,55,40,.07);text-align:center}
+.authPanelInner{width:min(76rem,100%);background:#fff5ea;padding:clamp(4rem,5vw,7rem);text-align:left}
 .registerPanel{width:min(72rem,100%)}
-.authPanel .eyebrow{margin:0 0 1.6rem;color:#8c8179;font-size:1.2rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase}
+.authPanel .eyebrow{margin:0 0 1.6rem;color:#9b504a;font-size:1.2rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase}
 .authPanel h1{margin:0;color:var(--account-accent);font-family:var(--secondary-font,"Times New Roman",serif);font-size:clamp(3.8rem,4vw,5.6rem);font-weight:400;line-height:1.05;text-transform:uppercase}
-.authIntro{max-width:49rem;margin:1.8rem auto 0;color:#706a65;font-size:1.6rem;line-height:1.7}
-.authForm{display:grid;gap:2.2rem;margin-top:4rem;text-align:left}
-.authField{display:grid;gap:.9rem;color:#5d5651;font-size:1.5rem;line-height:1.4}
-.authField input{width:100%;height:5.8rem;border:1px solid #d9cec6;border-radius:0;background:#fff;padding:0 1.8rem;color:#332f2c;font-family:var(--primary-font,Arial,Helvetica,sans-serif);font-size:1.6rem;outline:none;transition:border-color .2s,box-shadow .2s}
-.authField input:focus{border-color:var(--account-accent);box-shadow:0 0 0 3px rgba(155,80,74,.1)}
+.authIntro{max-width:58rem;margin:2.2rem 0 0;color:#706a65;font-size:1.6rem;line-height:1.7}
+.authForm{display:grid;gap:3rem;margin-top:4.5rem;text-align:left}
+.authField{display:grid;gap:.7rem;color:var(--account-accent);font-size:1.6rem;line-height:1.4}
+.authField input{width:100%;height:4.8rem;border:0;border-bottom:1px solid #d9cec6;border-radius:0;background:transparent;padding:.4rem 0;color:#332f2c;font-family:var(--primary-font,Arial,Helvetica,sans-serif);font-size:1.6rem;outline:none;transition:border-color .2s}
+.authField input:focus{border-bottom-color:var(--account-accent);box-shadow:none}
 .authField small{color:#918981;font-size:1.25rem}
-.authGrid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.authGrid{display:grid;grid-template-columns:1fr 1fr;gap:3.4rem}
 .formMeta{display:flex;align-items:center;justify-content:space-between;gap:1.6rem;color:#6b645f;font-size:1.4rem}
 .check{font-size:1.4rem;line-height:1.5}
 .check input{width:1.6rem;height:1.6rem;accent-color:var(--account-accent)}
 .formMeta a,.switchText a{color:var(--account-accent);font-weight:500}
-.authForm>.primary{width:100%;min-height:5.8rem;margin-top:.4rem;padding:1.2rem 2.4rem;font-family:var(--primary-font,Arial,Helvetica,sans-serif);font-size:1.4rem;letter-spacing:.11em;transition:background-color .25s,color .25s}
+.authForm>.primary{width:min(30rem,100%);min-height:5.8rem;margin-top:1rem;padding:1.2rem 2.4rem;font-family:var(--primary-font,Arial,Helvetica,sans-serif);font-size:1.4rem;letter-spacing:.08em;transition:background-color .25s,color .25s}
 .authForm>.primary:hover{background:transparent;color:var(--account-accent)}
-.switchText{margin:0;text-align:center;color:#706a65;font-size:1.45rem;line-height:1.6}
+.switchText{margin:0;color:#706a65;font-size:1.45rem;line-height:1.6;text-align:left}
 .authCard .authForm{text-align:left}
-@media(max-width:640px){.authPanel{padding:5rem 1.6rem}.authPanelInner{padding:3.5rem 2.2rem}.authGrid{grid-template-columns:1fr}.formMeta{align-items:flex-start;flex-direction:column}.authPanel h1{font-size:3.6rem}.authIntro{font-size:1.5rem}}
+@media(max-width:640px){.authPanel{padding:5rem 1.6rem}.authPanelInner{padding:3.5rem 2.2rem}.authGrid{grid-template-columns:1fr;gap:3rem}.formMeta{align-items:flex-start;flex-direction:column}.authPanel h1{font-size:3.6rem}.authIntro{font-size:1.5rem}}
