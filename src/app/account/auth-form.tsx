@@ -13,6 +13,7 @@ import type {
   RegisterContent,
 } from "@/lib/customer-account/content";
 import styles from "./account.module.css";
+import { AccountFeedback } from "./account-feedback";
 const initial: AuthState = {};
 function Submit({ children }: { children: React.ReactNode }) {
   return (
@@ -25,9 +26,10 @@ export function LoginForm({ content }: { content: LoginContent }) {
   const [state, action, pending] = useActionState(loginAction, initial);
   return (
     <form action={action} className={styles.authForm}>
-      {state.error && (
-        <p className={`${styles.notice} ${styles.error}`}>{state.error}</p>
-      )}
+      <AccountFeedback
+        key={state.error || "login-feedback"}
+        error={state.error}
+      />
       <Field
         name="email"
         label={content.emailLabel}
@@ -60,9 +62,10 @@ export function RegisterForm({ content }: { content: RegisterContent }) {
   const [state, action, pending] = useActionState(registerAction, initial);
   return (
     <form action={action} className={styles.authForm}>
-      {state.error && (
-        <p className={`${styles.notice} ${styles.error}`}>{state.error}</p>
-      )}
+      <AccountFeedback
+        key={state.error || "register-feedback"}
+        error={state.error}
+      />
       <div className={styles.authGrid}>
         <Field
           name="firstName"
@@ -110,10 +113,11 @@ export function RecoverForm({ content }: { content: RecoveryContent }) {
   const [state, action, pending] = useActionState(recoverAction, initial);
   return (
     <form action={action} className={styles.authForm}>
-      {state.error && (
-        <p className={`${styles.notice} ${styles.error}`}>{state.error}</p>
-      )}
-      {state.success && <p className={styles.notice}>{state.success}</p>}
+      <AccountFeedback
+        key={state.error || state.success || "recover-feedback"}
+        error={state.error}
+        success={state.success}
+      />
       <Field
         name="email"
         label={content.emailLabel}

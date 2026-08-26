@@ -4,6 +4,7 @@ import { PROFILE_QUERY } from "@/lib/customer-account/queries";
 import { updatePassword, updateProfile } from "../../profile-actions";
 import styles from "../../account.module.css";
 import { ConfirmSubmitButton } from "../../confirm-submit-button";
+import { AccountFeedback } from "../../account-feedback";
 
 type Customer = {
   firstName?: string;
@@ -61,10 +62,12 @@ export default async function ProfilePage({
           <p className={styles.portalIntro}>{c.description}</p>
         </div>
       </header>
-      {params.success && <p className={styles.notice}>{params.success}</p>}
-      {params.error && (
-        <p className={`${styles.notice} ${styles.error}`}>{params.error}</p>
-      )}
+      <AccountFeedback
+        key={params.error || params.success || "feedback"}
+        success={params.success}
+        error={params.error}
+        clearQuery
+      />
       <div className={styles.profileStack}>
         <article className={styles.card}>
           <h2>{c.detailsHeading}</h2>

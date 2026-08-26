@@ -13,6 +13,7 @@ import {
 } from "../../storefront-actions";
 import styles from "../../account.module.css";
 import { ConfirmSubmitButton } from "../../confirm-submit-button";
+import { AccountFeedback } from "../../account-feedback";
 type Address = {
   id: string;
   firstName?: string;
@@ -96,10 +97,12 @@ export default async function AddressesPage({
           <h1 className={styles.title}>{c.heading}</h1>
         </div>
       </header>
-      {params.success && <p className={styles.notice}>{params.success}</p>}
-      {params.error && (
-        <p className={`${styles.notice} ${styles.error}`}>{params.error}</p>
-      )}
+      <AccountFeedback
+        key={params.error || params.success || "feedback"}
+        success={params.success}
+        error={params.error}
+        clearQuery
+      />
       <div className={styles.addressGrid}>
         {customer.addresses.nodes.map((address) => {
           const id = encodeCustomerId(address.id);
