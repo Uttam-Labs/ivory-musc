@@ -9,6 +9,7 @@ import {
   CUSTOMER_SESSION_COOKIE,
   customerCookieOptions,
   encryptSession,
+  getCustomerSession,
 } from "@/lib/customer-account/session";
 
 type UpdateResult = {
@@ -23,22 +24,26 @@ const destination = (type: "success" | "error", message: string) =>
   `/account/profile?${type}=${encodeURIComponent(message)}`;
 
 async function updateCustomer(input: Record<string, unknown>) {
+  const session = await getCustomerSession();
+  if (!session)
+    throw new Error("Your session has expired. Please sign in again.");
   const result = (
     await customerAccountFetch<UpdateResult>(mutation, { customer: input })
   ).customerUpdate;
   const error = result.customerUserErrors[0];
   if (error) throw new Error(error.message);
-  if (result.customerAccessToken) {
-    const expiresAt = new Date(result.customerAccessToken.expiresAt).getTime();
-    (await cookies()).set(
-      CUSTOMER_SESSION_COOKIE,
-      encryptSession({
-        accessToken: result.customerAccessToken.accessToken,
-        expiresAt,
-      }),
-      { ...customerCookieOptions, expires: new Date(expiresAt) },
-    );
-  }
+  const accessToken =
+    result.customerAccessToken?.accessToken || session.accessToken;
+  const expiresAt = result.customerAccessToken
+    ? new Date(result.customerAccessToken.expiresAt).getTime()
+    : session.expiresAt;
+  const firstName =
+    typeof input.firstName === "string" ? input.firstName : session.firstName;
+  (await cookies()).set(
+    CUSTOMER_SESSION_COOKIE,
+    encryptSession({ accessToken, firstName, expiresAt }),
+    { ...customerCookieOptions, expires: new Date(expiresAt) },
+  );
 }
 
 export async function updateProfile(formData: FormData) {

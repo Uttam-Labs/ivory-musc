@@ -62,17 +62,27 @@ const getDefaultSettings = cache(async () =>
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getDefaultSettings();
   const siteTitle = settings?.title || "Ivory Muse";
-  const description = settings?.description || "Ivory Muse headless Shopify storefront.";
-  const favicon = settings?.favicon ? sanityImageUrl(settings.favicon, 512) : undefined;
-  const socialImage = settings?.socialImage ? sanityImageUrl(settings.socialImage, 1200) : undefined;
+  const description =
+    settings?.description || "Ivory Muse headless Shopify storefront.";
+  const favicon = settings?.favicon
+    ? sanityImageUrl(settings.favicon, 512)
+    : undefined;
+  const socialImage = settings?.socialImage
+    ? sanityImageUrl(settings.socialImage, 1200)
+    : undefined;
 
   return {
     metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
     applicationName: siteTitle,
-    title: { default: siteTitle, template: settings?.titleTemplate || `%s | ${siteTitle}` },
+    title: {
+      default: siteTitle,
+      template: settings?.titleTemplate || `%s | ${siteTitle}`,
+    },
     description,
     keywords: settings?.keywords,
-    icons: favicon ? { icon: favicon, shortcut: favicon, apple: favicon } : undefined,
+    icons: favicon
+      ? { icon: favicon, shortcut: favicon, apple: favicon }
+      : undefined,
     robots: {
       index: settings?.allowIndex !== false,
       follow: settings?.allowFollow !== false,
@@ -83,7 +93,9 @@ export async function generateMetadata(): Promise<Metadata> {
       title: siteTitle,
       description,
       locale: settings?.locale || "en_AU",
-      images: socialImage ? [{ url: socialImage, alt: settings?.socialImage?.alt || siteTitle }] : undefined,
+      images: socialImage
+        ? [{ url: socialImage, alt: settings?.socialImage?.alt || siteTitle }]
+        : undefined,
     },
     twitter: {
       card: socialImage ? "summary_large_image" : "summary",
@@ -96,7 +108,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export async function generateViewport(): Promise<Viewport> {
   const settings = await getDefaultSettings();
-  return { colorScheme: "light", themeColor: settings?.themeColor || settings?.theme?.background || "#FFF9F3" };
+  return {
+    colorScheme: "light",
+    themeColor:
+      settings?.themeColor || settings?.theme?.background || "#FFF9F3",
+  };
 }
 type HeaderData = {
   title?: string;
@@ -124,13 +140,11 @@ type FooterData = {
   copyright?: string;
 } | null;
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [settings, header, footer] = isSanityConfigured
-    ? await Promise.all([
-        getDefaultSettings(),
-        sanityFetch<HeaderData>(HEADER_SETTINGS_QUERY),
-        sanityFetch<FooterData>(FOOTER_SETTINGS_QUERY),
-      ])
-    : [null, null, null];
+  const [settings, header, footer] = await Promise.all([
+    isSanityConfigured ? getDefaultSettings() : null,
+    isSanityConfigured ? sanityFetch<HeaderData>(HEADER_SETTINGS_QUERY) : null,
+    isSanityConfigured ? sanityFetch<FooterData>(FOOTER_SETTINGS_QUERY) : null,
+  ]);
   const extensionCleanup = `
     (() => {
       const injected = /^(bis_|processed_)/;
@@ -177,9 +191,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           "--black": settings?.theme?.black || "#000000",
           "--body-font-size": `${settings?.theme?.bodyFontSize || 18}px`,
           "--button-font-size": `${settings?.theme?.buttonFontSize || 16}px`,
-          "--common-heading": settings?.theme?.commonHeadingSize || "clamp(2.6rem, 2vw, 3rem)",
-          "--primary-font": settings?.theme?.bodyFont || "Arial, Helvetica, sans-serif",
-          "--secondary-font": settings?.theme?.headingFont || '"Times New Roman", Times, serif',
+          "--common-heading":
+            settings?.theme?.commonHeadingSize || "clamp(2.6rem, 2vw, 3rem)",
+          "--primary-font":
+            settings?.theme?.bodyFont || "Arial, Helvetica, sans-serif",
+          "--secondary-font":
+            settings?.theme?.headingFont || '"Times New Roman", Times, serif',
           "--body-line-height": settings?.theme?.bodyLineHeight || 1.5,
           "--cms-heading-font":
             settings?.theme?.headingFont === "Cormorant Garamond"

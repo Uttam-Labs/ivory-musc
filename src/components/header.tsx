@@ -38,7 +38,12 @@ export function Header({
   const pathname = usePathname();
   const router = useRouter();
   const normalizedPathname = pathname === "/index" ? "/" : pathname;
-  const overlaysHero = normalizedPathname === "/" || normalizedPathname === "/about" || normalizedPathname === "/faq" || normalizedPathname === "/contact" || normalizedPathname === "/blog";
+  const overlaysHero =
+    normalizedPathname === "/" ||
+    normalizedPathname === "/about" ||
+    normalizedPathname === "/faq" ||
+    normalizedPathname === "/contact" ||
+    normalizedPathname === "/blog";
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
@@ -49,8 +54,29 @@ export function Header({
   const [cartLoading, setCartLoading] = useState(false);
   const [updatingLines, setUpdatingLines] = useState<string[]>([]);
   const [cartError, setCartError] = useState("");
+  const [customerName, setCustomerName] = useState("");
   const searchInput = useRef<HTMLInputElement>(null);
   const menuCloseButton = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const refreshCustomer = () =>
+      fetch("/api/customer-account/summary", {
+        cache: "no-store",
+        signal: controller.signal,
+      })
+        .then((response) => (response.ok ? response.json() : null))
+        .then((data) =>
+          setCustomerName(data?.authenticated ? data.firstName || "" : ""),
+        )
+        .catch(() => undefined);
+    void refreshCustomer();
+    window.addEventListener("focus", refreshCustomer);
+    return () => {
+      controller.abort();
+      window.removeEventListener("focus", refreshCustomer);
+    };
+  }, [pathname]);
 
   const refreshCart = useCallback(async () => {
     const cartId = localStorage.getItem("shopify-cart-id");
@@ -60,9 +86,12 @@ export function Header({
     }
 
     try {
-      const response = await fetch(`/api/cart?id=${encodeURIComponent(cartId)}`, {
-        cache: "no-store",
-      });
+      const response = await fetch(
+        `/api/cart?id=${encodeURIComponent(cartId)}`,
+        {
+          cache: "no-store",
+        },
+      );
       const payload = await response.json();
       if (!response.ok || !payload.cart) {
         localStorage.removeItem("shopify-cart-id");
@@ -176,9 +205,12 @@ export function Header({
         body: JSON.stringify({ action, cartId: cart.id, lineId, quantity }),
       });
       const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || "Cart could not be updated");
+      if (!response.ok)
+        throw new Error(payload.error || "Cart could not be updated");
       setCart(payload.cart);
-      window.dispatchEvent(new CustomEvent("cart:changed", { detail: payload.cart }));
+      window.dispatchEvent(
+        new CustomEvent("cart:changed", { detail: payload.cart }),
+      );
     } catch (error) {
       setCartError(error instanceof Error ? error.message : "Please try again");
     } finally {
@@ -208,13 +240,15 @@ export function Header({
                 <Link
                   aria-current={
                     normalizedPathname === item.href ||
-                    (item.href !== "/" && normalizedPathname.startsWith(`${item.href}/`))
+                    (item.href !== "/" &&
+                      normalizedPathname.startsWith(`${item.href}/`))
                       ? "page"
                       : undefined
                   }
                   className={`menu-link border-b pb-1 transition-colors ${
                     normalizedPathname === item.href ||
-                    (item.href !== "/" && normalizedPathname.startsWith(`${item.href}/`))
+                    (item.href !== "/" &&
+                      normalizedPathname.startsWith(`${item.href}/`))
                       ? "border-current"
                       : "border-transparent hover:border-current/50 hover:opacity-65"
                   }`}
@@ -279,13 +313,25 @@ export function Header({
               </button>
             )}
             {showAccount && accountHref && (
-              <Link
-                className={`${iconClass} header--icon icon-account`}
-                href={accountHref}
-                aria-label="Account"
-              >
-                <AccountIcon className="size-[19px]" />
-              </Link>
+              <>
+                {customerName && (
+                  <Link
+                    href={accountHref}
+                    aria-label={`Account for ${customerName}`}
+                    title={customerName}
+                    className="mr-1 grid size-[30px] place-items-center rounded-full bg-[#9b504a] text-[13px] font-medium uppercase leading-none text-white shadow-sm"
+                  >
+                    {customerName.trim().charAt(0)}
+                  </Link>
+                )}
+                <Link
+                  className={`${iconClass} header--icon icon-account`}
+                  href={accountHref}
+                  aria-label="Account"
+                >
+                  <AccountIcon className="size-[19px]" />
+                </Link>
+              </>
             )}
             {showCart && (
               <button
@@ -343,13 +389,15 @@ export function Header({
                   onClick={() => setMenuOpen(false)}
                   aria-current={
                     normalizedPathname === item.href ||
-                    (item.href !== "/" && normalizedPathname.startsWith(`${item.href}/`))
+                    (item.href !== "/" &&
+                      normalizedPathname.startsWith(`${item.href}/`))
                       ? "page"
                       : undefined
                   }
                   className={`block border-b border-stone-900/10 py-3.5 text-[15px] tracking-[.01em] transition-colors hover:text-[var(--accent)] ${
                     normalizedPathname === item.href ||
-                    (item.href !== "/" && normalizedPathname.startsWith(`${item.href}/`))
+                    (item.href !== "/" &&
+                      normalizedPathname.startsWith(`${item.href}/`))
                       ? "text-[var(--accent)]"
                       : "text-stone-800"
                   }`}
@@ -504,23 +552,27 @@ export function Header({
                     )}
                     <div className="min-w-0">
                       <div className="flex items-start justify-between gap-2">
-                      <Link
-                        onClick={() => setCartOpen(false)}
-                        href={`/products/${line.merchandise.product.handle}`}
-                        className="font-heading text-[17px] leading-tight text-[var(--accent)] hover:opacity-70"
-                      >
-                        {line.merchandise.product.title}
-                      </Link>
-                      <button
-                        type="button"
-                        aria-label={`Remove ${line.merchandise.product.title}`}
-                        title="Remove item"
-                        disabled={updatingLines.includes(line.id)}
-                        onClick={() => changeCartLine(line.id)}
-                        className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-full text-stone-500 transition hover:bg-red-50 hover:text-[#a95850] disabled:cursor-not-allowed disabled:opacity-40"
-                      >
-                        {updatingLines.includes(line.id) ? <LoaderCircle size={15} className="animate-spin" /> : <Trash2 size={16} strokeWidth={1.5} />}
-                      </button>
+                        <Link
+                          onClick={() => setCartOpen(false)}
+                          href={`/products/${line.merchandise.product.handle}`}
+                          className="font-heading text-[17px] leading-tight text-[var(--accent)] hover:opacity-70"
+                        >
+                          {line.merchandise.product.title}
+                        </Link>
+                        <button
+                          type="button"
+                          aria-label={`Remove ${line.merchandise.product.title}`}
+                          title="Remove item"
+                          disabled={updatingLines.includes(line.id)}
+                          onClick={() => changeCartLine(line.id)}
+                          className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-full text-stone-500 transition hover:bg-red-50 hover:text-[#a95850] disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          {updatingLines.includes(line.id) ? (
+                            <LoaderCircle size={15} className="animate-spin" />
+                          ) : (
+                            <Trash2 size={16} strokeWidth={1.5} />
+                          )}
+                        </button>
                       </div>
                       {line.merchandise.title !== "Default Title" && (
                         <p className="mt-2 text-[14px] leading-snug text-stone-500">
@@ -531,10 +583,17 @@ export function Header({
                         <button
                           type="button"
                           aria-label={`Decrease ${line.merchandise.product.title} quantity`}
-                          disabled={line.quantity <= 1 || updatingLines.includes(line.id)}
-                          onClick={() => changeCartLine(line.id, line.quantity - 1)}
+                          disabled={
+                            line.quantity <= 1 ||
+                            updatingLines.includes(line.id)
+                          }
+                          onClick={() =>
+                            changeCartLine(line.id, line.quantity - 1)
+                          }
                           className="grid h-full w-10 cursor-pointer place-items-center transition hover:bg-stone-100 disabled:cursor-not-allowed disabled:opacity-35"
-                        ><Minus size={13} /></button>
+                        >
+                          <Minus size={13} />
+                        </button>
                         <input
                           key={`${line.id}-${line.quantity}`}
                           aria-label={`${line.merchandise.product.title} quantity`}
@@ -543,34 +602,65 @@ export function Header({
                           max={20}
                           defaultValue={line.quantity}
                           disabled={updatingLines.includes(line.id)}
-                          onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter")
+                              event.currentTarget.blur();
+                          }}
                           onBlur={(event) => {
-                            const next = Math.min(20, Math.max(1, Number.parseInt(event.currentTarget.value, 10) || line.quantity));
+                            const next = Math.min(
+                              20,
+                              Math.max(
+                                1,
+                                Number.parseInt(
+                                  event.currentTarget.value,
+                                  10,
+                                ) || line.quantity,
+                              ),
+                            );
                             event.currentTarget.value = String(next);
-                            if (next !== line.quantity) changeCartLine(line.id, next);
+                            if (next !== line.quantity)
+                              changeCartLine(line.id, next);
                           }}
                           className="h-full min-w-0 flex-1 appearance-none border-x border-stone-300 bg-transparent text-center text-[14px] outline-none [font-variant-numeric:tabular-nums] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                         />
                         <button
                           type="button"
                           aria-label={`Increase ${line.merchandise.product.title} quantity`}
-                          disabled={line.quantity >= 20 || updatingLines.includes(line.id)}
-                          onClick={() => changeCartLine(line.id, line.quantity + 1)}
+                          disabled={
+                            line.quantity >= 20 ||
+                            updatingLines.includes(line.id)
+                          }
+                          onClick={() =>
+                            changeCartLine(line.id, line.quantity + 1)
+                          }
                           className="grid h-full w-10 cursor-pointer place-items-center transition hover:bg-stone-100 disabled:cursor-not-allowed disabled:opacity-35"
-                        ><Plus size={13} /></button>
+                        >
+                          <Plus size={13} />
+                        </button>
                       </div>
                       <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                        {line.merchandise.compareAtPrice && Number(line.merchandise.compareAtPrice.amount) > Number(line.merchandise.price.amount) && (
-                          <span className="text-[14px] text-stone-400 line-through">
-                            {formatMoney({ ...line.merchandise.compareAtPrice, amount: String(Number(line.merchandise.compareAtPrice.amount) * line.quantity) })}
-                          </span>
-                        )}
+                        {line.merchandise.compareAtPrice &&
+                          Number(line.merchandise.compareAtPrice.amount) >
+                            Number(line.merchandise.price.amount) && (
+                            <span className="text-[14px] text-stone-400 line-through">
+                              {formatMoney({
+                                ...line.merchandise.compareAtPrice,
+                                amount: String(
+                                  Number(
+                                    line.merchandise.compareAtPrice.amount,
+                                  ) * line.quantity,
+                                ),
+                              })}
+                            </span>
+                          )}
                         <strong className="text-[18px] font-normal text-stone-800">
                           {formatMoney(line.cost.totalAmount)}
                         </strong>
                       </div>
                       <p className="mt-1 text-[12px] text-stone-500">
-                        {line.quantity} {line.quantity === 1 ? "meter" : "meters"} × {formatMoney(line.cost.amountPerQuantity)}
+                        {line.quantity}{" "}
+                        {line.quantity === 1 ? "meter" : "meters"} ×{" "}
+                        {formatMoney(line.cost.amountPerQuantity)}
                       </p>
                     </div>
                   </div>
@@ -588,7 +678,11 @@ export function Header({
                 </button>
               </div>
             )}
-            {cartError && <p role="alert" className="mt-4 text-[13px] text-red-600">{cartError}</p>}
+            {cartError && (
+              <p role="alert" className="mt-4 text-[13px] text-red-600">
+                {cartError}
+              </p>
+            )}
           </div>
           {cart?.lines.nodes.length ? (
             <div className="border-t border-stone-300 px-7 py-6">
