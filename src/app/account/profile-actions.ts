@@ -79,13 +79,22 @@ export async function updateProfile(formData: FormData) {
 }
 
 export async function updatePassword(formData: FormData) {
-  const parsed = z.string().min(8).safeParse(formData.get("password"));
+  const parsed = z
+    .object({ password: z.string().min(8), confirmPassword: z.string().min(8) })
+    .refine((data) => data.password === data.confirmPassword)
+    .safeParse({
+      password: formData.get("password"),
+      confirmPassword: formData.get("confirmPassword"),
+    });
   let next: string;
   if (!parsed.success)
-    next = destination("error", "Password must contain at least 8 characters.");
+    next = destination(
+      "error",
+      "Passwords must match and contain at least 8 characters.",
+    );
   else
     try {
-      await updateCustomer({ password: parsed.data });
+      await updateCustomer({ password: parsed.data.password });
       next = destination("success", "Your password has been updated.");
     } catch (error) {
       next = destination(

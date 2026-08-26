@@ -222,6 +222,7 @@ export const accountProfilePage = defineType({
     phoneLabel: "Phone",
     marketingLabel: "Receive news about collections and private offers",
     passwordLabel: "New password",
+    confirmPasswordLabel: "Confirm new password",
     passwordHint:
       "Leave blank to keep your current password. Use at least 8 characters.",
     saveDetailsLabel: "Save details",
@@ -248,6 +249,7 @@ export const accountProfilePage = defineType({
     text("phoneLabel", "Phone label"),
     text("marketingLabel", "Marketing consent label"),
     text("passwordLabel", "New password label"),
+    text("confirmPasswordLabel", "Confirm new password label"),
     text("passwordHint", "Password helper text"),
     text("saveDetailsLabel", "Save details button"),
     text("savePasswordLabel", "Save password button"),

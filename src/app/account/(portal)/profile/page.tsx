@@ -42,6 +42,7 @@ export default async function ProfilePage({
     phoneLabel: "Phone",
     marketingLabel: "Receive news about collections and private offers",
     passwordLabel: "New password",
+    confirmPasswordLabel: "Confirm new password",
     passwordHint:
       "Leave blank to keep your current password. Use at least 8 characters.",
     saveDetailsLabel: "Save details",
@@ -122,9 +123,17 @@ export default async function ProfilePage({
               required
               hint={c.passwordHint}
             />
+            <Field
+              full
+              name="confirmPassword"
+              type="password"
+              label={c.confirmPasswordLabel}
+              required
+            />
             <ConfirmSubmitButton
               className={`${styles.primary} ${styles.full}`}
               message={c.confirmPasswordMessage}
+              matchFields={["password", "confirmPassword"]}
             >
               {c.savePasswordLabel}
             </ConfirmSubmitButton>

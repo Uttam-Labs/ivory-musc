@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCustomerSession } from "@/lib/customer-account/session";
 import { getAccountContent } from "@/lib/customer-account/content";
 import styles from "../account.module.css";
+import { AccountNav } from "../account-nav";
 export default async function AccountPortalLayout({
   children,
 }: {
@@ -22,16 +22,7 @@ export default async function AccountPortalLayout({
   return (
     <main className={styles.shell}>
       <div className={`${styles.inner} ${styles.portal}`}>
-        <nav className={styles.nav} aria-label={copy.ariaLabel}>
-          <Link href="/account">{copy.overviewLabel}</Link>
-          <Link href="/account/orders">{copy.ordersLabel}</Link>
-          <Link href="/account/addresses">{copy.addressesLabel}</Link>
-          <Link href="/account/profile">{copy.profileLabel}</Link>
-          <Link href="/contact">{copy.supportLabel}</Link>
-          <Link className={styles.signOut} href="/api/customer-account/logout">
-            {copy.signOutLabel}
-          </Link>
-        </nav>
+        <AccountNav labels={copy} />
         <section className={styles.content}>{children}</section>
       </div>
     </main>
