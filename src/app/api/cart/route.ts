@@ -3,12 +3,14 @@ import { z } from "zod";
 import { shopifyFetch } from "@/lib/shopify/client";
 import {
   CART_CREATE_MUTATION,
+  CART_BUYER_IDENTITY_UPDATE_MUTATION,
   CART_LINES_ADD_MUTATION,
   CART_LINES_REMOVE_MUTATION,
   CART_LINES_UPDATE_MUTATION,
   CART_QUERY,
 } from "@/lib/shopify/queries";
 import type { Cart } from "@/lib/shopify/types";
+import { getCustomerSession } from "@/lib/customer-account/session";
 
 const bodySchema = z.object({
   cartId: z.string().nullable().optional(),
@@ -84,7 +86,29 @@ export async function POST(request: Request) {
         { error: result.userErrors[0]?.message || "Cart could not be updated" },
         { status: 400 },
       );
-    return NextResponse.json({ cart: result.cart });
+    const session = await getCustomerSession();
+    let cart = result.cart;
+    if (session) {
+      const identityResult = (
+        await shopifyFetch<{ cartBuyerIdentityUpdate: MutationResult }>({
+          query: CART_BUYER_IDENTITY_UPDATE_MUTATION,
+          variables: {
+            cartId: cart.id,
+            buyerIdentity: { customerAccessToken: session.accessToken },
+          },
+          revalidate: false,
+          tags: [],
+          buyerIp: buyerIp(request),
+        })
+      ).cartBuyerIdentityUpdate;
+      if (identityResult.userErrors.length || !identityResult.cart)
+        return NextResponse.json(
+          { error: identityResult.userErrors[0]?.message || "Your account could not be connected to checkout." },
+          { status: 400 },
+        );
+      cart = identityResult.cart;
+    }
+    return NextResponse.json({ cart });
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Invalid request" },
