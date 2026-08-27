@@ -304,6 +304,8 @@ export function Header({
                 alt={title || "Logo"}
                 width={92}
                 height={86}
+                quality={95}
+                sizes="92px"
                 priority
                 style={
                   {
@@ -493,6 +495,8 @@ export function Header({
                           alt={product.featuredImage.altText || product.title}
                           width={240}
                           height={300}
+                          quality={95}
+                          sizes="(max-width: 1023px) 72px, 240px"
                           className="aspect-[4/5] w-[72px] object-cover lg:w-full"
                         />
                       )}
@@ -569,6 +573,8 @@ export function Header({
                         }
                         width={176}
                         height={220}
+                        quality={95}
+                        sizes="104px"
                         className="aspect-[4/5] w-full bg-stone-100 object-cover"
                       />
                     )}

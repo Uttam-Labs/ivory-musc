@@ -29,7 +29,7 @@ export default async function PreviewLoginPage({
     <main className={`${styles.page} preview-login-page`}>
       <section className={styles.card}>
         <div className={styles.logo}>
-          {logoUrl ? <Image src={logoUrl} width={140} height={124} alt={header?.title || "Ivory Muse"} priority /> : <span>IVORY MUSE</span>}
+          {logoUrl ? <Image src={logoUrl} width={280} height={248} quality={95} sizes="140px" alt={header?.title || "Ivory Muse"} priority /> : <span>IVORY MUSE</span>}
         </div>
         <p className={styles.eyebrow}>Private website preview</p>
         <h1>Welcome to Ivory Muse</h1>

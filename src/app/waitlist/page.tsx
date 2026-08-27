@@ -26,7 +26,7 @@ export default async function WaitlistPage() {
       <section className={styles.panel}>
         <div className={styles.brand}>
           {logoUrl ? (
-            <Image src={logoUrl} alt={header?.title || "Ivory Muse"} width={150} height={132} priority />
+            <Image src={logoUrl} alt={header?.title || "Ivory Muse"} width={300} height={264} quality={95} sizes="150px" priority />
           ) : (
             <span>IVORY MUSE</span>
           )}
