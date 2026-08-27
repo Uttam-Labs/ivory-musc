@@ -1,20 +1,25 @@
 import Link from "next/link";
 import { ArrowRight, ShoppingBag } from "lucide-react";
 import { customerAccountFetch, encodeCustomerId } from "@/lib/customer-account/client";
-import { ORDERS_QUERY } from "@/lib/customer-account/queries";
+import { ORDERS_FALLBACK_QUERY, ORDERS_QUERY } from "@/lib/customer-account/queries";
 import { getAccountContent } from "@/lib/customer-account/content";
 import { OrderList, type OrderListItem } from "./order-list";
 import styles from "../../account.module.css";
-type Data = { customer: { orders: { nodes: Omit<OrderListItem, "encodedId">[] } } };
+type Data = { customer: { orders: { nodes: Omit<OrderListItem, "encodedId">[] } } | null };
 export async function generateMetadata() {
   const content = await getAccountContent<Record<string, string>>("accountOrdersPage");
   return { title: content.seoTitle || "Orders | Ivory Muse" };
 }
 export default async function OrdersPage() {
-  const [{ customer }, cms] = await Promise.all([
-    customerAccountFetch<Data>(ORDERS_QUERY, { first: 100 }),
+  const [ordersResult, cms] = await Promise.all([
+    customerAccountFetch<Data>(ORDERS_QUERY, { first: 50 }).catch(() =>
+      customerAccountFetch<Data>(ORDERS_FALLBACK_QUERY, { first: 50 }).catch(
+        () => null,
+      ),
+    ),
     getAccountContent<Record<string, string>>("accountOrdersPage"),
   ]);
+  const customer = ordersResult?.customer;
   const c = {
     eyebrow: "Order history",
     heading: "Your orders",
@@ -33,6 +38,9 @@ export default async function OrdersPage() {
     viewDetailsLabel: "View details",
     previousLabel: "Previous",
     nextLabel: "Next",
+    errorHeading: "We couldn’t load your orders",
+    errorText: "Your order history is temporarily unavailable. Please try again.",
+    retryLabel: "Try again",
     ...cms,
   };
   return (
@@ -44,7 +52,19 @@ export default async function OrdersPage() {
         </div>
       </header>
       <div className={styles.orderList}>
-        {customer.orders.nodes.length ? (
+        {!customer ? (
+          <div className={styles.orderEmptyState}>
+            <span className={styles.orderEmptyIcon} aria-hidden="true">
+              <ShoppingBag size={28} strokeWidth={1.35} />
+            </span>
+            <h2>{c.errorHeading}</h2>
+            <p className={styles.orderEmptyText}>{c.errorText}</p>
+            <a className={styles.orderEmptyAction} href="/account/orders">
+              {c.retryLabel}
+              <ArrowRight size={17} aria-hidden="true" />
+            </a>
+          </div>
+        ) : customer.orders.nodes.length ? (
           <OrderList orders={customer.orders.nodes.map((order) => ({ ...order, encodedId: encodeCustomerId(order.id) }))} copy={c} />
         ) : (
           <div className={styles.orderEmptyState}>

@@ -14,6 +14,10 @@ export const ORDERS_QUERY = `query CustomerOrders($first: Int!, $customerAccessT
   customer(customerAccessToken: $customerAccessToken) { orders(first: $first, reverse: true, sortKey: PROCESSED_AT) { nodes { id name processedAt canceledAt financialStatus fulfillmentStatus totalPrice { amount currencyCode } } } }
 }`;
 
+export const ORDERS_FALLBACK_QUERY = `query CustomerOrdersFallback($first: Int!, $customerAccessToken: String!) {
+  customer(customerAccessToken: $customerAccessToken) { orders(first: $first, reverse: true) { nodes { id name processedAt financialStatus fulfillmentStatus totalPrice { amount currencyCode } } } }
+}`;
+
 export const ORDER_QUERY = `query CustomerOrder($customerAccessToken: String!) {
   customer(customerAccessToken: $customerAccessToken) { orders(first: 100, reverse: true) { nodes {
     id name orderNumber processedAt canceledAt cancelReason currencyCode email phone financialStatus fulfillmentStatus statusUrl
