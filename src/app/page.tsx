@@ -217,10 +217,11 @@ export default async function Home() {
                         <div className="relative mx-auto size-[45px] xl:size-[90px]">
                           <Image
                             fill
-                            src={sanityImageUrl(feature.icon, 90)}
+                            src={sanityImageUrl(feature.icon, 180)}
                             alt=""
                             className="object-contain"
                             sizes="90px"
+                            quality={90}
                           />
                         </div>
                       )}
@@ -263,10 +264,11 @@ export default async function Home() {
                 <div className="relative min-h-[280px] sm:min-h-80">
                   <Image
                     fill
-                    src={sanityImageUrl(section.image)}
+                    src={sanityImageUrl(section.image, 2400)}
                     alt={section.heading || ""}
                     className="object-cover"
                     sizes="(min-width: 768px) 55vw, 100vw"
+                    quality={90}
                   />
                 </div>
               )}
@@ -284,10 +286,11 @@ export default async function Home() {
                 {section.image && (
                   <Image
                     fill
-                    src={sanityImageUrl(section.image, 2000)}
+                    src={sanityImageUrl(section.image, 2800)}
                     alt={section.heading || ""}
                     className="object-cover object-center"
                     sizes="100vw"
+                    quality={90}
                   />
                 )}
                 <div className="absolute inset-0 bg-black/15" />
@@ -326,10 +329,11 @@ export default async function Home() {
                 >
                   <Image
                     fill
-                    src={sanityImageUrl(section.image)}
+                    src={sanityImageUrl(section.image, 2400)}
                     alt={section.heading || section.eyebrow || ""}
                     className="object-cover"
                     sizes="(min-width:768px) 50vw,100vw"
+                    quality={90}
                   />
                 </div>
               )}

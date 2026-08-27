@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "cdn.sanity.io" },
     ],
     formats: ["image/avif", "image/webp"],
+    qualities: [75, 85, 90],
   },
   poweredByHeader: false,
   reactStrictMode: true,

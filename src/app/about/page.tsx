@@ -159,7 +159,7 @@ export default async function AboutPage() {
                 <div className="relative mx-auto size-[35px] xl:size-[50px]">
                   <Image
                     fill
-                    src={sanityImageUrl(item.icon, 50)}
+                    src={sanityImageUrl(item.icon, 160)}
                     alt={item.icon.alt || ""}
                     className="object-contain"
                   />
@@ -193,7 +193,7 @@ export default async function AboutPage() {
                       <div className="relative mx-auto size-[35px] xl:size-[50px]">
                         <Image
                           fill
-                          src={sanityImageUrl(item.icon, 50)}
+                          src={sanityImageUrl(item.icon, 160)}
                           alt={item.icon.alt || ""}
                           className="object-contain"
                         />
