@@ -210,6 +210,9 @@ a {
     transition-delay: 0s;
 }
 .global-loader__mark {
+    display: grid;
+    place-items: center;
+    justify-self: center;
     color: var(--theme-red);
     font-family: var(--secondary-font);
     font-size: 5rem;
@@ -218,13 +221,14 @@ a {
     text-align: center;
 }
 .global-loader__logo {
-    width: 12rem;
-    height: 10rem;
+    width: 10rem;
+    height: 9rem;
     object-fit: contain;
     filter: brightness(0) opacity(.42);
 }
 .global-loader__line {
-    width: 8rem;
+    justify-self: center;
+    width: 10rem;
     height: 1px;
     overflow: hidden;
     background: rgba(155,80,74,.2);

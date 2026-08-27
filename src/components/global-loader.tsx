@@ -14,31 +14,35 @@ export function GlobalLoader({
   const pathname = usePathname();
   const [initialLoading, setInitialLoading] = useState(true);
   const [navigating, setNavigating] = useState(false);
-  const firstRender = useRef(true);
+  const previousPathname = useRef(pathname);
   const navigationStartedAt = useRef(0);
 
   useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-      const initialStartedAt = performance.now();
-      let timer: number | undefined;
-      const finishInitialLoad = () => {
-        const remaining = Math.max(
-          0,
-          3000 - (performance.now() - initialStartedAt),
-        );
-        timer = window.setTimeout(() => setInitialLoading(false), remaining);
-      };
+    let minimumTimePassed = false;
+    let pageLoaded = document.readyState === "complete";
+    const finishWhenReady = () => {
+      if (minimumTimePassed && pageLoaded) setInitialLoading(false);
+    };
+    const minimumTimer = window.setTimeout(() => {
+      minimumTimePassed = true;
+      pageLoaded = pageLoaded || document.readyState === "complete";
+      finishWhenReady();
+    }, 3000);
+    const handleLoad = () => {
+      pageLoaded = true;
+      finishWhenReady();
+    };
 
-      if (document.readyState === "complete") finishInitialLoad();
-      else window.addEventListener("load", finishInitialLoad, { once: true });
+    if (!pageLoaded) window.addEventListener("load", handleLoad, { once: true });
+    return () => {
+      window.clearTimeout(minimumTimer);
+      window.removeEventListener("load", handleLoad);
+    };
+  }, []);
 
-      return () => {
-        window.removeEventListener("load", finishInitialLoad);
-        if (timer) window.clearTimeout(timer);
-      };
-    }
-
+  useEffect(() => {
+    if (previousPathname.current === pathname) return;
+    previousPathname.current = pathname;
     const elapsed = performance.now() - navigationStartedAt.current;
     const timer = window.setTimeout(
       () => setNavigating(false),
