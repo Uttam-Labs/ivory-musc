@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { cache } from "react";
+import { cache, Suspense } from "react";
 import { Cormorant_Garamond, Montserrat } from "next/font/google";
 import "./globals.css";
 import "./custom.css";
 import "./responsive.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { GlobalLoader } from "@/components/global-loader";
 import { env } from "@/lib/env";
 import { isSanityConfigured } from "@/lib/env";
 import { sanityFetch } from "@/sanity/lib/client";
@@ -219,6 +220,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         suppressHydrationWarning
         className="min-h-full flex flex-col bg-[var(--background)] text-[var(--foreground)]"
       >
+        <Suspense fallback={null}>
+          <GlobalLoader />
+        </Suspense>
         <Header
           title={header?.title}
           logoUrl={header?.logo ? sanityImageUrl(header.logo, 320) : undefined}

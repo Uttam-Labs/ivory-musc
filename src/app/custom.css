@@ -189,6 +189,56 @@ a {
 .home-hero img {
     width: 100%;
 }
+
+.global-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    place-content: center;
+    gap: 1.6rem;
+    background: #fff9f3;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity .3s ease, visibility 0s linear .3s;
+}
+.global-loader--visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
+}
+.global-loader__mark {
+    color: var(--theme-red);
+    font-family: var(--secondary-font);
+    font-size: 5rem;
+    font-weight: 400;
+    line-height: 1;
+    text-align: center;
+}
+.global-loader__line {
+    width: 8rem;
+    height: 1px;
+    overflow: hidden;
+    background: rgba(155,80,74,.2);
+}
+.global-loader__line span {
+    display: block;
+    width: 45%;
+    height: 100%;
+    background: var(--theme-red);
+    animation: global-loader-line 1s cubic-bezier(.65,0,.35,1) infinite;
+}
+@keyframes global-loader-line {
+    from { transform: translateX(-110%); }
+    to { transform: translateX(245%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .global-loader__line span { animation: none; width: 100%; }
+    .global-loader { transition-duration: .01ms; }
+}
 .home-hero-media {
     object-position: center center;
     animation: hero-media-drift 16s ease-in-out infinite alternate;
