@@ -2,6 +2,7 @@ import type { SanityImageSource } from "@sanity/image-url";
 import Image from "next/image";
 import Link from "next/link";
 import { isSanityConfigured } from "@/lib/env";
+import { normalizeShopHref } from "@/lib/navigation";
 import { sanityFetch } from "@/sanity/lib/client";
 import { sanityImageUrl } from "@/sanity/lib/image";
 import { ABOUT_PAGE_QUERY } from "@/sanity/lib/queries";
@@ -57,7 +58,7 @@ function Button({
   if (!label || !href) return null;
   return (
     <Link
-      href={href}
+      href={normalizeShopHref(label, href)}
       className={`inline-flex h-[38px] items-center justify-center border px-6 text-[10px] uppercase tracking-[.1em] transition ${filled ? "border-white bg-white text-stone-800 hover:bg-transparent hover:text-white" : "border-white text-white hover:bg-white hover:text-stone-800"} ${className}`}
     >
       {label}
@@ -261,7 +262,7 @@ export default async function AboutPage() {
                     <p className="vscard-text">{card.body}</p>
                     {card.linkLabel && card.linkHref && (
                       <Link
-                        href={card.linkHref}
+                        href={normalizeShopHref(card.linkLabel, card.linkHref)}
                         className="explore--link mt-auto self-start uppercase text-[var(--accent)] underline decoration-[var(--accent)] decoration-[1px] underline-offset-[3px]"
                       >
                         {card.linkLabel}

@@ -20,7 +20,7 @@ export const productPage = defineType({
             defineField({ name: "homeLabel", title: "Breadcrumb home label", type: "string", initialValue: "Home" }),
             defineField({ name: "homeHref", title: "Breadcrumb home link", type: "string", initialValue: "/" }),
             defineField({ name: "collectionLabel", title: "Breadcrumb collection label", type: "string", initialValue: "Collections" }),
-            defineField({ name: "collectionHref", title: "Breadcrumb collection link", type: "string", initialValue: "/collections" }),
+            defineField({ name: "collectionHref", title: "Breadcrumb collection link", type: "string", initialValue: "/collections/shop" }),
             defineField({ name: "perUnitLabel", title: "Price unit label", type: "string" }),
             defineField({ name: "quantityLabel", title: "Quantity label", type: "string" }),
             defineField({ name: "totalLabel", title: "Total label", type: "string" }),

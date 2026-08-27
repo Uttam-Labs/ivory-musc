@@ -8,6 +8,7 @@ import { useMemo, useState } from "react";
 import { CollectionProductGrid } from "@/components/collection-product-grid";
 import { SiteContainer } from "@/components/site-container";
 import { formatMoney } from "@/lib/format";
+import { SHOP_HREF } from "@/lib/navigation";
 import type { Product, ProductOptionValue } from "@/lib/shopify/types";
 import styles from "@/app/products/product-details.module.css";
 
@@ -42,7 +43,7 @@ export function ProductDetails({ product, initialSelection, settings, relatedHea
   const specifications = [[settings?.compositionLabel, product.composition?.value], [settings?.weightLabel, product.fabricWeight?.value], [settings?.widthLabel, product.fabricWidth?.value], [settings?.careLabel, product.care?.value]].filter((item): item is [string, string] => Boolean(item[0] && item[1]));
   const breadcrumbItems = [
     settings?.homeLabel?.trim() ? { label: settings.homeLabel.trim(), href: settings.homeHref?.trim() || "/" } : null,
-    settings?.collectionLabel?.trim() ? { label: settings.collectionLabel.trim(), href: settings.collectionHref?.trim() || "/collections" } : null,
+    settings?.collectionLabel?.trim() ? { label: settings.collectionLabel.trim(), href: SHOP_HREF } : null,
   ].filter((item): item is { label: string; href: string } => Boolean(item));
 
   function choose(name: string, value: string) {

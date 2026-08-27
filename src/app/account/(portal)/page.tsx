@@ -67,7 +67,7 @@ export default async function AccountPage() {
           </h1>
           <p className={styles.portalIntro}>{c.intro}</p>
         </div>
-        <Link className={styles.secondary} href="/collections">
+        <Link className={styles.secondary} href="/collections/shop">
           {c.shopLabel}
         </Link>
       </header>

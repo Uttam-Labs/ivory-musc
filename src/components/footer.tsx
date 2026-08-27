@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { normalizeShopHref } from "@/lib/navigation";
 import { FacebookIcon, InstagramIcon } from "./social-icons";
 type Column = {
   heading?: string;
@@ -42,7 +43,7 @@ export function Footer({
                     <Link
                       className="transition-opacity hover:opacity-60"
                       key={link.href || i}
-                      href={link.href}
+                      href={normalizeShopHref(link.label, link.href)}
                     >
                       {link.label}
                     </Link>

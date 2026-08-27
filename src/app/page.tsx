@@ -5,6 +5,7 @@ import { CollectionSlider } from "@/components/collection-slider";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { isSanityConfigured, isShopifyConfigured } from "@/lib/env";
 import { getCollection } from "@/lib/shopify";
+import { normalizeShopHref } from "@/lib/navigation";
 import { sanityFetch } from "@/sanity/lib/client";
 import { sanityImageUrl } from "@/sanity/lib/image";
 import { HOME_PAGE_QUERY } from "@/sanity/lib/queries";
@@ -58,7 +59,7 @@ function Button({
     variant === "solid" ? solid : variant === "primary" ? primary : secondary;
   return (
     <Link
-      href={href}
+      href={normalizeShopHref(label, href)}
       className={`mt-6 inline-flex h-[38px] items-center justify-center border px-7 text-center text-[10px] font-medium uppercase tracking-[.12em] transition-all duration-300 ${buttonStyle} ${className}`}
     >
       {label}

@@ -6,6 +6,7 @@ import { LoaderCircle, Menu, Minus, Plus, Trash2, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { formatMoney } from "@/lib/format";
+import { normalizeShopHref } from "@/lib/navigation";
 import type { Cart, Product } from "@/lib/shopify/types";
 import { AccountIcon, CartIcon, SearchIcon } from "./header-icons";
 
@@ -276,7 +277,7 @@ export function Header({
                       : "border-transparent hover:border-current/50 hover:opacity-65"
                   }`}
                   key={item.href}
-                  href={item.href}
+                  href={normalizeShopHref(item.label, item.href)}
                 >
                   {item.label}
                 </Link>
@@ -426,7 +427,7 @@ export function Header({
                       : "text-stone-800"
                   }`}
                   key={item.href}
-                  href={item.href}
+                  href={normalizeShopHref(item.label, item.href)}
                 >
                   {item.label}
                 </Link>
