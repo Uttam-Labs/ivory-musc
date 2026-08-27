@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { ArrowRight, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ArrowRight, ChevronDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { formatMoney } from "@/lib/format";
 import styles from "../../account.module.css";
 
@@ -32,6 +32,20 @@ type Copy = {
 
 const PAGE_SIZE = 8;
 const readable = (value: string) => value.replaceAll("_", " ").toLowerCase();
+const financialTone = (status: string) =>
+  ["PAID", "PARTIALLY_REFUNDED"].includes(status)
+    ? "success"
+    : ["REFUNDED", "VOIDED"].includes(status)
+      ? "neutral"
+      : "warning";
+const fulfillmentTone = (status: string, cancelled: boolean) =>
+  cancelled
+    ? "danger"
+    : status === "FULFILLED"
+      ? "success"
+      : ["IN_PROGRESS", "PARTIALLY_FULFILLED", "SCHEDULED"].includes(status)
+        ? "info"
+        : "warning";
 
 export function OrderList({ orders, copy }: { orders: OrderListItem[]; copy: Copy }) {
   const [query, setQuery] = useState("");
@@ -61,12 +75,16 @@ export function OrderList({ orders, copy }: { orders: OrderListItem[]; copy: Cop
           <span className="sr-only">{copy.searchPlaceholder}</span>
           <input value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder={copy.searchPlaceholder} />
         </label>
-        <select value={filter} onChange={(event) => changeFilter(event.target.value)} aria-label="Filter orders">
-          <option value="all">{copy.filterAll}</option>
-          <option value="open">{copy.filterOpen}</option>
-          <option value="fulfilled">{copy.filterFulfilled}</option>
-          <option value="cancelled">{copy.filterCancelled}</option>
-        </select>
+        <label className={styles.orderFilter}>
+          <span className="sr-only">Filter orders</span>
+          <select value={filter} onChange={(event) => changeFilter(event.target.value)}>
+            <option value="all">{copy.filterAll}</option>
+            <option value="open">{copy.filterOpen}</option>
+            <option value="fulfilled">{copy.filterFulfilled}</option>
+            <option value="cancelled">{copy.filterCancelled}</option>
+          </select>
+          <ChevronDown size={18} strokeWidth={1.6} aria-hidden="true" />
+        </label>
       </div>
       {visible.length ? (
         <div className={styles.orderCards}>
@@ -79,8 +97,8 @@ export function OrderList({ orders, copy }: { orders: OrderListItem[]; copy: Cop
                   <span>{new Intl.DateTimeFormat("en-AU", { dateStyle: "medium" }).format(new Date(order.processedAt))}</span>
                 </div>
                 <div className={styles.orderBadges}>
-                  <span className={styles.orderBadge}>{readable(order.financialStatus)}</span>
-                  <span className={`${styles.orderBadge} ${order.canceledAt ? styles.orderBadgeDanger : ""}`}>{fulfilment}</span>
+                  <span className={`${styles.orderBadge} ${styles[`orderBadge_${financialTone(order.financialStatus)}`]}`}>{readable(order.financialStatus)}</span>
+                  <span className={`${styles.orderBadge} ${styles[`orderBadge_${fulfillmentTone(order.fulfillmentStatus, Boolean(order.canceledAt))}`]}`}>{fulfilment}</span>
                 </div>
                 <strong className={styles.orderTotal}>{formatMoney(order.totalPrice)}</strong>
                 <span className={styles.orderView}>{copy.viewDetailsLabel}<ArrowRight size={17} aria-hidden="true" /></span>
