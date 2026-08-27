@@ -298,7 +298,7 @@ export function Header({
       <header
         className={`${overlaysHero ? "absolute text-white" : "relative text-[var(--foreground)]"} z-50 w-full`}
       >
-        <div className="mx-auto grid h-[100px] max-w-[1920] px-6 sm:px-12 xl:px-24 grid-cols-[1fr_auto_1fr] items-center">
+        <div className="mx-auto grid h-[88px] lg:h-[100px] max-w-[1920] px-6 sm:px-12 xl:px-24 grid-cols-[1fr_auto_1fr] items-center">
           <nav className="hidden header__nav items-center gap-7 text-[10px] lg:flex">
             {navigation.map((item) =>
               item.href && item.label ? (
@@ -338,7 +338,7 @@ export function Header({
           )}
           <Link
             href="/"
-            className="heading-logo-link flex h-[76px] w-[110px] min-w-[110px] max-w-[110px] self-center items-center justify-center overflow-visible"
+            className="heading-logo-link flex h-[68px] w-[100px] min-w-[100px] max-w-[100px] self-center items-center justify-center overflow-visible lg:h-[76px] lg:w-[110px] lg:min-w-[110px] lg:max-w-[110px]"
           >
             {logoUrl ? (
               <Image
@@ -407,7 +407,7 @@ export function Header({
               >
                 <CartIcon className="h-[19px] w-[17px]" />
                 {cart?.totalQuantity ? (
-                  <span className="pointer-events-none absolute right-[4px] top-[-2px] z-10 flex h-[18px] min-w-[18px] items-center justify-center rounded-full border border-[#fff9f3] bg-[#a95850] px-[4px] text-[11px] font-medium leading-none text-white shadow-[0_2px_7px_rgba(80,35,31,.25)] [font-variant-numeric:tabular-nums]">
+                  <span className="pointer-events-none absolute right-[-4px] top-[-7px] z-10 flex h-[18px] min-w-[18px] items-center justify-center rounded-full border border-[#fff9f3] bg-[#a95850] px-[4px] text-[11px] font-medium leading-none text-white shadow-[0_2px_7px_rgba(80,35,31,.25)] [font-variant-numeric:tabular-nums] lg:right-[2px] lg:top-[-2px]">
                     {cart.totalQuantity}
                   </span>
                 ) : null}
