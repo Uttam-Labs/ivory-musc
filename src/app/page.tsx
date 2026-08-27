@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CollectionSlider } from "@/components/collection-slider";
 import { NewsletterForm } from "@/components/newsletter-form";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import { isSanityConfigured, isShopifyConfigured } from "@/lib/env";
 import { getCollection } from "@/lib/shopify";
 import { sanityFetch } from "@/sanity/lib/client";
@@ -81,6 +82,7 @@ export default async function Home() {
   const products = collection?.products.nodes || [];
   return (
     <main className="home-page flex-1 overflow-hidden bg-[#fff9f3]">
+      <ScrollReveal />
       {sections.map((section, index) => {
         const key = section._key || index;
         if (section._type === "hero")

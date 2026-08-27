@@ -220,25 +220,32 @@ a {
     to { object-position: 52% center; }
 }
 
-@supports (animation-timeline: view()) {
-    .home-page > section:not(.home-hero) {
-        animation: luxe-section-reveal both cubic-bezier(.22,1,.36,1);
-        animation-timeline: view();
-        animation-range: entry 5% cover 24%;
-    }
-    @keyframes luxe-section-reveal {
-        from { opacity: 0; transform: translateY(32px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+.scroll-reveal-enabled [data-scroll-reveal] {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+        opacity .85s cubic-bezier(.22,1,.36,1),
+        transform .95s cubic-bezier(.22,1,.36,1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+}
+.scroll-reveal-enabled [data-scroll-reveal].is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+    will-change: auto;
 }
 
-@media (hover: hover) and (pointer: fine) {
-    .home-page :is(.home-split-image,.home-campaign,.home-newsletter) img {
-        transition: transform 1.1s cubic-bezier(.22,1,.36,1);
-    }
-    .home-page :is(.home-split-image,.home-campaign,.home-newsletter):hover img {
-        transform: scale(1.018);
-    }
+/* Product and editorial imagery stays still on hover. */
+.home-page img,
+.collection-page img,
+.blog-page img,
+.product-card img {
+    scale: 1 !important;
+}
+.collection-page .cardImage,
+.blog-page .cardImage,
+[class*="cardImage"] {
+    transform: none !important;
 }
 
 @media (max-width: 640px) {
@@ -254,9 +261,13 @@ a {
 
 @media (prefers-reduced-motion: reduce) {
     .home-hero-media,
-    .home-hero-content,
-    .home-page > section:not(.home-hero) {
+    .home-hero-content {
         animation: none !important;
+    }
+    .scroll-reveal-enabled [data-scroll-reveal] {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
     }
     .home-page img {
         transition: none !important;

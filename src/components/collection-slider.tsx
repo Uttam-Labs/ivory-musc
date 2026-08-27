@@ -63,7 +63,7 @@ export function CollectionSlider({
                         fill
                         src={p.featuredImage.url}
                         alt={p.featuredImage.altText || p.title}
-                        className="object-cover transition-transform duration-700 hover:scale-[1.025]"
+                        className="object-cover"
                         sizes="(min-width:1024px) 29vw,84vw"
                         quality={90}
                       />
