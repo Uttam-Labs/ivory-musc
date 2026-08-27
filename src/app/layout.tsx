@@ -6,6 +6,7 @@ import "./custom.css";
 import "./responsive.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import { env } from "@/lib/env";
 import { isSanityConfigured } from "@/lib/env";
 import { sanityFetch } from "@/sanity/lib/client";
@@ -232,6 +233,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           showCart={header?.showCart}
           cartHref={header?.cartHref}
         />
+        <ScrollReveal />
         {children}
         <Footer
           contactHeading={footer?.contactHeading}
