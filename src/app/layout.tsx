@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { cache, Suspense } from "react";
 import Image from "next/image";
+import Script from "next/script";
 import { Cormorant_Garamond, Montserrat } from "next/font/google";
 import "./globals.css";
 import "./custom.css";
@@ -215,15 +216,17 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       }
       suppressHydrationWarning
     >
-      <head>
-        {process.env.NODE_ENV === "development" && (
-          <script dangerouslySetInnerHTML={{ __html: extensionCleanup }} />
-        )}
-      </head>
       <body
         suppressHydrationWarning
         className="min-h-full flex flex-col bg-[var(--background)] text-[var(--foreground)]"
       >
+        {process.env.NODE_ENV === "development" && (
+          <Script
+            id="development-extension-cleanup"
+            strategy="beforeInteractive"
+            dangerouslySetInnerHTML={{ __html: extensionCleanup }}
+          />
+        )}
         <Suspense
           fallback={
             <div
