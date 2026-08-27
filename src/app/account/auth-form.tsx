@@ -13,7 +13,6 @@ import type {
   RegisterContent,
 } from "@/lib/customer-account/content";
 import styles from "./account.module.css";
-import { AccountFeedback } from "./account-feedback";
 const initial: AuthState = {};
 function Submit({ children }: { children: React.ReactNode }) {
   return (
@@ -26,10 +25,6 @@ export function LoginForm({ content }: { content: LoginContent }) {
   const [state, action, pending] = useActionState(loginAction, initial);
   return (
     <form action={action} className={styles.authForm}>
-      <AccountFeedback
-        key={state.error || "login-feedback"}
-        error={state.error}
-      />
       <Field
         name="email"
         label={content.emailLabel}
@@ -42,6 +37,7 @@ export function LoginForm({ content }: { content: LoginContent }) {
         type="password"
         autoComplete="current-password"
       />
+      <InlineFeedback error={state.error} />
       <div className={styles.formMeta}>
         <label className={styles.check}>
           <input type="checkbox" name="remember" /> {content.rememberLabel}
@@ -62,10 +58,6 @@ export function RegisterForm({ content }: { content: RegisterContent }) {
   const [state, action, pending] = useActionState(registerAction, initial);
   return (
     <form action={action} className={styles.authForm}>
-      <AccountFeedback
-        key={state.error || "register-feedback"}
-        error={state.error}
-      />
       <div className={styles.authGrid}>
         <Field
           name="firstName"
@@ -91,6 +83,7 @@ export function RegisterForm({ content }: { content: RegisterContent }) {
         type="password"
         autoComplete="new-password"
       />
+      <InlineFeedback error={state.error} />
       <label className={styles.check}>
         <input type="checkbox" name="acceptsMarketing" />{" "}
         {content.marketingLabel}
@@ -107,22 +100,38 @@ export function RecoverForm({ content }: { content: RecoveryContent }) {
   const [state, action, pending] = useActionState(recoverAction, initial);
   return (
     <form action={action} className={styles.authForm}>
-      <AccountFeedback
-        key={state.error || state.success || "recover-feedback"}
-        error={state.error}
-        success={state.success}
-      />
       <Field
         name="email"
         label={content.emailLabel}
         type="email"
         autoComplete="email"
       />
+      <InlineFeedback error={state.error} success={state.success} />
       <Submit>{pending ? content.submittingLabel : content.submitLabel}</Submit>
       <p className={styles.switchText}>
         <Link href="/account/login">{content.backLabel}</Link>
       </p>
     </form>
+  );
+}
+function InlineFeedback({
+  error,
+  success,
+}: {
+  error?: string;
+  success?: string;
+}) {
+  const message = error || success;
+  if (!message) return null;
+  return (
+    <p
+      className={`${styles.authFeedback} ${error ? styles.authFeedbackError : styles.authFeedbackSuccess}`}
+      role={error ? "alert" : "status"}
+      aria-live="polite"
+    >
+      <span aria-hidden="true">{error ? "!" : "✓"}</span>
+      {message}
+    </p>
   );
 }
 function PasswordStrengthField({ content }: { content: RegisterContent }) {
