@@ -197,22 +197,31 @@ function PasswordStrengthField({
         autoComplete="new-password"
         value={password}
         onChange={(event) => setPassword(event.target.value)}
-        aria-describedby={error ? "password-strength password-error" : "password-strength"}
+        aria-describedby={
+          error && password
+            ? "password-error password-strength"
+            : error
+              ? "password-error"
+              : password
+                ? "password-strength"
+                : undefined
+        }
         aria-invalid={Boolean(error)}
         className={error ? styles.invalidInput : undefined}
       />
       {error && <FieldError id="password-error" message={error} />}
-      <div
-        id="password-strength"
-        className={styles.passwordStrength}
-        data-score={password ? score : 0}
-        onMouseEnter={() => setTooltipOpen(true)}
-        onMouseLeave={() => setTooltipOpen(false)}
-        onBlur={(event) => {
-          if (!event.currentTarget.contains(event.relatedTarget))
-            setTooltipOpen(false);
-        }}
-      >
+      {password && (
+        <div
+          id="password-strength"
+          className={styles.passwordStrength}
+          data-score={score}
+          onMouseEnter={() => setTooltipOpen(true)}
+          onMouseLeave={() => setTooltipOpen(false)}
+          onBlur={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget))
+              setTooltipOpen(false);
+          }}
+        >
         <div className={styles.strengthBarRow}>
           <div className={styles.strengthTrack} aria-hidden="true">
             <span
@@ -251,7 +260,8 @@ function PasswordStrengthField({
             ))}
           </ul>
         </div>
-      </div>
+        </div>
+      )}
     </div>
   );
 }
