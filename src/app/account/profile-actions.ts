@@ -22,6 +22,28 @@ type UpdateResult = {
 const mutation = `mutation UpdateCustomer($customerAccessToken:String!,$customer:CustomerUpdateInput!){customerUpdate(customerAccessToken:$customerAccessToken,customer:$customer){customer{id}customerAccessToken{accessToken expiresAt}customerUserErrors{message}}}`;
 const destination = (type: "success" | "error", message: string) =>
   `/account/profile?${type}=${encodeURIComponent(message)}`;
+const countryDialCodes: Record<string, string> = {
+  AU: "+61",
+  BD: "+880",
+  IN: "+91",
+  NZ: "+64",
+  GB: "+44",
+  US: "+1",
+  CA: "+1",
+  SG: "+65",
+  AE: "+971",
+  PK: "+92",
+  LK: "+94",
+  NP: "+977",
+};
+const normalizePhone = (phone: string, countryIso: string) => {
+  const value = phone.trim();
+  if (!value) return "";
+  const digits = value.replace(/\D/g, "");
+  if (value.startsWith("+")) return `+${digits}`;
+  const code = countryDialCodes[countryIso] || "+61";
+  return `${code}${digits.replace(/^0+/, "")}`;
+};
 
 async function updateCustomer(input: Record<string, unknown>) {
   const session = await getCustomerSession();
@@ -47,6 +69,7 @@ async function updateCustomer(input: Record<string, unknown>) {
 }
 
 export async function updateProfile(formData: FormData) {
+  const phoneCountry = String(formData.get("phoneCountry") || "AU");
   const parsed = z
     .object({
       firstName: z.string().trim().min(1),
@@ -58,7 +81,7 @@ export async function updateProfile(formData: FormData) {
       firstName: formData.get("firstName"),
       lastName: formData.get("lastName"),
       email: formData.get("email"),
-      phone: formData.get("phone"),
+      phone: normalizePhone(String(formData.get("phone") || ""), phoneCountry),
     });
   let next: string;
   if (!parsed.success)

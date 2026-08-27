@@ -12,8 +12,46 @@ type Customer = {
   email: string;
   phone?: string;
   acceptsMarketing: boolean;
+  defaultAddress?: { countryCodeV2?: string };
 };
 type Data = { customer: Customer };
+const phoneCountries = [
+  { iso: "AU", name: "Australia", dial: "61" },
+  { iso: "BD", name: "Bangladesh", dial: "880" },
+  { iso: "IN", name: "India", dial: "91" },
+  { iso: "NZ", name: "New Zealand", dial: "64" },
+  { iso: "GB", name: "United Kingdom", dial: "44" },
+  { iso: "US", name: "United States", dial: "1" },
+  { iso: "CA", name: "Canada", dial: "1" },
+  { iso: "SG", name: "Singapore", dial: "65" },
+  { iso: "AE", name: "United Arab Emirates", dial: "971" },
+  { iso: "PK", name: "Pakistan", dial: "92" },
+  { iso: "LK", name: "Sri Lanka", dial: "94" },
+  { iso: "NP", name: "Nepal", dial: "977" },
+] as const;
+
+function phoneDefaults(phone?: string, addressCountry?: string) {
+  const digits = (phone || "").replace(/\D/g, "");
+  const phoneMatches = phone?.startsWith("+")
+    ? [...phoneCountries]
+        .sort((a, b) => b.dial.length - a.dial.length)
+        .filter((country) => digits.startsWith(country.dial))
+    : [];
+  const phoneCountry =
+    phoneMatches.find((country) => country.iso === addressCountry) ||
+    phoneMatches[0];
+  const country =
+    phoneCountry ||
+    phoneCountries.find((item) => item.iso === addressCountry) ||
+    phoneCountries[0];
+  return {
+    countryIso: country.iso,
+    number:
+      phoneCountry && digits.startsWith(phoneCountry.dial)
+        ? digits.slice(phoneCountry.dial.length)
+        : phone || "",
+  };
+}
 export async function generateMetadata() {
   const c =
     await getAccountContent<Record<string, string>>("accountProfilePage");
@@ -41,6 +79,7 @@ export default async function ProfilePage({
     lastNameLabel: "Last name",
     emailLabel: "Email address",
     phoneLabel: "Phone",
+    countryCodeLabel: "Country code",
     marketingLabel: "Receive news about collections and private offers",
     passwordLabel: "New password",
     confirmPasswordLabel: "Confirm new password",
@@ -53,6 +92,10 @@ export default async function ProfilePage({
       "Update your account password? You will use the new password next time you sign in.",
     ...cms,
   };
+  const phone = phoneDefaults(
+    customer.phone,
+    customer.defaultAddress?.countryCodeV2,
+  );
   return (
     <>
       <header className={styles.header}>
@@ -92,12 +135,11 @@ export default async function ProfilePage({
               value={customer.email}
               required
             />
-            <Field
-              full
-              name="phone"
-              type="tel"
+            <PhoneField
               label={c.phoneLabel}
-              value={customer.phone}
+              countryCodeLabel={c.countryCodeLabel}
+              countryIso={phone.countryIso}
+              value={phone.number}
             />
             <label className={`${styles.check} ${styles.full}`}>
               <input
@@ -144,6 +186,44 @@ export default async function ProfilePage({
         </article>
       </div>
     </>
+  );
+}
+function PhoneField({
+  label,
+  countryCodeLabel,
+  countryIso,
+  value,
+}: {
+  label: string;
+  countryCodeLabel: string;
+  countryIso: string;
+  value: string;
+}) {
+  return (
+    <div className={`${styles.field} ${styles.full}`}>
+      <label htmlFor="phone">{label}</label>
+      <div className={styles.phoneField}>
+        <select
+          aria-label={countryCodeLabel}
+          name="phoneCountry"
+          defaultValue={countryIso}
+        >
+          {phoneCountries.map((country) => (
+            <option key={country.iso} value={country.iso}>
+              {country.name} (+{country.dial})
+            </option>
+          ))}
+        </select>
+        <input
+          id="phone"
+          name="phone"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel-national"
+          defaultValue={value}
+        />
+      </div>
+    </div>
   );
 }
 function Field({
