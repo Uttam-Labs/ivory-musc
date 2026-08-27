@@ -33,8 +33,10 @@ type Copy = {
 const PAGE_SIZE = 8;
 const readable = (value: string) => value.replaceAll("_", " ").toLowerCase();
 const financialTone = (status: string) =>
-  ["PAID", "PARTIALLY_REFUNDED"].includes(status)
-    ? "success"
+  status === "PAID"
+    ? "paid"
+    : status === "PARTIALLY_REFUNDED"
+      ? "info"
     : ["REFUNDED", "VOIDED"].includes(status)
       ? "neutral"
       : "warning";

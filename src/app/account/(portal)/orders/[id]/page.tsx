@@ -17,7 +17,7 @@ type Order = { id: string; name: string; orderNumber: number; processedAt: strin
 type Data = { customer: { orders: { nodes: Order[] } } | null };
 const readable = (value: string) => value.replaceAll("_", " ").toLowerCase();
 const hasMoney = (money?: Money) => Boolean(money && Number(money.amount) > 0);
-const financialTone = (status: string) => ["PAID", "PARTIALLY_REFUNDED"].includes(status) ? "success" : ["REFUNDED", "VOIDED"].includes(status) ? "neutral" : "warning";
+const financialTone = (status: string) => status === "PAID" ? "paid" : status === "PARTIALLY_REFUNDED" ? "info" : ["REFUNDED", "VOIDED"].includes(status) ? "neutral" : "warning";
 const fulfillmentTone = (status: string, cancelled: boolean) => cancelled ? "danger" : status === "FULFILLED" ? "success" : ["IN_PROGRESS", "PARTIALLY_FULFILLED", "SCHEDULED"].includes(status) ? "info" : "warning";
 
 export default async function OrderPage({ params }: { params: Promise<{ id: string }> }) {
