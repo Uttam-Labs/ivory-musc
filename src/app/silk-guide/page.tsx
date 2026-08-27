@@ -12,19 +12,15 @@ export default function SilkGuidePage() {
   return (
     <main className={styles.page}>
       <section className={styles.inner}>
-        <p className={styles.eyebrow}>The Ivory Muse journal</p>
-        <h1 className={styles.title}>Silk Guide<br />Coming Soon</h1>
+        <p className={styles.eyebrow}>Ivory Muse</p>
+        <h1 className={styles.title}>Silk Guide — Coming Soon</h1>
         <p className={styles.copy}>
-          We are thoughtfully creating a guide to silk qualities, finishes,
-          care and craftsmanship—designed to help you choose and preserve each
-          piece with confidence.
+          Our guide to silk qualities, care and craftsmanship is coming soon.
         </p>
-        <div className={styles.divider} aria-hidden="true"><span>IM</span></div>
         <div className={styles.actions}>
           <Link className={styles.primary} href="/collections/shop">Explore our silks</Link>
           <Link className={styles.secondary} href="/">Return home</Link>
         </div>
-        <p className={styles.note}>A considered resource is being woven.</p>
       </section>
     </main>
   );
