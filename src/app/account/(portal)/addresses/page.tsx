@@ -35,6 +35,7 @@ type Data = {
     addresses: { nodes: Address[] };
   } | null;
 };
+const stableAddressId = (id: string) => id.split("?", 1)[0];
 export async function generateMetadata() {
   const content = await getAccountContent<Record<string, string>>(
     "accountAddressesPage",
@@ -86,7 +87,7 @@ export default async function AddressesPage({
     try {
       const addressId = decodeCustomerId(params.edit);
       edit = customer.addresses.nodes.find(
-        (address) => address.id === addressId,
+        (address) => stableAddressId(address.id) === stableAddressId(addressId),
       );
     } catch {
       edit = undefined;
