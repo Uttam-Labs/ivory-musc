@@ -313,17 +313,16 @@ export function Header({
               </button>
             )}
             {showAccount && accountHref && (
-              <span className="flex items-center">
-                {customerName && (
-                  <Link
-                    href={accountHref}
-                    aria-label={`Account for ${customerName}`}
-                    title={customerName}
-                    className="-mr-1 grid size-[30px] place-items-center rounded-full bg-[#9b504a] text-[13px] font-medium uppercase leading-none text-white shadow-sm"
-                  >
-                    {customerName.trim().charAt(0)}
-                  </Link>
-                )}
+              customerName ? (
+                <Link
+                  href={accountHref}
+                  aria-label={`Account for ${customerName}`}
+                  title={customerName}
+                  className="mx-[5px] grid size-[30px] place-items-center rounded-full bg-[#9b504a] text-[13px] font-medium uppercase leading-none text-white shadow-sm"
+                >
+                  {customerName.trim().charAt(0)}
+                </Link>
+              ) : (
                 <Link
                   className={`${iconClass} header--icon icon-account`}
                   href={accountHref}
@@ -331,7 +330,7 @@ export function Header({
                 >
                   <AccountIcon className="size-[19px]" />
                 </Link>
-              </span>
+              )
             )}
             {showCart && (
               <button
