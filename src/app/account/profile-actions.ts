@@ -4,6 +4,11 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import {
+  getCountries,
+  getCountryCallingCode,
+  type CountryCode,
+} from "libphonenumber-js";
 import { customerAccountFetch } from "@/lib/customer-account/client";
 import {
   CUSTOMER_SESSION_COOKIE,
@@ -22,26 +27,16 @@ type UpdateResult = {
 const mutation = `mutation UpdateCustomer($customerAccessToken:String!,$customer:CustomerUpdateInput!){customerUpdate(customerAccessToken:$customerAccessToken,customer:$customer){customer{id}customerAccessToken{accessToken expiresAt}customerUserErrors{message}}}`;
 const destination = (type: "success" | "error", message: string) =>
   `/account/profile?${type}=${encodeURIComponent(message)}`;
-const countryDialCodes: Record<string, string> = {
-  AU: "+61",
-  BD: "+880",
-  IN: "+91",
-  NZ: "+64",
-  GB: "+44",
-  US: "+1",
-  CA: "+1",
-  SG: "+65",
-  AE: "+971",
-  PK: "+92",
-  LK: "+94",
-  NP: "+977",
-};
+const supportedPhoneCountries = new Set<string>(getCountries());
 const normalizePhone = (phone: string, countryIso: string) => {
   const value = phone.trim();
   if (!value) return "";
   const digits = value.replace(/\D/g, "");
   if (value.startsWith("+")) return `+${digits}`;
-  const code = countryDialCodes[countryIso] || "+61";
+  const country = supportedPhoneCountries.has(countryIso)
+    ? (countryIso as CountryCode)
+    : "AU";
+  const code = `+${getCountryCallingCode(country)}`;
   return `${code}${digits.replace(/^0+/, "")}`;
 };
 

@@ -1,4 +1,8 @@
 import { customerAccountFetch } from "@/lib/customer-account/client";
+import {
+  getCountries,
+  getCountryCallingCode,
+} from "libphonenumber-js";
 import { getAccountContent } from "@/lib/customer-account/content";
 import { PROFILE_QUERY } from "@/lib/customer-account/queries";
 import { updatePassword, updateProfile } from "../../profile-actions";
@@ -15,20 +19,14 @@ type Customer = {
   defaultAddress?: { countryCodeV2?: string };
 };
 type Data = { customer: Customer };
-const phoneCountries = [
-  { iso: "AU", name: "Australia", dial: "61" },
-  { iso: "BD", name: "Bangladesh", dial: "880" },
-  { iso: "IN", name: "India", dial: "91" },
-  { iso: "NZ", name: "New Zealand", dial: "64" },
-  { iso: "GB", name: "United Kingdom", dial: "44" },
-  { iso: "US", name: "United States", dial: "1" },
-  { iso: "CA", name: "Canada", dial: "1" },
-  { iso: "SG", name: "Singapore", dial: "65" },
-  { iso: "AE", name: "United Arab Emirates", dial: "971" },
-  { iso: "PK", name: "Pakistan", dial: "92" },
-  { iso: "LK", name: "Sri Lanka", dial: "94" },
-  { iso: "NP", name: "Nepal", dial: "977" },
-] as const;
+const countryNames = new Intl.DisplayNames(["en"], { type: "region" });
+const phoneCountries = getCountries()
+  .map((iso) => ({
+    iso,
+    name: countryNames.of(iso) || iso,
+    dial: getCountryCallingCode(iso),
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));
 
 function phoneDefaults(phone?: string, addressCountry?: string) {
   const digits = (phone || "").replace(/\D/g, "");
@@ -43,7 +41,7 @@ function phoneDefaults(phone?: string, addressCountry?: string) {
   const country =
     phoneCountry ||
     phoneCountries.find((item) => item.iso === addressCountry) ||
-    phoneCountries[0];
+    phoneCountries.find((item) => item.iso === "AU") || phoneCountries[0];
   return {
     countryIso: country.iso,
     number:
