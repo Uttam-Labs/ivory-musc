@@ -38,9 +38,11 @@ export function AccountNav({ labels }: { labels: Labels }) {
           </Link>
         );
       })}
-      <Link className={styles.signOut} href="/api/customer-account/logout">
-        {labels.signOutLabel}
-      </Link>
+      <form action="/api/customer-account/logout" method="post">
+        <button className={styles.signOut} type="submit">
+          {labels.signOutLabel}
+        </button>
+      </form>
     </nav>
   );
 }
