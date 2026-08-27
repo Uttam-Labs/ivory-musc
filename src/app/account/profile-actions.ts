@@ -61,10 +61,13 @@ async function updateCustomer(input: Record<string, unknown>) {
     : session.expiresAt;
   const firstName =
     typeof input.firstName === "string" ? input.firstName : session.firstName;
+  const remember = session.remember !== false;
   (await cookies()).set(
     CUSTOMER_SESSION_COOKIE,
-    encryptSession({ accessToken, firstName, expiresAt }),
-    { ...customerCookieOptions, expires: new Date(expiresAt) },
+    encryptSession({ accessToken, firstName, remember, expiresAt }),
+    remember
+      ? { ...customerCookieOptions, expires: new Date(expiresAt) }
+      : customerCookieOptions,
   );
 }
 

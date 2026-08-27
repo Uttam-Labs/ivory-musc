@@ -22,7 +22,11 @@ type TokenPayload = {
   };
 };
 const TOKEN_MUTATION = `mutation Login($input:CustomerAccessTokenCreateInput!){customerAccessTokenCreate(input:$input){customerAccessToken{accessToken expiresAt}customerUserErrors{message}}}`;
-async function createSession(email: string, password: string) {
+async function createSession(
+  email: string,
+  password: string,
+  remember: boolean,
+) {
   const data = await storefrontCustomerFetch<TokenPayload>(TOKEN_MUTATION, {
     input: { email, password },
   });
@@ -44,8 +48,10 @@ async function createSession(email: string, password: string) {
   const expiresAt = new Date(result.customerAccessToken.expiresAt).getTime();
   (await cookies()).set(
     CUSTOMER_SESSION_COOKIE,
-    encryptSession({ accessToken, firstName, expiresAt }),
-    { ...customerCookieOptions, expires: new Date(expiresAt) },
+    encryptSession({ accessToken, firstName, remember, expiresAt }),
+    remember
+      ? { ...customerCookieOptions, expires: new Date(expiresAt) }
+      : customerCookieOptions,
   );
 }
 
@@ -57,6 +63,7 @@ export async function loginAction(
     .trim()
     .toLowerCase();
   const password = String(formData.get("password") || "");
+  const remember = formData.get("remember") === "on";
   const fieldErrors: Record<string, string> = {};
   if (!email) fieldErrors.email = "Please enter your email address.";
   else if (!EMAIL_PATTERN.test(email))
@@ -64,7 +71,7 @@ export async function loginAction(
   if (!password) fieldErrors.password = "Please enter your password.";
   if (Object.keys(fieldErrors).length) return { fieldErrors };
   try {
-    await createSession(email, password);
+    await createSession(email, password, remember);
   } catch (error) {
     if (error instanceof CustomerCredentialsError)
       return { fieldErrors: { password: error.message } };
@@ -135,7 +142,7 @@ export async function registerAction(
         result.customerUserErrors[0]?.message ||
           "Account could not be created.",
       );
-    await createSession(email, password);
+    await createSession(email, password, true);
   } catch (error) {
     return {
       error: error instanceof Error ? error.message : "Registration failed.",

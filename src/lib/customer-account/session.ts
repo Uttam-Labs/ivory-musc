@@ -14,6 +14,7 @@ export type CustomerSession = {
   accessToken: string;
   idToken?: string;
   firstName?: string;
+  remember?: boolean;
   expiresAt: number;
 };
 
