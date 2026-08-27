@@ -59,10 +59,10 @@ export default async function OrdersPage() {
             </span>
             <h2>{c.errorHeading}</h2>
             <p className={styles.orderEmptyText}>{c.errorText}</p>
-            <a className={styles.orderEmptyAction} href="/account/orders">
+            <Link className={styles.orderEmptyAction} href="/account/orders">
               {c.retryLabel}
               <ArrowRight size={17} aria-hidden="true" />
-            </a>
+            </Link>
           </div>
         ) : customer.orders.nodes.length ? (
           <OrderList orders={customer.orders.nodes.map((order) => ({ ...order, encodedId: encodeCustomerId(order.id) }))} copy={c} />

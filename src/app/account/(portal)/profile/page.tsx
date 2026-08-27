@@ -9,6 +9,7 @@ import { updatePassword, updateProfile } from "../../profile-actions";
 import styles from "../../account.module.css";
 import { ConfirmSubmitButton } from "../../confirm-submit-button";
 import { AccountFeedback } from "../../account-feedback";
+import { AccountDataError } from "../../account-data-error";
 
 type Customer = {
   firstName?: string;
@@ -18,7 +19,7 @@ type Customer = {
   acceptsMarketing: boolean;
   defaultAddress?: { countryCodeV2?: string };
 };
-type Data = { customer: Customer };
+type Data = { customer: Customer | null };
 const countryNames = new Intl.DisplayNames(["en"], { type: "region" });
 const phoneCountries = getCountries()
   .map((iso) => ({
@@ -61,8 +62,8 @@ export default async function ProfilePage({
 }: {
   searchParams: Promise<{ success?: string; error?: string }>;
 }) {
-  const [{ customer }, params, cms] = await Promise.all([
-    customerAccountFetch<Data>(PROFILE_QUERY),
+  const [profileResult, params, cms] = await Promise.all([
+    customerAccountFetch<Data>(PROFILE_QUERY).catch(() => null),
     searchParams,
     getAccountContent<Record<string, string>>("accountProfilePage"),
   ]);
@@ -90,6 +91,25 @@ export default async function ProfilePage({
       "Update your account password? You will use the new password next time you sign in.",
     ...cms,
   };
+  const customer = profileResult?.customer;
+  if (!customer) {
+    return (
+      <>
+        <header className={styles.header}>
+          <div>
+            <p className={styles.eyebrow}>{c.eyebrow}</p>
+            <h1 className={styles.title}>{c.heading}</h1>
+            <p className={styles.portalIntro}>{c.description}</p>
+          </div>
+        </header>
+        <AccountDataError
+          href="/account/profile"
+          title="We couldn’t load your profile"
+          message="Your personal details are temporarily unavailable. Your account is still signed in—please try again."
+        />
+      </>
+    );
+  }
   const phone = phoneDefaults(
     customer.phone,
     customer.defaultAddress?.countryCodeV2,

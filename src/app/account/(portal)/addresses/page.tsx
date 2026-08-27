@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import {
   customerAccountFetch,
   decodeCustomerId,
@@ -15,6 +14,7 @@ import {
 import styles from "../../account.module.css";
 import { ConfirmSubmitButton } from "../../confirm-submit-button";
 import { AccountFeedback } from "../../account-feedback";
+import { AccountDataError } from "../../account-data-error";
 type Address = {
   id: string;
   firstName?: string;
@@ -53,7 +53,23 @@ export default async function AddressesPage({
     getAccountContent<Record<string, string>>("accountAddressesPage"),
   ]);
   const customer = addressResult?.customer;
-  if (!customer) redirect("/api/customer-account/logout");
+  if (!customer) {
+    return (
+      <>
+        <header className={styles.header}>
+          <div>
+            <p className={styles.eyebrow}>Address book</p>
+            <h1 className={styles.title}>Your addresses</h1>
+          </div>
+        </header>
+        <AccountDataError
+          href="/account/addresses"
+          title="We couldn’t load your addresses"
+          message="Your saved addresses are temporarily unavailable. Your account is still signed in—please try again."
+        />
+      </>
+    );
+  }
   const c = {
     eyebrow: "Address book",
     heading: "Your addresses",

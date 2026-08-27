@@ -7,13 +7,14 @@ import { ORDER_QUERY } from "@/lib/customer-account/queries";
 import { getAccountContent } from "@/lib/customer-account/content";
 import { formatMoney } from "@/lib/format";
 import styles from "../../../account.module.css";
+import { AccountDataError } from "../../../account-data-error";
 
 type Money = { amount: string; currencyCode: string };
 type Address = { formatted: string[] };
 type Item = { title: string; quantity: number; currentQuantity: number; originalTotalPrice: Money; discountedTotalPrice: Money; customAttributes: { key: string; value: string }[]; variant?: { id: string; title: string; sku?: string | null; image?: { url: string; altText?: string | null } | null; price: Money; product: { handle: string; title: string } } | null };
 type Fulfillment = { trackingCompany?: string | null; trackingInfo: { number?: string | null; url?: string | null }[] };
 type Order = { id: string; name: string; orderNumber: number; processedAt: string; canceledAt?: string | null; cancelReason?: string | null; currencyCode: string; email?: string | null; phone?: string | null; financialStatus: string; fulfillmentStatus: string; statusUrl: string; totalPrice: Money; subtotalPrice?: Money; totalShippingPrice: Money; totalTax?: Money; totalRefunded?: Money; shippingAddress?: Address | null; billingAddress?: Address | null; successfulFulfillments?: Fulfillment[] | null; lineItems: { nodes: Item[] } };
-type Data = { customer: { orders: { nodes: Order[] } } };
+type Data = { customer: { orders: { nodes: Order[] } } | null };
 const readable = (value: string) => value.replaceAll("_", " ").toLowerCase();
 const hasMoney = (money?: Money) => Boolean(money && Number(money.amount) > 0);
 const financialTone = (status: string) => ["PAID", "PARTIALLY_REFUNDED"].includes(status) ? "success" : ["REFUNDED", "VOIDED"].includes(status) ? "neutral" : "warning";
@@ -23,10 +24,14 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
   const { id } = await params;
   const gid = decodeCustomerId(id);
   if (!gid.startsWith("gid://shopify/Order/")) notFound();
-  const [{ customer }, cms] = await Promise.all([
-    customerAccountFetch<Data>(ORDER_QUERY),
+  const [orderResult, cms] = await Promise.all([
+    customerAccountFetch<Data>(ORDER_QUERY).catch(() => null),
     getAccountContent<Record<string, string>>("accountOrderDetailsPage"),
   ]);
+  const customer = orderResult?.customer;
+  if (!customer) {
+    return <AccountDataError href={`/account/orders/${id}`} title="We couldn’t load this order" message="The order details are temporarily unavailable. Your account is still signed in—please try again." />;
+  }
   const order = customer.orders.nodes.find((item) => item.id === gid);
   if (!order) notFound();
   const c = { backLabel: "Back to orders", eyebrow: "Order details", itemsHeading: "Items in your order", quantityLabel: "Qty", skuLabel: "SKU", subtotalLabel: "Subtotal", shippingLabel: "Shipping", taxLabel: "Tax", refundedLabel: "Refunded", totalLabel: "Order total", progressHeading: "Order progress", placedLabel: "Order placed", paidLabel: "Payment confirmed", preparingLabel: "Preparing order", fulfilledLabel: "Fulfilled", trackingHeading: "Delivery & tracking", trackPackageLabel: "Track shipment", trackingPendingText: "Tracking details will appear here as soon as your order has shipped.", shippingAddressHeading: "Shipping address", billingAddressHeading: "Billing address", contactHeading: "Order information", contactLabel: "Contact", phoneLabel: "Phone", orderDateLabel: "Order date", paymentLabel: "Payment", deliveryLabel: "Delivery", noAddressText: "No address was supplied.", cancelledLabel: "This order was cancelled", ...cms };

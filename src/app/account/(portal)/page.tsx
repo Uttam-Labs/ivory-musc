@@ -6,6 +6,7 @@ import {
 import { ACCOUNT_QUERY } from "@/lib/customer-account/queries";
 import { formatMoney } from "@/lib/format";
 import { getAccountContent } from "@/lib/customer-account/content";
+import { AccountDataError } from "../account-data-error";
 import styles from "../account.module.css";
 type Money = { amount: string; currencyCode: string };
 type Address = { formatted: string[] };
@@ -24,7 +25,7 @@ type Data = {
     defaultAddress?: Address;
     addresses: { nodes: Address[] };
     orders: { nodes: Order[] };
-  };
+  } | null;
 };
 export async function generateMetadata() {
   const content = await getAccountContent<Record<string, string>>(
@@ -33,8 +34,8 @@ export async function generateMetadata() {
   return { title: content.seoTitle || "My account | Ivory Muse" };
 }
 export default async function AccountPage() {
-  const [{ customer }, cms] = await Promise.all([
-    customerAccountFetch<Data>(ACCOUNT_QUERY),
+  const [accountResult, cms] = await Promise.all([
+    customerAccountFetch<Data>(ACCOUNT_QUERY).catch(() => null),
     getAccountContent<Record<string, string>>("accountDashboardPage"),
   ]);
   const c = {
@@ -57,6 +58,25 @@ export default async function AccountPage() {
     shopLabel: "Continue shopping",
     ...cms,
   };
+  const customer = accountResult?.customer;
+  if (!customer) {
+    return (
+      <>
+        <header className={styles.dashboardHeader}>
+          <div>
+            <p className={styles.eyebrow}>{c.eyebrow}</p>
+            <h1 className={styles.title}>Your account</h1>
+            <p className={styles.portalIntro}>{c.intro}</p>
+          </div>
+        </header>
+        <AccountDataError
+          href="/account"
+          title="We couldn’t load your account"
+          message="Your account information is temporarily unavailable. Your session has been kept securely signed in."
+        />
+      </>
+    );
+  }
   return (
     <>
       <header className={styles.dashboardHeader}>
