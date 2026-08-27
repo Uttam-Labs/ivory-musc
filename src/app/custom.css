@@ -217,6 +217,12 @@ a {
     line-height: 1;
     text-align: center;
 }
+.global-loader__logo {
+    width: 12rem;
+    height: 10rem;
+    object-fit: contain;
+    filter: brightness(0) opacity(.42);
+}
 .global-loader__line {
     width: 8rem;
     height: 1px;

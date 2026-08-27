@@ -146,6 +146,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     isSanityConfigured ? sanityFetch<HeaderData>(HEADER_SETTINGS_QUERY) : null,
     isSanityConfigured ? sanityFetch<FooterData>(FOOTER_SETTINGS_QUERY) : null,
   ]);
+  const headerLogoUrl = header?.logo
+    ? sanityImageUrl(header.logo, 640)
+    : undefined;
   const extensionCleanup = `
     (() => {
       const injected = /^(bis_|processed_)/;
@@ -221,11 +224,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         className="min-h-full flex flex-col bg-[var(--background)] text-[var(--foreground)]"
       >
         <Suspense fallback={null}>
-          <GlobalLoader />
+          <GlobalLoader logoUrl={headerLogoUrl} title={header?.title} />
         </Suspense>
         <Header
           title={header?.title}
-          logoUrl={header?.logo ? sanityImageUrl(header.logo, 320) : undefined}
+          logoUrl={headerLogoUrl}
           logoSizeDesktop={header?.logoSizeDesktop}
           logoSizeMobile={header?.logoSizeMobile}
           navigation={header?.navigation}

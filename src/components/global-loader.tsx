@@ -1,9 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
-export function GlobalLoader() {
+export function GlobalLoader({
+  logoUrl,
+  title = "Ivory Muse",
+}: {
+  logoUrl?: string;
+  title?: string;
+}) {
   const pathname = usePathname();
   const [visible, setVisible] = useState(true);
   const firstRender = useRef(true);
@@ -54,7 +61,21 @@ export function GlobalLoader() {
       aria-label="Loading Ivory Muse"
       role="status"
     >
-      <div className="global-loader__mark" aria-hidden="true">M</div>
+      <div className="global-loader__mark" aria-hidden="true">
+        {logoUrl ? (
+          <Image
+            src={logoUrl}
+            alt=""
+            width={240}
+            height={220}
+            quality={95}
+            sizes="120px"
+            className="global-loader__logo"
+          />
+        ) : (
+          title.trim().charAt(0) || "M"
+        )}
+      </div>
       <div className="global-loader__line" aria-hidden="true"><span /></div>
     </div>
   );
