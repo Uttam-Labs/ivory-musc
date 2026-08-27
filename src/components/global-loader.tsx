@@ -30,7 +30,7 @@ export function GlobalLoader({
       minimumTimePassed = true;
       pageLoaded = pageLoaded || document.readyState === "complete";
       finishWhenReady();
-    }, 650);
+    }, 1000);
     const maximumTimer = window.setTimeout(() => setInitialLoading(false), 3000);
     const handleLoad = () => {
       pageLoaded = true;
@@ -62,7 +62,7 @@ export function GlobalLoader({
           navigationMaximumTimer.current = null;
         }
       },
-      Math.max(0, 450 - elapsed),
+      Math.max(0, 1000 - elapsed),
     );
     return () => window.clearTimeout(timer);
   }, [pathname]);
