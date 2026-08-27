@@ -719,6 +719,13 @@ export function Header({
                 <span>Subtotal</span>
                 <strong>{formatMoney(cart.cost.subtotalAmount)}</strong>
               </div>
+              <Link
+                href="/cart"
+                onClick={() => setCartOpen(false)}
+                className="mb-3 flex h-[50px] w-full items-center justify-center border border-[#a95850] text-[12px] uppercase tracking-[.12em] text-[#a95850] transition hover:bg-[#f7ebe7]"
+              >
+                View shopping bag
+              </Link>
               <button
                 type="button"
                 onClick={startCheckout}
