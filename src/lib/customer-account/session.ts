@@ -19,10 +19,17 @@ export type CustomerSession = {
 };
 
 function key() {
-  if (!env.CUSTOMER_ACCOUNT_SESSION_SECRET)
-    throw new Error("Customer account session secret is not configured");
+  const secret =
+    env.CUSTOMER_ACCOUNT_SESSION_SECRET ||
+    env.SHOPIFY_ADMIN_ACCESS_TOKEN ||
+    env.SANITY_API_WRITE_TOKEN ||
+    env.SANITY_API_READ_TOKEN ||
+    env.SMTP_CREDENTIAL_ENCRYPTION_KEY ||
+    env.PREVIEW_AUTH_SECRET;
+  if (!secret)
+    throw new Error("Secure customer sessions are not configured");
   return createHash("sha256")
-    .update(env.CUSTOMER_ACCOUNT_SESSION_SECRET)
+    .update(`ivory-muse:customer-session:v1:${secret}`)
     .digest();
 }
 
