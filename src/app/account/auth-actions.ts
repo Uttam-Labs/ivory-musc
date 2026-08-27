@@ -164,16 +164,29 @@ export async function recoverAction(
     return { fieldErrors: { email: "Please enter a valid email address." } };
   try {
     const data = await storefrontCustomerFetch<{
-      customerRecover: { customerUserErrors: Array<{ message: string }> };
+      customerRecover: {
+        customerUserErrors: Array<{ code?: string | null; message: string }>;
+      };
     }>(
-      `mutation Recover($email:String!){customerRecover(email:$email){customerUserErrors{message}}}`,
+      `mutation Recover($email:String!){customerRecover(email:$email){customerUserErrors{code message}}}`,
       { email },
     );
     const error = data.customerRecover.customerUserErrors[0];
-    if (error) return { error: error.message };
+    // Shopify deliberately treats a customer record without an active legacy
+    // password account as unidentified. Keep the public recovery response
+    // neutral so the form cannot be used to discover registered emails.
+    if (
+      error &&
+      !["CUSTOMER_DISABLED", "NOT_FOUND", "UNIDENTIFIED_CUSTOMER"].includes(
+        error.code || "",
+      ) &&
+      !/could not find customer|unidentified customer/i.test(error.message)
+    ) {
+      return { error: error.message };
+    }
     return {
       success:
-        "If an account exists for this email, Shopify has sent password reset instructions.",
+        "If an active account exists for this email, password reset instructions will arrive shortly. Please also check your spam folder.",
     };
   } catch {
     return {
