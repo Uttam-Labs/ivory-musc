@@ -89,27 +89,26 @@ export default async function Home() {
               key={key}
               className="home-hero relative flex min-h-[600px] items-end text-white md:aspect-[2/1] md:min-h-0 md:max-h-[820px]"
             >
-              {section.image ? (
+              {section.image && (
                 <Image
                   src={sanityImageUrl(section.image, 3840)}
                   alt={section.heading || "Ivory Muse silk fabric"}
                   fill
                   priority
                   quality={95}
-                  className="home-hero-media object-cover"
-                  sizes="100vw"
-                />
-              ) : (
-                <Image
-                  src="/media/ivory-muse-hero.gif"
-                  alt={section.heading || "Ivory Muse silk fabric"}
-                  fill
-                  priority
-                  unoptimized
-                  className="home-hero-media object-cover"
+                  className="home-hero-media object-cover md:hidden"
                   sizes="100vw"
                 />
               )}
+              <Image
+                src="/media/ivory-muse-hero.gif"
+                alt={section.heading || "Ivory Muse silk fabric"}
+                fill
+                priority={!section.image}
+                unoptimized
+                className={`home-hero-media object-cover ${section.image ? "hidden md:block" : ""}`}
+                sizes="100vw"
+              />
               <div className="absolute inset-0 bg-black/15" />
               <div className="home-hero-content relative mx-auto w-full max-w-[1920] px-6 sm:px-12 xl:px-24 pb-16 md:pb-20 lg:pb-36">
                 <div className="home-hero__content-wrap w-full md:w-4/5 xl:w-1/2">
