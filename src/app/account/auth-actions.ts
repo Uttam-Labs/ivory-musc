@@ -14,6 +14,7 @@ export type AuthState = {
   fieldErrors?: Record<string, string>;
 };
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+class CustomerCredentialsError extends Error {}
 type TokenPayload = {
   customerAccessTokenCreate: {
     customerAccessToken?: { accessToken: string; expiresAt: string };
@@ -27,9 +28,8 @@ async function createSession(email: string, password: string) {
   });
   const result = data.customerAccessTokenCreate;
   if (!result.customerAccessToken)
-    throw new Error(
-      result.customerUserErrors[0]?.message ||
-        "Email or password is incorrect.",
+    throw new CustomerCredentialsError(
+      "The email address or password does not match our records.",
     );
   const accessToken = result.customerAccessToken.accessToken;
   const profile = await storefrontCustomerFetch<{
@@ -66,8 +66,13 @@ export async function loginAction(
   try {
     await createSession(email, password);
   } catch (error) {
+    if (error instanceof CustomerCredentialsError)
+      return { fieldErrors: { password: error.message } };
     return {
-      error: error instanceof Error ? error.message : "Sign in failed.",
+      error:
+        error instanceof Error
+          ? error.message
+          : "Sign in could not be completed. Please try again.",
     };
   }
   redirect("/account");

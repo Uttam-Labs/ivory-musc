@@ -245,6 +245,7 @@ function Field({
   hint?: string;
   error?: string;
 }) {
+  const [value, setValue] = useState("");
   return (
     <label className={styles.authField}>
       <span>{label}</span>
@@ -253,6 +254,8 @@ function Field({
         name={name}
         type={type}
         autoComplete={autoComplete}
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${name}-error` : undefined}
         className={error ? styles.invalidInput : undefined}
