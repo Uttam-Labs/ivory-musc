@@ -8,7 +8,12 @@ import {
   encryptSession,
 } from "@/lib/customer-account/session";
 
-export type AuthState = { error?: string; success?: string };
+export type AuthState = {
+  error?: string;
+  success?: string;
+  fieldErrors?: Record<string, string>;
+};
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 type TokenPayload = {
   customerAccessTokenCreate: {
     customerAccessToken?: { accessToken: string; expiresAt: string };
@@ -52,7 +57,12 @@ export async function loginAction(
     .trim()
     .toLowerCase();
   const password = String(formData.get("password") || "");
-  if (!email || !password) return { error: "Enter your email and password." };
+  const fieldErrors: Record<string, string> = {};
+  if (!email) fieldErrors.email = "Please enter your email address.";
+  else if (!EMAIL_PATTERN.test(email))
+    fieldErrors.email = "Please enter a valid email address.";
+  if (!password) fieldErrors.password = "Please enter your password.";
+  if (Object.keys(fieldErrors).length) return { fieldErrors };
   try {
     await createSession(email, password);
   } catch (error) {
@@ -74,11 +84,28 @@ export async function registerAction(
     .toLowerCase();
   const password = String(formData.get("password") || "");
   const confirm = String(formData.get("confirmPassword") || "");
-  if (!firstName || !lastName || !email)
-    return { error: "Complete all required fields." };
-  if (password.length < 8)
-    return { error: "Password must contain at least 8 characters." };
-  if (password !== confirm) return { error: "Passwords do not match." };
+  const fieldErrors: Record<string, string> = {};
+  if (!firstName) fieldErrors.firstName = "Please enter your first name.";
+  if (!lastName) fieldErrors.lastName = "Please enter your last name.";
+  if (!email) fieldErrors.email = "Please enter your email address.";
+  else if (!EMAIL_PATTERN.test(email))
+    fieldErrors.email = "Please enter a valid email address.";
+  if (!password) fieldErrors.password = "Please create a password.";
+  else {
+    const requirements = [
+      password.length >= 8,
+      /[a-z]/.test(password) && /[A-Z]/.test(password),
+      /\d/.test(password),
+      /[^A-Za-z0-9]/.test(password),
+    ];
+    if (!requirements.every(Boolean))
+      fieldErrors.password = "Please meet all password requirements.";
+  }
+  if (!confirm)
+    fieldErrors.confirmPassword = "Please confirm your password.";
+  else if (password !== confirm)
+    fieldErrors.confirmPassword = "Passwords do not match.";
+  if (Object.keys(fieldErrors).length) return { fieldErrors };
   try {
     const data = await storefrontCustomerFetch<{
       customerCreate: {
@@ -119,7 +146,10 @@ export async function recoverAction(
   const email = String(formData.get("email") || "")
     .trim()
     .toLowerCase();
-  if (!email) return { error: "Enter your email address." };
+  if (!email)
+    return { fieldErrors: { email: "Please enter your email address." } };
+  if (!EMAIL_PATTERN.test(email))
+    return { fieldErrors: { email: "Please enter a valid email address." } };
   try {
     const data = await storefrontCustomerFetch<{
       customerRecover: { customerUserErrors: Array<{ message: string }> };

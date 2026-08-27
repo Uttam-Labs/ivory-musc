@@ -14,9 +14,15 @@ import type {
 } from "@/lib/customer-account/content";
 import styles from "./account.module.css";
 const initial: AuthState = {};
-function Submit({ children }: { children: React.ReactNode }) {
+function Submit({
+  children,
+  pending,
+}: {
+  children: React.ReactNode;
+  pending: boolean;
+}) {
   return (
-    <button className={styles.primary} type="submit">
+    <button className={styles.primary} type="submit" disabled={pending}>
       {children}
     </button>
   );
@@ -24,18 +30,20 @@ function Submit({ children }: { children: React.ReactNode }) {
 export function LoginForm({ content }: { content: LoginContent }) {
   const [state, action, pending] = useActionState(loginAction, initial);
   return (
-    <form action={action} className={styles.authForm}>
+    <form action={action} className={styles.authForm} noValidate>
       <Field
         name="email"
         label={content.emailLabel}
         type="email"
         autoComplete="email"
+        error={state.fieldErrors?.email}
       />
       <Field
         name="password"
         label={content.passwordLabel}
         type="password"
         autoComplete="current-password"
+        error={state.fieldErrors?.password}
       />
       <InlineFeedback error={state.error} />
       <div className={styles.formMeta}>
@@ -46,7 +54,9 @@ export function LoginForm({ content }: { content: LoginContent }) {
           {content.forgotPasswordLabel}
         </Link>
       </div>
-      <Submit>{pending ? content.submittingLabel : content.submitLabel}</Submit>
+      <Submit pending={pending}>
+        {pending ? content.submittingLabel : content.submitLabel}
+      </Submit>
       <p className={styles.switchText}>
         {content.newCustomerText}{" "}
         <Link href="/account/register">{content.registerLinkLabel}</Link>
@@ -57,17 +67,19 @@ export function LoginForm({ content }: { content: LoginContent }) {
 export function RegisterForm({ content }: { content: RegisterContent }) {
   const [state, action, pending] = useActionState(registerAction, initial);
   return (
-    <form action={action} className={styles.authForm}>
+    <form action={action} className={styles.authForm} noValidate>
       <div className={styles.authGrid}>
         <Field
           name="firstName"
           label={content.firstNameLabel}
           autoComplete="given-name"
+          error={state.fieldErrors?.firstName}
         />
         <Field
           name="lastName"
           label={content.lastNameLabel}
           autoComplete="family-name"
+          error={state.fieldErrors?.lastName}
         />
       </div>
       <Field
@@ -75,20 +87,27 @@ export function RegisterForm({ content }: { content: RegisterContent }) {
         label={content.emailLabel}
         type="email"
         autoComplete="email"
+        error={state.fieldErrors?.email}
       />
-      <PasswordStrengthField content={content} />
+      <PasswordStrengthField
+        content={content}
+        error={state.fieldErrors?.password}
+      />
       <Field
         name="confirmPassword"
         label={content.confirmPasswordLabel}
         type="password"
         autoComplete="new-password"
+        error={state.fieldErrors?.confirmPassword}
       />
       <InlineFeedback error={state.error} />
       <label className={styles.check}>
         <input type="checkbox" name="acceptsMarketing" />{" "}
         {content.marketingLabel}
       </label>
-      <Submit>{pending ? content.submittingLabel : content.submitLabel}</Submit>
+      <Submit pending={pending}>
+        {pending ? content.submittingLabel : content.submitLabel}
+      </Submit>
       <p className={styles.switchText}>
         {content.existingCustomerText}{" "}
         <Link href="/account/login">{content.loginLinkLabel}</Link>
@@ -99,15 +118,18 @@ export function RegisterForm({ content }: { content: RegisterContent }) {
 export function RecoverForm({ content }: { content: RecoveryContent }) {
   const [state, action, pending] = useActionState(recoverAction, initial);
   return (
-    <form action={action} className={styles.authForm}>
+    <form action={action} className={styles.authForm} noValidate>
       <Field
         name="email"
         label={content.emailLabel}
         type="email"
         autoComplete="email"
+        error={state.fieldErrors?.email}
       />
       <InlineFeedback error={state.error} success={state.success} />
-      <Submit>{pending ? content.submittingLabel : content.submitLabel}</Submit>
+      <Submit pending={pending}>
+        {pending ? content.submittingLabel : content.submitLabel}
+      </Submit>
       <p className={styles.switchText}>
         <Link href="/account/login">{content.backLabel}</Link>
       </p>
@@ -134,7 +156,13 @@ function InlineFeedback({
     </p>
   );
 }
-function PasswordStrengthField({ content }: { content: RegisterContent }) {
+function PasswordStrengthField({
+  content,
+  error,
+}: {
+  content: RegisterContent;
+  error?: string;
+}) {
   const [password, setPassword] = useState("");
   const checks = [
     password.length >= 8,
@@ -166,8 +194,11 @@ function PasswordStrengthField({ content }: { content: RegisterContent }) {
         autoComplete="new-password"
         value={password}
         onChange={(event) => setPassword(event.target.value)}
-        aria-describedby="password-strength"
+        aria-describedby={error ? "password-strength password-error" : "password-strength"}
+        aria-invalid={Boolean(error)}
+        className={error ? styles.invalidInput : undefined}
       />
+      {error && <FieldError id="password-error" message={error} />}
       <div
         id="password-strength"
         className={styles.passwordStrength}
@@ -205,18 +236,37 @@ function Field({
   type = "text",
   autoComplete,
   hint,
+  error,
 }: {
   name: string;
   label: string;
   type?: string;
   autoComplete?: string;
   hint?: string;
+  error?: string;
 }) {
   return (
     <label className={styles.authField}>
       <span>{label}</span>
-      <input required name={name} type={type} autoComplete={autoComplete} />
+      <input
+        required
+        name={name}
+        type={type}
+        autoComplete={autoComplete}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? `${name}-error` : undefined}
+        className={error ? styles.invalidInput : undefined}
+      />
+      {error && <FieldError id={`${name}-error`} message={error} />}
       {hint && <small>{hint}</small>}
     </label>
+  );
+}
+function FieldError({ message, id }: { message: string; id?: string }) {
+  return (
+    <small className={styles.fieldError} id={id} role="alert">
+      <span aria-hidden="true">!</span>
+      {message}
+    </small>
   );
 }
