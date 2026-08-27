@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export function GlobalLoader({
   logoUrl,
@@ -12,6 +13,7 @@ export function GlobalLoader({
   title?: string;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [initialLoading, setInitialLoading] = useState(true);
   const [navigating, setNavigating] = useState(false);
   const previousPathname = useRef(pathname);
@@ -89,8 +91,9 @@ export function GlobalLoader({
         destination.protocol === "tel:"
       ) return;
 
+      event.preventDefault();
       navigationStartedAt.current = performance.now();
-      setNavigating(true);
+      flushSync(() => setNavigating(true));
       if (navigationMaximumTimer.current) {
         window.clearTimeout(navigationMaximumTimer.current);
       }
@@ -98,6 +101,11 @@ export function GlobalLoader({
         () => setNavigating(false),
         3000,
       );
+
+      const href = `${destination.pathname}${destination.search}${destination.hash}`;
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => router.push(href));
+      });
     };
 
     document.addEventListener("click", showBeforeNavigation, true);
@@ -107,7 +115,7 @@ export function GlobalLoader({
         window.clearTimeout(navigationMaximumTimer.current);
       }
     };
-  }, []);
+  }, [router]);
 
   return (
       <div
