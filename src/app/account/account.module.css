@@ -87,7 +87,7 @@
 .orderBadge_info{border-color:#d9b8b1;background:#f9efeb;color:#8e4a44}
 .orderBadge_neutral{border-color:#d8cec8;background:#f7f3f0;color:#6e625c}
 .orderBadge_danger{border-color:#c98f88;background:#fbe9e6;color:#8e3934}
-.orderBadge_paid{border-color:#a5534d;background:#a5534d;color:#fff}
+.orderBadge.orderBadge_paid,.inlineStatus.orderBadge_paid{border-color:#a5534d;background:#a5534d;color:#fff}
 .orderCard{grid-template-columns:minmax(18rem,1fr) auto}
 .orderCardLead .orderBadges{justify-content:flex-start;margin-top:1.2rem}
 .orderCardMeta{display:flex;align-items:center;justify-content:flex-end;gap:2.4rem}
