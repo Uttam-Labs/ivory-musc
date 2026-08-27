@@ -88,26 +88,26 @@ export async function POST(request: Request) {
       );
     const session = await getCustomerSession();
     let cart = result.cart;
-    if (session) {
-      const identityResult = (
-        await shopifyFetch<{ cartBuyerIdentityUpdate: MutationResult }>({
-          query: CART_BUYER_IDENTITY_UPDATE_MUTATION,
-          variables: {
-            cartId: cart.id,
-            buyerIdentity: { customerAccessToken: session.accessToken },
-          },
-          revalidate: false,
-          tags: [],
-          buyerIp: buyerIp(request),
-        })
-      ).cartBuyerIdentityUpdate;
-      if (identityResult.userErrors.length || !identityResult.cart)
-        return NextResponse.json(
-          { error: identityResult.userErrors[0]?.message || "Your account could not be connected to checkout." },
-          { status: 400 },
-        );
-      cart = identityResult.cart;
-    }
+    const identityResult = (
+      await shopifyFetch<{ cartBuyerIdentityUpdate: MutationResult }>({
+        query: CART_BUYER_IDENTITY_UPDATE_MUTATION,
+        variables: {
+          cartId: cart.id,
+          buyerIdentity: session
+            ? { customerAccessToken: session.accessToken }
+            : { customerAccessToken: null, email: null, phone: null },
+        },
+        revalidate: false,
+        tags: [],
+        buyerIp: buyerIp(request),
+      })
+    ).cartBuyerIdentityUpdate;
+    if (identityResult.userErrors.length || !identityResult.cart)
+      return NextResponse.json(
+        { error: identityResult.userErrors[0]?.message || "Checkout identity could not be refreshed." },
+        { status: 400 },
+      );
+    cart = identityResult.cart;
     return NextResponse.json({ cart });
   } catch (error) {
     return NextResponse.json(
