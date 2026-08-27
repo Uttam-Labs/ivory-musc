@@ -73,10 +73,12 @@ export default async function AccountPage() {
       </header>
       <div className={styles.dashboardGrid}>
         <article className={styles.dashboardCard}>
-          <span className={styles.cardNumber}>
-            {customer.orders.nodes.length}
-          </span>
-          <h2>{c.ordersHeading}</h2>
+          <div className={styles.dashboardCardHeading}>
+            <h2>{c.ordersHeading}</h2>
+            <span className={styles.cardCount} aria-label={`${customer.orders.nodes.length} orders`}>
+              {customer.orders.nodes.length}
+            </span>
+          </div>
           <p className={styles.muted}>
             {customer.orders.nodes.length
               ? `${customer.orders.nodes.length} recent order${customer.orders.nodes.length === 1 ? "" : "s"}`
@@ -87,10 +89,12 @@ export default async function AccountPage() {
           </Link>
         </article>
         <article className={styles.dashboardCard}>
-          <span className={styles.cardNumber}>
-            {customer.addresses.nodes.length}
-          </span>
-          <h2>{c.addressHeading}</h2>
+          <div className={styles.dashboardCardHeading}>
+            <h2>{c.addressHeading}</h2>
+            <span className={styles.cardCount} aria-label={`${customer.addresses.nodes.length} saved addresses`}>
+              {customer.addresses.nodes.length}
+            </span>
+          </div>
           {customer.defaultAddress ? (
             customer.defaultAddress.formatted.map((line) => (
               <p key={line}>{line}</p>
