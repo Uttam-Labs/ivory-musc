@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight, ShoppingBag } from "lucide-react";
 import {
   customerAccountFetch,
   encodeCustomerId,
@@ -28,7 +29,10 @@ export default async function OrdersPage() {
   const c = {
     eyebrow: "Order history",
     heading: "Your orders",
-    emptyText: "No orders found for this account.",
+    emptyKicker: "Ivory Muse collection",
+    emptyHeading: "Your order history is waiting",
+    emptyText:
+      "When you place an order, its details and delivery progress will appear here.",
     shopLabel: "Start shopping",
     ...cms,
   };
@@ -61,9 +65,17 @@ export default async function OrdersPage() {
             </Link>
           ))
         ) : (
-          <div className={styles.card}>
-            <p className={styles.muted}>{c.emptyText}</p>
-            <Link href="/collections/shop">{c.shopLabel}</Link>
+          <div className={styles.orderEmptyState}>
+            <span className={styles.orderEmptyIcon} aria-hidden="true">
+              <ShoppingBag size={28} strokeWidth={1.35} />
+            </span>
+            <p className={styles.orderEmptyKicker}>{c.emptyKicker}</p>
+            <h2>{c.emptyHeading}</h2>
+            <p className={styles.orderEmptyText}>{c.emptyText}</p>
+            <Link className={styles.orderEmptyAction} href="/collections/shop">
+              {c.shopLabel}
+              <ArrowRight size={17} aria-hidden="true" />
+            </Link>
           </div>
         )}
       </div>

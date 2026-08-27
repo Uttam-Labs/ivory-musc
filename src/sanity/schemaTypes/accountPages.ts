@@ -284,15 +284,20 @@ export const accountOrdersPage = defineType({
     seoTitle: "Orders | Ivory Muse",
     eyebrow: "Order history",
     heading: "Your orders",
-    emptyText: "No orders found for this account.",
+    emptyKicker: "Ivory Muse collection",
+    emptyHeading: "Your order history is waiting",
+    emptyText:
+      "When you place an order, its details and delivery progress will appear here.",
     shopLabel: "Start shopping",
   },
   fields: [
     text("seoTitle", "SEO title"),
     text("eyebrow", "Eyebrow"),
     text("heading", "Heading"),
-    text("emptyText", "No orders message"),
-    text("shopLabel", "Start shopping link"),
+    text("emptyKicker", "Empty state eyebrow"),
+    text("emptyHeading", "Empty state heading"),
+    text("emptyText", "Empty state description"),
+    text("shopLabel", "Start shopping button"),
   ],
 });
 
