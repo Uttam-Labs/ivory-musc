@@ -246,7 +246,7 @@ a {
 
 @media (max-width: 640px) {
     .home-hero-content .hero-title {
-        max-width: 20ch;
+        max-width: 26ch;
         font-size: clamp(2rem, 5.8vw, 2.4rem);
         line-height: 1.06;
     }
