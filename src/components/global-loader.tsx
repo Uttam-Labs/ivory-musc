@@ -12,13 +12,20 @@ export function GlobalLoader({
   title?: string;
 }) {
   const pathname = usePathname();
-  const [visible, setVisible] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [navigating, setNavigating] = useState(false);
   const firstRender = useRef(true);
+  const safetyTimer = useRef<number | null>(null);
 
   useEffect(() => {
-    const delay = firstRender.current ? 700 : 450;
-    firstRender.current = false;
-    const timer = window.setTimeout(() => setVisible(false), delay);
+    if (firstRender.current) {
+      firstRender.current = false;
+      const timer = window.setTimeout(() => setInitialLoading(false), 700);
+      return () => window.clearTimeout(timer);
+    }
+
+    if (safetyTimer.current) window.clearTimeout(safetyTimer.current);
+    const timer = window.setTimeout(() => setNavigating(false), 220);
     return () => window.clearTimeout(timer);
   }, [pathname]);
 
@@ -46,37 +53,47 @@ export function GlobalLoader({
         destination.protocol === "tel:"
       ) return;
 
-      setVisible(true);
-      window.setTimeout(() => setVisible(false), 2500);
+      setNavigating(true);
+      if (safetyTimer.current) window.clearTimeout(safetyTimer.current);
+      safetyTimer.current = window.setTimeout(() => setNavigating(false), 3000);
     };
 
     document.addEventListener("click", showBeforeNavigation, true);
-    return () => document.removeEventListener("click", showBeforeNavigation, true);
+    return () => {
+      document.removeEventListener("click", showBeforeNavigation, true);
+      if (safetyTimer.current) window.clearTimeout(safetyTimer.current);
+    };
   }, []);
 
   return (
-    <div
-      className={`global-loader ${visible ? "global-loader--visible" : ""}`}
-      aria-hidden={!visible}
-      aria-label="Loading Ivory Muse"
-      role="status"
-    >
-      <div className="global-loader__mark" aria-hidden="true">
-        {logoUrl ? (
-          <Image
-            src={logoUrl}
-            alt=""
-            width={240}
-            height={220}
-            quality={95}
-            sizes="120px"
-            className="global-loader__logo"
-          />
-        ) : (
-          title.trim().charAt(0) || "M"
-        )}
+    <>
+      <div
+        className={`global-loader ${initialLoading ? "global-loader--visible" : ""}`}
+        aria-hidden={!initialLoading}
+        aria-label="Loading Ivory Muse"
+        role="status"
+      >
+        <div className="global-loader__mark" aria-hidden="true">
+          {logoUrl ? (
+            <Image
+              src={logoUrl}
+              alt=""
+              width={240}
+              height={220}
+              quality={95}
+              sizes="120px"
+              className="global-loader__logo"
+            />
+          ) : (
+            title.trim().charAt(0) || "M"
+          )}
+        </div>
+        <div className="global-loader__line" aria-hidden="true"><span /></div>
       </div>
-      <div className="global-loader__line" aria-hidden="true"><span /></div>
-    </div>
+      <div
+        className={`route-progress ${navigating ? "route-progress--visible" : ""}`}
+        aria-hidden="true"
+      ><span /></div>
+    </>
   );
 }

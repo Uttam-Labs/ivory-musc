@@ -240,10 +240,35 @@ a {
     from { transform: translateX(-110%); }
     to { transform: translateX(245%); }
 }
+.route-progress {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 10000;
+    height: 2px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .18s ease;
+}
+.route-progress--visible { opacity: 1; }
+.route-progress span {
+    display: block;
+    width: 38%;
+    height: 100%;
+    background: var(--theme-red);
+    animation: route-progress-line .9s cubic-bezier(.65,0,.35,1) infinite;
+}
+@keyframes route-progress-line {
+    from { transform: translateX(-110%); }
+    to { transform: translateX(365%); }
+}
 
 @media (prefers-reduced-motion: reduce) {
     .global-loader__line span { animation: none; width: 100%; }
     .global-loader { transition-duration: .01ms; }
+    .route-progress span { animation: none; width: 100%; }
 }
 .home-hero-media {
     object-position: center center;
