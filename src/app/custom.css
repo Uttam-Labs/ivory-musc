@@ -311,6 +311,41 @@ a {
 
 /* End Home split */
 
+@media (max-width: 767px) {
+    /* Keep the first editorial section visually connected to the hero. */
+    .home-chosen {
+        gap: 0;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    .home-chosen .home-split-image {
+        aspect-ratio: 1.35 / 1;
+    }
+    .home-chosen .home-split-content {
+        padding: 3.2rem 2.2rem 4rem;
+        background: #fff5ea;
+    }
+    .home-chosen .home-split-innerbox {
+        max-width: 34rem;
+        margin: 0 auto;
+    }
+    .home-chosen .home-split-content .title {
+        margin-bottom: 1.2rem;
+        font-size: 2.6rem;
+        line-height: 1.08;
+    }
+    .home-chosen .home-split-content p {
+        margin-top: 0;
+        margin-bottom: 2.4rem;
+        font-size: 1.55rem;
+        line-height: 1.65;
+    }
+    .home-chosen .custom-button {
+        width: 100%;
+        margin-top: 0;
+    }
+}
+
 .section__heading {
     margin-bottom: 4.8rem;
 }
