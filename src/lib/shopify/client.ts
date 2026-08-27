@@ -11,11 +11,13 @@ export async function shopifyFetch<T>({
   variables,
   tags = ["shopify"],
   revalidate = 300,
+  buyerIp,
 }: {
   query: string;
   variables?: Record<string, unknown>;
   tags?: string[];
   revalidate?: number | false;
+  buyerIp?: string;
 }): Promise<T> {
   if (!isShopifyConfigured) throw new ShopifyConfigurationError("Shopify is not configured");
 
@@ -26,6 +28,7 @@ export async function shopifyFetch<T>({
       headers: {
         "Content-Type": "application/json",
         "X-Shopify-Storefront-Access-Token": env.SHOPIFY_STOREFRONT_ACCESS_TOKEN!,
+        ...(buyerIp ? { "Shopify-Storefront-Buyer-IP": buyerIp } : {}),
       },
       body: JSON.stringify({ query, variables }),
       next: { revalidate, tags },

@@ -54,6 +54,7 @@ export function Header({
   const [cartLoading, setCartLoading] = useState(false);
   const [updatingLines, setUpdatingLines] = useState<string[]>([]);
   const [cartError, setCartError] = useState("");
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [customerName, setCustomerName] = useState("");
   const searchInput = useRef<HTMLInputElement>(null);
   const menuCloseButton = useRef<HTMLButtonElement>(null);
@@ -215,6 +216,28 @@ export function Header({
       setCartError(error instanceof Error ? error.message : "Please try again");
     } finally {
       setUpdatingLines((lines) => lines.filter((id) => id !== lineId));
+    }
+  }
+
+  async function startCheckout() {
+    if (!cart?.id || checkoutLoading) return;
+    setCheckoutLoading(true);
+    setCartError("");
+    try {
+      const response = await fetch("/api/cart/checkout", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ cartId: cart.id }),
+      });
+      const payload = await response.json();
+      if (!response.ok || !payload.checkoutUrl)
+        throw new Error(payload.error || "Checkout could not be started");
+      window.location.assign(payload.checkoutUrl);
+    } catch (error) {
+      setCartError(
+        error instanceof Error ? error.message : "Please try again",
+      );
+      setCheckoutLoading(false);
     }
   }
 
@@ -689,12 +712,17 @@ export function Header({
                 <span>Subtotal</span>
                 <strong>{formatMoney(cart.cost.subtotalAmount)}</strong>
               </div>
-              <a
-                href={cart.checkoutUrl}
-                className="flex h-[58px] cursor-pointer items-center justify-center bg-[#a95850] text-[14px] font-medium uppercase tracking-[.14em] text-white transition hover:bg-[#8f453f]"
+              <button
+                type="button"
+                onClick={startCheckout}
+                disabled={checkoutLoading}
+                className="flex h-[58px] w-full cursor-pointer items-center justify-center gap-2 bg-[#a95850] text-[14px] font-medium uppercase tracking-[.14em] text-white transition hover:bg-[#8f453f] disabled:cursor-wait disabled:opacity-70"
               >
-                Checkout
-              </a>
+                {checkoutLoading && (
+                  <LoaderCircle className="animate-spin" size={17} />
+                )}
+                {checkoutLoading ? "Preparing checkout…" : "Checkout"}
+              </button>
             </div>
           ) : null}
         </aside>

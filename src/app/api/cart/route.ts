@@ -32,6 +32,10 @@ type MutationResult = {
   cart: Cart | null;
   userErrors: Array<{ message: string }>;
 };
+const buyerIp = (request: Request) =>
+  request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+  request.headers.get("x-real-ip") ||
+  undefined;
 
 export async function GET(request: Request) {
   const cartId = new URL(request.url).searchParams.get("id");
@@ -42,6 +46,7 @@ export async function GET(request: Request) {
       variables: { id: cartId },
       revalidate: false,
       tags: [],
+      buyerIp: buyerIp(request),
     });
     return NextResponse.json({ cart });
   } catch {
@@ -62,6 +67,7 @@ export async function POST(request: Request) {
             variables: { cartId: body.cartId, lines },
             revalidate: false,
             tags: [],
+            buyerIp: buyerIp(request),
           })
         ).cartLinesAdd
       : (
@@ -70,6 +76,7 @@ export async function POST(request: Request) {
             variables: { input: { lines } },
             revalidate: false,
             tags: [],
+            buyerIp: buyerIp(request),
           })
         ).cartCreate;
     if (result.userErrors.length || !result.cart)
@@ -99,6 +106,7 @@ export async function PATCH(request: Request) {
             },
             revalidate: false,
             tags: [],
+            buyerIp: buyerIp(request),
           })
         ).cartLinesUpdate
       : (
@@ -107,6 +115,7 @@ export async function PATCH(request: Request) {
             variables: { cartId: body.cartId, lineIds: [body.lineId] },
             revalidate: false,
             tags: [],
+            buyerIp: buyerIp(request),
           })
         ).cartLinesRemove;
     if (result.userErrors.length || !result.cart) {
