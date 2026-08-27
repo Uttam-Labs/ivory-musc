@@ -89,26 +89,27 @@ export default async function Home() {
               key={key}
               className="home-hero relative flex min-h-[600px] items-end text-white md:aspect-[2/1] md:min-h-0 md:max-h-[820px]"
             >
-              {section.image && (
+              {section.image ? (
                 <Image
-                  src={sanityImageUrl(section.image, 2800)}
+                  src={sanityImageUrl(section.image, 3840)}
                   alt={section.heading || "Ivory Muse silk fabric"}
                   fill
                   priority
                   quality={95}
-                  className="home-hero-media object-cover md:hidden"
+                  className="home-hero-media object-cover"
+                  sizes="100vw"
+                />
+              ) : (
+                <Image
+                  src="/media/ivory-muse-hero.gif"
+                  alt={section.heading || "Ivory Muse silk fabric"}
+                  fill
+                  priority
+                  unoptimized
+                  className="home-hero-media object-cover"
                   sizes="100vw"
                 />
               )}
-              <Image
-                src="/media/ivory-muse-hero.gif"
-                alt={section.heading || "Ivory Muse silk fabric"}
-                fill
-                priority={!section.image}
-                unoptimized
-                className={`home-hero-media object-cover ${section.image ? "hidden md:block" : ""}`}
-                sizes="100vw"
-              />
               <div className="absolute inset-0 bg-black/15" />
               <div className="home-hero-content relative mx-auto w-full max-w-[1920] px-6 sm:px-12 xl:px-24 pb-16 md:pb-20 lg:pb-36">
                 <div className="home-hero__content-wrap w-full md:w-4/5 xl:w-1/2">
@@ -274,7 +275,7 @@ export default async function Home() {
                 <div className="relative min-h-[280px] sm:min-h-80">
                   <Image
                     fill
-                    src={sanityImageUrl(section.image, 2400)}
+                    src={sanityImageUrl(section.image, 3200)}
                     alt={section.heading || ""}
                     className="object-cover"
                     sizes="(min-width: 768px) 55vw, 100vw"
@@ -296,7 +297,7 @@ export default async function Home() {
                 {section.image && (
                   <Image
                     fill
-                    src={sanityImageUrl(section.image, 2800)}
+                    src={sanityImageUrl(section.image, 3840)}
                     alt={section.heading || ""}
                     className="object-cover object-center"
                     sizes="100vw"
@@ -339,7 +340,7 @@ export default async function Home() {
                 >
                   <Image
                     fill
-                    src={sanityImageUrl(section.image, 2400)}
+                    src={sanityImageUrl(section.image, 3200)}
                     alt={section.heading || section.eyebrow || ""}
                     className="object-cover"
                     sizes="(min-width:768px) 50vw,100vw"

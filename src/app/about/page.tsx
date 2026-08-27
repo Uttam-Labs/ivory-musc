@@ -94,7 +94,7 @@ export default async function AboutPage() {
             <Image
               fill
               priority
-              src={sanityImageUrl(hero.image, 2800)}
+              src={sanityImageUrl(hero.image, 3840)}
               alt={hero.image.alt || hero.heading || ""}
               className="object-cover"
               sizes="100vw"
@@ -134,7 +134,7 @@ export default async function AboutPage() {
             <div className="home-split-image relative aspect-[1.88/1] w-full">
               <Image
                 fill
-                src={sanityImageUrl(why.image, 2400)}
+                src={sanityImageUrl(why.image, 3200)}
                 alt={why.image.alt || why.heading || ""}
                 className="object-cover"
                 sizes="(max-width: 1023px) 100vw, 50vw"
@@ -214,7 +214,7 @@ export default async function AboutPage() {
             <div className="relative aspect-[1.43/1] w-full -order-1 lg:order-1">
               <Image
                 fill
-                src={sanityImageUrl(nature.image, 2400)}
+                src={sanityImageUrl(nature.image, 3200)}
                 alt={nature.image.alt || nature.heading || ""}
                 className="object-cover"
                 sizes="(max-width: 1023px) 100vw, 55vw"
