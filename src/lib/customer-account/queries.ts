@@ -16,7 +16,7 @@ export const ORDERS_QUERY = `query CustomerOrders($first: Int!, $customerAccessT
 
 export const ORDER_QUERY = `query CustomerOrder($customerAccessToken: String!) {
   customer(customerAccessToken: $customerAccessToken) { orders(first: 100, reverse: true) { nodes {
-    id name orderNumber processedAt canceledAt cancelReason email phone financialStatus fulfillmentStatus statusUrl
+    id name orderNumber processedAt canceledAt cancelReason currencyCode email phone financialStatus fulfillmentStatus statusUrl
     totalPrice { amount currencyCode }
     subtotalPrice { amount currencyCode }
     totalShippingPrice { amount currencyCode }
