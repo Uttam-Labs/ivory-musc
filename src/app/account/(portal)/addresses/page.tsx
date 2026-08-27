@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
   customerAccountFetch,
   decodeCustomerId,
@@ -32,7 +33,7 @@ type Data = {
   customer: {
     defaultAddress?: { id: string };
     addresses: { nodes: Address[] };
-  };
+  } | null;
 };
 export async function generateMetadata() {
   const content = await getAccountContent<Record<string, string>>(
@@ -45,11 +46,13 @@ export default async function AddressesPage({
 }: {
   searchParams: Promise<{ edit?: string; success?: string; error?: string }>;
 }) {
-  const [{ customer }, params, cms] = await Promise.all([
-    customerAccountFetch<Data>(ADDRESSES_QUERY),
+  const [addressResult, params, cms] = await Promise.all([
+    customerAccountFetch<Data>(ADDRESSES_QUERY).catch(() => null),
     searchParams,
     getAccountContent<Record<string, string>>("accountAddressesPage"),
   ]);
+  const customer = addressResult?.customer;
+  if (!customer) redirect("/api/customer-account/logout");
   const c = {
     eyebrow: "Address book",
     heading: "Your addresses",
