@@ -4,7 +4,7 @@ import { formatMoney } from "@/lib/format";
 import type { Product } from "@/lib/shopify/types";
 
 export function ProductCard({ product }: { product: Product }) {
-  return <article className="group">
+  return <article className="product-card group">
     <Link href={`/products/${product.handle}`} className="block overflow-hidden rounded-2xl bg-stone-100">
       {product.featuredImage ? <Image src={product.featuredImage.url} alt={product.featuredImage.altText || product.title} width={product.featuredImage.width} height={product.featuredImage.height} quality={95} className="aspect-[4/5] w-full object-cover" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" /> : <div className="aspect-[4/5]" />}
     </Link>

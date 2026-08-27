@@ -220,17 +220,28 @@ a {
     to { object-position: 52% center; }
 }
 
-/* Product and editorial imagery stays still on hover. */
+/* Editorial imagery stays still; product imagery has its own hover treatment. */
 .home-page img,
 .collection-page img,
 .blog-page img,
 .product-card img {
     scale: 1 !important;
 }
-.collection-page .cardImage,
 .blog-page .cardImage,
-[class*="cardImage"] {
+[class*="blog_cardImage"] {
     transform: none !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .bestseller-card img,
+    .product-card img {
+        transition: transform .8s cubic-bezier(.22,1,.36,1);
+        will-change: transform;
+    }
+    .bestseller-card:hover img,
+    .product-card:hover img {
+        transform: scale(1.035);
+    }
 }
 
 @media (max-width: 640px) {
@@ -250,6 +261,12 @@ a {
         animation: none !important;
     }
     .home-page img {
+        transition: none !important;
+        transform: none !important;
+    }
+    .product-card img,
+    .bestseller-card img,
+    [class*="collection_cardImage"] {
         transition: none !important;
         transform: none !important;
     }
