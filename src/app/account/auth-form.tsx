@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { Info } from "lucide-react";
 import { useActionState, useState } from "react";
 import {
   loginAction,
@@ -164,6 +165,7 @@ function PasswordStrengthField({
   error?: string;
 }) {
   const [password, setPassword] = useState("");
+  const [tooltipOpen, setTooltipOpen] = useState(false);
   const checks = [
     password.length >= 8,
     /[a-z]/.test(password) && /[A-Z]/.test(password),
@@ -185,9 +187,10 @@ function PasswordStrengthField({
     content.requirementSymbol,
   ];
   return (
-    <label className={styles.authField}>
-      <span>{content.passwordLabel}</span>
+    <div className={styles.authField}>
+      <label htmlFor="register-password">{content.passwordLabel}</label>
       <input
+        id="register-password"
         required
         name="password"
         type="password"
@@ -203,31 +206,53 @@ function PasswordStrengthField({
         id="password-strength"
         className={styles.passwordStrength}
         data-score={password ? score : 0}
+        onMouseEnter={() => setTooltipOpen(true)}
+        onMouseLeave={() => setTooltipOpen(false)}
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget))
+            setTooltipOpen(false);
+        }}
       >
-        <div className={styles.strengthHeading}>
-          <small>{content.passwordStrengthLabel}</small>
-          <strong aria-live="polite">
-            {password ? labels[Math.max(1, score)] : content.passwordHint}
-          </strong>
+        <div className={styles.strengthBarRow}>
+          <div className={styles.strengthTrack} aria-hidden="true">
+            <span
+              style={{ width: `${password ? Math.max(1, score) * 25 : 0}%` }}
+            />
+          </div>
+          <button
+            type="button"
+            className={styles.strengthInfo}
+            aria-label={`${content.passwordStrengthLabel}: ${password ? labels[Math.max(1, score)] : content.passwordHint}`}
+            aria-expanded={tooltipOpen}
+            onClick={() => setTooltipOpen((open) => !open)}
+          >
+            <Info size={16} aria-hidden="true" />
+          </button>
         </div>
-        <div className={styles.strengthTrack} aria-hidden="true">
-          <span
-            style={{ width: `${password ? Math.max(1, score) * 25 : 0}%` }}
-          />
+        <div
+          className={`${styles.strengthTooltip} ${tooltipOpen ? styles.strengthTooltipOpen : ""}`}
+          role="tooltip"
+        >
+          <div className={styles.strengthHeading}>
+            <small>{content.passwordStrengthLabel}</small>
+            <strong aria-live="polite">
+              {password ? labels[Math.max(1, score)] : content.passwordHint}
+            </strong>
+          </div>
+          <ul>
+            {requirements.map((requirement, index) => (
+              <li
+                className={checks[index] ? styles.requirementMet : undefined}
+                key={requirement}
+              >
+                <span aria-hidden="true">{checks[index] ? "✓" : "○"}</span>
+                {requirement}
+              </li>
+            ))}
+          </ul>
         </div>
-        <ul>
-          {requirements.map((requirement, index) => (
-            <li
-              className={checks[index] ? styles.requirementMet : undefined}
-              key={requirement}
-            >
-              <span aria-hidden="true">{checks[index] ? "✓" : "○"}</span>
-              {requirement}
-            </li>
-          ))}
-        </ul>
       </div>
-    </label>
+    </div>
   );
 }
 function Field({
