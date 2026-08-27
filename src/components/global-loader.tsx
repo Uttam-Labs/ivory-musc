@@ -121,6 +121,7 @@ export function GlobalLoader({
               quality={95}
               sizes="120px"
               className="global-loader__logo"
+              priority
             />
           ) : (
             title.trim().charAt(0) || "M"

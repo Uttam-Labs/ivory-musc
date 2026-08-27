@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { cache, Suspense } from "react";
+import Image from "next/image";
 import { Cormorant_Garamond, Montserrat } from "next/font/google";
 import "./globals.css";
 import "./custom.css";
@@ -223,7 +224,35 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         suppressHydrationWarning
         className="min-h-full flex flex-col bg-[var(--background)] text-[var(--foreground)]"
       >
-        <Suspense fallback={null}>
+        <Suspense
+          fallback={
+            <div
+              className="global-loader global-loader--visible"
+              aria-label="Loading Ivory Muse"
+              role="status"
+            >
+              <div className="global-loader__mark" aria-hidden="true">
+                {headerLogoUrl ? (
+                  <Image
+                    src={headerLogoUrl}
+                    alt=""
+                    width={240}
+                    height={220}
+                    quality={95}
+                    sizes="120px"
+                    className="global-loader__logo"
+                    priority
+                  />
+                ) : (
+                  header?.title?.trim().charAt(0) || "M"
+                )}
+              </div>
+              <div className="global-loader__line" aria-hidden="true">
+                <span />
+              </div>
+            </div>
+          }
+        >
           <GlobalLoader logoUrl={headerLogoUrl} title={header?.title} />
         </Suspense>
         <Header
