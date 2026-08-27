@@ -366,7 +366,7 @@ export function Header({
               >
                 <CartIcon className="h-[19px] w-[17px]" />
                 {cart?.totalQuantity ? (
-                  <span className="pointer-events-none absolute right-0 top-[-1px] z-10 flex h-[18px] min-w-[18px] items-center justify-center rounded-full border border-[#fff9f3] bg-[#a95850] px-[4px] text-[11px] font-medium leading-none text-white shadow-[0_2px_7px_rgba(80,35,31,.25)] [font-variant-numeric:tabular-nums]">
+                  <span className="pointer-events-none absolute right-[4px] top-[-2px] z-10 flex h-[18px] min-w-[18px] items-center justify-center rounded-full border border-[#fff9f3] bg-[#a95850] px-[4px] text-[11px] font-medium leading-none text-white shadow-[0_2px_7px_rgba(80,35,31,.25)] [font-variant-numeric:tabular-nums]">
                     {cart.totalQuantity}
                   </span>
                 ) : null}
