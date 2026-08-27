@@ -1,6 +1,4 @@
 .page{position:relative;display:grid;min-height:clamp(56rem,72vh,78rem);place-items:center;overflow:hidden;background:#fff9f3;padding:clamp(5rem,9vw,11rem) 2rem;color:#453f3b;text-align:center}
-.page::before,.page::after{position:absolute;width:34rem;height:34rem;border:1px solid rgba(155,80,74,.13);border-radius:50%;content:"";pointer-events:none}
-.page::before{top:-18rem;left:-11rem}.page::after{right:-14rem;bottom:-20rem}
 .inner{position:relative;z-index:1;width:min(74rem,100%)}
 .eyebrow{margin:0 0 1.8rem;color:#9b504a;font-family:var(--primary-font,Arial,sans-serif);font-size:1.15rem;letter-spacing:.24em;text-transform:uppercase}
 .code{display:block;margin:0 0 1.2rem;color:rgba(155,80,74,.2);font-family:var(--secondary-font,serif);font-size:clamp(6.5rem,9vw,10rem);font-weight:400;letter-spacing:-.04em;line-height:.8}
@@ -9,5 +7,5 @@
 .actions{display:flex;justify-content:center;flex-wrap:wrap;gap:1rem;margin-top:3.2rem}
 .primary,.secondary{display:inline-flex;min-width:21rem;min-height:5.4rem;align-items:center;justify-content:center;border:1px solid #9b504a;padding:1.2rem 2.4rem;font-family:var(--primary-font,Arial,sans-serif);font-size:1.2rem;letter-spacing:.12em;text-decoration:none;text-transform:uppercase;transition:background-color .25s,color .25s,transform .25s}
 .primary{background:#9b504a;color:#fff}.secondary{background:transparent;color:#9b504a}.primary:hover,.secondary:hover{transform:translateY(-2px)}.secondary:hover{background:#9b504a;color:#fff}.primary:hover{background:#87433e}
-@media(max-width:600px){.page{min-height:54rem;padding:5rem 2.2rem}.page::before,.page::after{width:24rem;height:24rem}.code{font-size:6.5rem}.title{font-size:3rem}.copy{font-size:1.35rem}.actions{display:grid}.primary,.secondary{width:100%;min-width:0}.eyebrow{font-size:1rem}}
+@media(max-width:600px){.page{min-height:54rem;padding:5rem 2.2rem}.code{font-size:6.5rem}.title{font-size:3rem}.copy{font-size:1.35rem}.actions{display:grid}.primary,.secondary{width:100%;min-width:0}.eyebrow{font-size:1rem}}
 @media(prefers-reduced-motion:reduce){.primary,.secondary{transition:none}.primary:hover,.secondary:hover{transform:none}}
