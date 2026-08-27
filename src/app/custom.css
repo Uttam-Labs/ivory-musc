@@ -220,21 +220,6 @@ a {
     to { object-position: 52% center; }
 }
 
-.scroll-reveal-enabled [data-scroll-reveal] {
-    opacity: 0;
-    transform: translateY(28px);
-    transition:
-        opacity .85s cubic-bezier(.22,1,.36,1),
-        transform .95s cubic-bezier(.22,1,.36,1);
-    transition-delay: var(--reveal-delay, 0ms);
-    will-change: opacity, transform;
-}
-.scroll-reveal-enabled [data-scroll-reveal].is-revealed {
-    opacity: 1;
-    transform: translateY(0);
-    will-change: auto;
-}
-
 /* Product and editorial imagery stays still on hover. */
 .home-page img,
 .collection-page img,
@@ -263,11 +248,6 @@ a {
     .home-hero-media,
     .home-hero-content {
         animation: none !important;
-    }
-    .scroll-reveal-enabled [data-scroll-reveal] {
-        opacity: 1 !important;
-        transform: none !important;
-        transition: none !important;
     }
     .home-page img {
         transition: none !important;
