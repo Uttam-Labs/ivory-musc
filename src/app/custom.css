@@ -189,6 +189,9 @@ a {
 .home-hero img {
     width: 100%;
 }
+.home-hero-media {
+    object-position: center center;
+}
 .home-hero-content {
     color: var(--white);
 }
