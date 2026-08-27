@@ -15,7 +15,6 @@ export default async function AccountPortalLayout({
     ordersLabel: "Orders",
     addressesLabel: "Addresses",
     profileLabel: "Profile",
-    supportLabel: "Support",
     signOutLabel: "Sign out",
     ...(await getAccountContent<Record<string, string>>("accountNavigation")),
   };

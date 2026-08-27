@@ -10,7 +10,6 @@ type Labels = {
   ordersLabel: string;
   addressesLabel: string;
   profileLabel: string;
-  supportLabel: string;
   signOutLabel: string;
 };
 const items = [
@@ -39,7 +38,6 @@ export function AccountNav({ labels }: { labels: Labels }) {
           </Link>
         );
       })}
-      <Link href="/contact">{labels.supportLabel}</Link>
       <Link className={styles.signOut} href="/api/customer-account/logout">
         {labels.signOutLabel}
       </Link>
