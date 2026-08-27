@@ -1,0 +1,20 @@
+.page{min-height:70vh;background:#fff9f3;padding-block:clamp(5rem,6vw,9rem) 0;color:#333;font-family:var(--primary-font,Arial,Helvetica,sans-serif)}
+.inner{max-width:1920px}
+.header{display:grid;grid-template-columns:minmax(0,1fr) minmax(42rem,.9fr);align-items:end;gap:clamp(3rem,6vw,10rem);margin-bottom:clamp(4rem,5vw,7rem);padding-bottom:clamp(3rem,4vw,5rem);border-bottom:1px solid #ded4cc}
+.eyebrow{margin:0 0 1rem;color:#8c8179;font-size:1.1rem;letter-spacing:.16em;text-transform:uppercase}
+.heading{margin:0;color:#9b504a;font-family:var(--secondary-font,"Times New Roman",serif);font-size:clamp(2.8rem,2.2vw,4rem);font-weight:400;line-height:1;text-transform:uppercase}
+.intro{max-width:60rem;margin:1.4rem 0 0;color:#746d68;font-size:1.45rem;line-height:1.65}
+.form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1rem}
+.inputWrap{display:flex;height:5.6rem;align-items:center;gap:1.2rem;border:1px solid #d9cec6;background:#fff;padding:0 1.7rem;color:#8a817b;transition:border-color .2s,box-shadow .2s}
+.inputWrap:focus-within{border-color:#9b504a;box-shadow:0 0 0 3px rgba(155,80,74,.08)}
+.inputWrap input{width:100%;height:100%;border:0;background:transparent;color:#332f2c;font:inherit;font-size:1.5rem;outline:0}
+.inputWrap input::placeholder{color:#9b938d}
+.submit{min-width:15rem;border:1px solid #9b504a;background:#9b504a;padding:0 2.4rem;color:#fff;font:inherit;font-size:1.25rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background-color .25s,border-color .25s}
+.submit:hover{border-color:#84423d;background:#84423d}
+.resultMeta{display:flex;align-items:center;justify-content:space-between;gap:2rem;margin-bottom:3rem;color:#746d68;font-size:1.35rem}
+.resultMeta strong{color:#9b504a;font-weight:500}
+.empty{display:grid;min-height:30rem;place-items:center;border:1px solid #dfd4cc;background:#fff;text-align:center}
+.empty h2{margin:0;color:#9b504a;font-family:var(--secondary-font,serif);font-size:clamp(2.4rem,3vw,3.4rem);font-weight:400}
+.empty p{margin:1rem 0 0;color:#746d68;font-size:1.4rem}
+@media(max-width:900px){.header{grid-template-columns:1fr}.form{max-width:72rem}}
+@media(max-width:600px){.page{padding-top:4rem}.header{gap:2.5rem;margin-bottom:3.5rem}.form{grid-template-columns:1fr}.submit{min-height:5.4rem}.resultMeta{align-items:flex-start;flex-direction:column;gap:.5rem}}
