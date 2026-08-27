@@ -1,29 +1,18 @@
 import Link from "next/link";
 import { ArrowRight, ShoppingBag } from "lucide-react";
-import {
-  customerAccountFetch,
-  encodeCustomerId,
-} from "@/lib/customer-account/client";
+import { customerAccountFetch, encodeCustomerId } from "@/lib/customer-account/client";
 import { ORDERS_QUERY } from "@/lib/customer-account/queries";
-import { formatMoney } from "@/lib/format";
 import { getAccountContent } from "@/lib/customer-account/content";
+import { OrderList, type OrderListItem } from "./order-list";
 import styles from "../../account.module.css";
-type Order = {
-  id: string;
-  name: string;
-  processedAt: string;
-  financialStatus: string;
-  fulfillmentStatus: string;
-  totalPrice: { amount: string; currencyCode: string };
-};
-type Data = { customer: { orders: { nodes: Order[] } } };
+type Data = { customer: { orders: { nodes: Omit<OrderListItem, "encodedId">[] } } };
 export async function generateMetadata() {
   const content = await getAccountContent<Record<string, string>>("accountOrdersPage");
   return { title: content.seoTitle || "Orders | Ivory Muse" };
 }
 export default async function OrdersPage() {
   const [{ customer }, cms] = await Promise.all([
-    customerAccountFetch<Data>(ORDERS_QUERY, { first: 50 }),
+    customerAccountFetch<Data>(ORDERS_QUERY, { first: 100 }),
     getAccountContent<Record<string, string>>("accountOrdersPage"),
   ]);
   const c = {
@@ -34,6 +23,16 @@ export default async function OrdersPage() {
     emptyText:
       "When you place an order, its details and delivery progress will appear here.",
     shopLabel: "Start shopping",
+    searchPlaceholder: "Search by order number or status",
+    filterAll: "All orders",
+    filterOpen: "Open orders",
+    filterFulfilled: "Fulfilled",
+    filterCancelled: "Cancelled",
+    noResultsHeading: "No matching orders",
+    noResultsText: "Try a different order number, status, or filter.",
+    viewDetailsLabel: "View details",
+    previousLabel: "Previous",
+    nextLabel: "Next",
     ...cms,
   };
   return (
@@ -46,24 +45,7 @@ export default async function OrdersPage() {
       </header>
       <div className={styles.orderList}>
         {customer.orders.nodes.length ? (
-          customer.orders.nodes.map((order) => (
-            <Link
-              className={styles.order}
-              href={`/account/orders/${encodeCustomerId(order.id)}`}
-              key={order.id}
-            >
-              <strong>{order.name}</strong>
-              <span>
-                {new Intl.DateTimeFormat("en-AU", {
-                  dateStyle: "medium",
-                }).format(new Date(order.processedAt))}
-              </span>
-              <span className={styles.status}>
-                {order.fulfillmentStatus.replaceAll("_", " ")}
-              </span>
-              <span>{formatMoney(order.totalPrice)}</span>
-            </Link>
-          ))
+          <OrderList orders={customer.orders.nodes.map((order) => ({ ...order, encodedId: encodeCustomerId(order.id) }))} copy={c} />
         ) : (
           <div className={styles.orderEmptyState}>
             <span className={styles.orderEmptyIcon} aria-hidden="true">

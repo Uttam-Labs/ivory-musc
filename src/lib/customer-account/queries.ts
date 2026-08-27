@@ -11,19 +11,35 @@ export const ACCOUNT_QUERY = `query AccountOverview($customerAccessToken: String
 }`;
 
 export const ORDERS_QUERY = `query CustomerOrders($first: Int!, $customerAccessToken: String!) {
-  customer(customerAccessToken: $customerAccessToken) { orders(first: $first, reverse: true, sortKey: PROCESSED_AT) { nodes { id name processedAt financialStatus fulfillmentStatus totalPrice { amount currencyCode } } } }
+  customer(customerAccessToken: $customerAccessToken) { orders(first: $first, reverse: true, sortKey: PROCESSED_AT) { nodes { id name processedAt canceledAt financialStatus fulfillmentStatus totalPrice { amount currencyCode } } } }
 }`;
 
 export const ORDER_QUERY = `query CustomerOrder($customerAccessToken: String!) {
   customer(customerAccessToken: $customerAccessToken) { orders(first: 100, reverse: true) { nodes {
-    id name processedAt financialStatus fulfillmentStatus statusUrl
+    id name orderNumber processedAt canceledAt cancelReason email phone financialStatus fulfillmentStatus statusUrl
     totalPrice { amount currencyCode }
     subtotalPrice { amount currencyCode }
     totalShippingPrice { amount currencyCode }
     totalTax { amount currencyCode }
+    totalRefunded { amount currencyCode }
     shippingAddress { ${ADDRESS_FIELDS} }
     billingAddress { ${ADDRESS_FIELDS} }
-    lineItems(first: 100) { nodes { id title quantity image { url altText } price { amount currencyCode } totalPrice { amount currencyCode } } }
+    successfulFulfillments {
+      trackingCompany
+      trackingInfo(first: 10) { number url }
+    }
+    lineItems(first: 100) { nodes {
+      title quantity currentQuantity
+      originalTotalPrice { amount currencyCode }
+      discountedTotalPrice { amount currencyCode }
+      customAttributes { key value }
+      variant {
+        id title sku
+        image { url altText }
+        price { amount currencyCode }
+        product { handle title }
+      }
+    } }
   } } }
 }`;
 
