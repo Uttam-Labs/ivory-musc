@@ -15,17 +15,35 @@ export function GlobalLoader({
   const [initialLoading, setInitialLoading] = useState(true);
   const [navigating, setNavigating] = useState(false);
   const firstRender = useRef(true);
-  const safetyTimer = useRef<number | null>(null);
+  const navigationStartedAt = useRef(0);
 
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
-      const timer = window.setTimeout(() => setInitialLoading(false), 700);
-      return () => window.clearTimeout(timer);
+      const initialStartedAt = performance.now();
+      let timer: number | undefined;
+      const finishInitialLoad = () => {
+        const remaining = Math.max(
+          0,
+          3000 - (performance.now() - initialStartedAt),
+        );
+        timer = window.setTimeout(() => setInitialLoading(false), remaining);
+      };
+
+      if (document.readyState === "complete") finishInitialLoad();
+      else window.addEventListener("load", finishInitialLoad, { once: true });
+
+      return () => {
+        window.removeEventListener("load", finishInitialLoad);
+        if (timer) window.clearTimeout(timer);
+      };
     }
 
-    if (safetyTimer.current) window.clearTimeout(safetyTimer.current);
-    const timer = window.setTimeout(() => setNavigating(false), 220);
+    const elapsed = performance.now() - navigationStartedAt.current;
+    const timer = window.setTimeout(
+      () => setNavigating(false),
+      Math.max(0, 3000 - elapsed),
+    );
     return () => window.clearTimeout(timer);
   }, [pathname]);
 
@@ -53,15 +71,13 @@ export function GlobalLoader({
         destination.protocol === "tel:"
       ) return;
 
+      navigationStartedAt.current = performance.now();
       setNavigating(true);
-      if (safetyTimer.current) window.clearTimeout(safetyTimer.current);
-      safetyTimer.current = window.setTimeout(() => setNavigating(false), 3000);
     };
 
     document.addEventListener("click", showBeforeNavigation, true);
     return () => {
       document.removeEventListener("click", showBeforeNavigation, true);
-      if (safetyTimer.current) window.clearTimeout(safetyTimer.current);
     };
   }, []);
 
