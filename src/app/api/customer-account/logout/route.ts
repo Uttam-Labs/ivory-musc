@@ -19,5 +19,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  return NextResponse.redirect(new URL("/account", request.url));
+  (await cookies()).delete(CUSTOMER_SESSION_COOKIE);
+  const destination = new URL("/account/login", request.url);
+  if (request.nextUrl.searchParams.get("reason") === "expired")
+    destination.searchParams.set("session", "expired");
+  return NextResponse.redirect(destination);
 }

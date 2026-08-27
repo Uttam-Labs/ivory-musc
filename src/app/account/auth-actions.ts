@@ -2,18 +2,24 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { storefrontCustomerFetch } from "@/lib/customer-account/client";
+import { sendAccountInviteIfInactive } from "@/lib/customer-account/admin";
 import {
   CUSTOMER_SESSION_COOKIE,
   customerCookieOptions,
   encryptSession,
 } from "@/lib/customer-account/session";
+import {
+  EMAIL_PATTERN,
+  isPrivateRecoveryResult,
+  validateLoginInput,
+  validateRegistrationInput,
+} from "@/lib/customer-account/validation";
 
 export type AuthState = {
   error?: string;
   success?: string;
   fieldErrors?: Record<string, string>;
 };
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 class CustomerCredentialsError extends Error {}
 type TokenPayload = {
   customerAccessTokenCreate: {
@@ -64,11 +70,7 @@ export async function loginAction(
     .toLowerCase();
   const password = String(formData.get("password") || "");
   const remember = formData.get("remember") === "on";
-  const fieldErrors: Record<string, string> = {};
-  if (!email) fieldErrors.email = "Please enter your email address.";
-  else if (!EMAIL_PATTERN.test(email))
-    fieldErrors.email = "Please enter a valid email address.";
-  if (!password) fieldErrors.password = "Please enter your password.";
+  const fieldErrors = validateLoginInput(email, password);
   if (Object.keys(fieldErrors).length) return { fieldErrors };
   try {
     await createSession(email, password, remember);
@@ -96,27 +98,13 @@ export async function registerAction(
     .toLowerCase();
   const password = String(formData.get("password") || "");
   const confirm = String(formData.get("confirmPassword") || "");
-  const fieldErrors: Record<string, string> = {};
-  if (!firstName) fieldErrors.firstName = "Please enter your first name.";
-  if (!lastName) fieldErrors.lastName = "Please enter your last name.";
-  if (!email) fieldErrors.email = "Please enter your email address.";
-  else if (!EMAIL_PATTERN.test(email))
-    fieldErrors.email = "Please enter a valid email address.";
-  if (!password) fieldErrors.password = "Please create a password.";
-  else {
-    const requirements = [
-      password.length >= 8,
-      /[a-z]/.test(password) && /[A-Z]/.test(password),
-      /\d/.test(password),
-      /[^A-Za-z0-9]/.test(password),
-    ];
-    if (!requirements.every(Boolean))
-      fieldErrors.password = "Please meet all password requirements.";
-  }
-  if (!confirm)
-    fieldErrors.confirmPassword = "Please confirm your password.";
-  else if (password !== confirm)
-    fieldErrors.confirmPassword = "Passwords do not match.";
+  const fieldErrors = validateRegistrationInput({
+    firstName,
+    lastName,
+    email,
+    password,
+    confirmPassword: confirm,
+  });
   if (Object.keys(fieldErrors).length) return { fieldErrors };
   try {
     const data = await storefrontCustomerFetch<{
@@ -175,15 +163,10 @@ export async function recoverAction(
     // Shopify deliberately treats a customer record without an active legacy
     // password account as unidentified. Keep the public recovery response
     // neutral so the form cannot be used to discover registered emails.
-    if (
-      error &&
-      !["CUSTOMER_DISABLED", "NOT_FOUND", "UNIDENTIFIED_CUSTOMER"].includes(
-        error.code || "",
-      ) &&
-      !/could not find customer|unidentified customer/i.test(error.message)
-    ) {
+    if (error && !isPrivateRecoveryResult(error)) {
       return { error: error.message };
     }
+    if (error) await sendAccountInviteIfInactive(email).catch(() => false);
     return {
       success:
         "If an active account exists for this email, password reset instructions will arrive shortly. Please also check your spam folder.",

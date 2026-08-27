@@ -6,8 +6,13 @@ import styles from "../account.module.css";
 
 const fallback: LoginContent = { seoTitle:"Sign in | Ivory Muse", eyebrow:"Customer account", heading:"Welcome back", description:"Sign in to review your orders, manage addresses and continue your Ivory Muse experience.", emailLabel:"Email address", passwordLabel:"Password", rememberLabel:"Remember me", forgotPasswordLabel:"Forgot password?", submitLabel:"Sign in", submittingLabel:"Signing in…", newCustomerText:"New to Ivory Muse?", registerLinkLabel:"Create an account" };
 export async function generateMetadata(){const content=await getAccountContent<LoginContent>("accountLoginPage");return{title:content.seoTitle||fallback.seoTitle}}
-export default async function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ session?: string }>;
+}) {
   if (await getCustomerSession()) redirect("/account");
+  const params = await searchParams;
   const content = { ...fallback, ...await getAccountContent<LoginContent>("accountLoginPage") };
   return (
     <main className={styles.authPage}>
@@ -16,6 +21,15 @@ export default async function LoginPage() {
           <p className={styles.eyebrow}>{content.eyebrow}</p>
           <h1>{content.heading}</h1>
           <p className={styles.authIntro}>{content.description}</p>
+          {params.session === "expired" && (
+            <p
+              className={`${styles.authFeedback} ${styles.authFeedbackSuccess}`}
+              role="status"
+            >
+              <span aria-hidden="true">i</span>
+              Your secure session has expired. Please sign in again.
+            </p>
+          )}
           <LoginForm content={content} />
         </div>
       </section>
