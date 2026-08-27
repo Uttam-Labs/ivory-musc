@@ -23,7 +23,7 @@ function metafieldText(metafield?: Product["featuredDescription"]) {
 }
 export function CollectionSlider({
   products,
-  autoSlide = false,
+  autoSlide = true,
   slideInterval = 5000,
 }: {
   products: Product[];
@@ -34,7 +34,7 @@ export function CollectionSlider({
     ? [
       Autoplay({
         delay: slideInterval,
-        stopOnInteraction: true,
+        stopOnInteraction: false,
         stopOnMouseEnter: true,
       }),
     ]

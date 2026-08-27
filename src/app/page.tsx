@@ -151,7 +151,6 @@ export default async function Home() {
               )}
               <CollectionSlider
                 products={products}
-                autoSlide={section.autoSlide}
                 slideInterval={section.slideInterval}
               />
             </section>
