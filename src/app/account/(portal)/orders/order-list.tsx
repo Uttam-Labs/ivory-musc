@@ -95,13 +95,15 @@ export function OrderList({ orders, copy }: { orders: OrderListItem[]; copy: Cop
                 <div className={styles.orderCardLead}>
                   <strong>{order.name}</strong>
                   <span>{new Intl.DateTimeFormat("en-AU", { dateStyle: "medium" }).format(new Date(order.processedAt))}</span>
+                  <div className={styles.orderBadges}>
+                    <span className={`${styles.orderBadge} ${styles[`orderBadge_${financialTone(order.financialStatus)}`]}`}>{readable(order.financialStatus)}</span>
+                    <span className={`${styles.orderBadge} ${styles[`orderBadge_${fulfillmentTone(order.fulfillmentStatus, Boolean(order.canceledAt))}`]}`}>{fulfilment}</span>
+                  </div>
                 </div>
-                <div className={styles.orderBadges}>
-                  <span className={`${styles.orderBadge} ${styles[`orderBadge_${financialTone(order.financialStatus)}`]}`}>{readable(order.financialStatus)}</span>
-                  <span className={`${styles.orderBadge} ${styles[`orderBadge_${fulfillmentTone(order.fulfillmentStatus, Boolean(order.canceledAt))}`]}`}>{fulfilment}</span>
+                <div className={styles.orderCardMeta}>
+                  <strong className={styles.orderTotal}>{formatMoney(order.totalPrice)}</strong>
+                  <span className={styles.orderView}>{copy.viewDetailsLabel}<ArrowRight size={17} aria-hidden="true" /></span>
                 </div>
-                <strong className={styles.orderTotal}>{formatMoney(order.totalPrice)}</strong>
-                <span className={styles.orderView}>{copy.viewDetailsLabel}<ArrowRight size={17} aria-hidden="true" /></span>
               </Link>
             );
           })}
