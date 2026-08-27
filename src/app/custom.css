@@ -43,6 +43,15 @@ body {
     background: var(--body-bg-color);
 }
 
+html.site-loading,
+html.site-loading body {
+    background: #fff9f3 !important;
+}
+
+html.site-loading body > :not(.global-loader) {
+    visibility: hidden !important;
+}
+
 img {
     display: block;
     max-width: 100%;

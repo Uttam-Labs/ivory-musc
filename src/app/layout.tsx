@@ -181,7 +181,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${bodyFont.variable} ${headingFont.variable} h-full antialiased`}
+      className={`${bodyFont.variable} ${headingFont.variable} site-loading h-full antialiased`}
       style={
         {
           "--background": settings?.theme?.background || "#FFF9F3",

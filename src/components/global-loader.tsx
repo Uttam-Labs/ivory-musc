@@ -44,6 +44,11 @@ export function GlobalLoader({
   }, []);
 
   useEffect(() => {
+    if (initialLoading) return;
+    document.documentElement.classList.remove("site-loading");
+  }, [initialLoading]);
+
+  useEffect(() => {
     if (previousPathname.current === pathname) return;
     previousPathname.current = pathname;
     const elapsed = performance.now() - navigationStartedAt.current;
