@@ -16,6 +16,7 @@ export function GlobalLoader({
   const [navigating, setNavigating] = useState(false);
   const previousPathname = useRef(pathname);
   const navigationStartedAt = useRef(0);
+  const navigationMaximumTimer = useRef<number | null>(null);
 
   useEffect(() => {
     let minimumTimePassed = false;
@@ -27,7 +28,8 @@ export function GlobalLoader({
       minimumTimePassed = true;
       pageLoaded = pageLoaded || document.readyState === "complete";
       finishWhenReady();
-    }, 3000);
+    }, 650);
+    const maximumTimer = window.setTimeout(() => setInitialLoading(false), 3000);
     const handleLoad = () => {
       pageLoaded = true;
       finishWhenReady();
@@ -36,6 +38,7 @@ export function GlobalLoader({
     if (!pageLoaded) window.addEventListener("load", handleLoad, { once: true });
     return () => {
       window.clearTimeout(minimumTimer);
+      window.clearTimeout(maximumTimer);
       window.removeEventListener("load", handleLoad);
     };
   }, []);
@@ -45,8 +48,14 @@ export function GlobalLoader({
     previousPathname.current = pathname;
     const elapsed = performance.now() - navigationStartedAt.current;
     const timer = window.setTimeout(
-      () => setNavigating(false),
-      Math.max(0, 3000 - elapsed),
+      () => {
+        setNavigating(false);
+        if (navigationMaximumTimer.current) {
+          window.clearTimeout(navigationMaximumTimer.current);
+          navigationMaximumTimer.current = null;
+        }
+      },
+      Math.max(0, 450 - elapsed),
     );
     return () => window.clearTimeout(timer);
   }, [pathname]);
@@ -77,19 +86,28 @@ export function GlobalLoader({
 
       navigationStartedAt.current = performance.now();
       setNavigating(true);
+      if (navigationMaximumTimer.current) {
+        window.clearTimeout(navigationMaximumTimer.current);
+      }
+      navigationMaximumTimer.current = window.setTimeout(
+        () => setNavigating(false),
+        3000,
+      );
     };
 
     document.addEventListener("click", showBeforeNavigation, true);
     return () => {
       document.removeEventListener("click", showBeforeNavigation, true);
+      if (navigationMaximumTimer.current) {
+        window.clearTimeout(navigationMaximumTimer.current);
+      }
     };
   }, []);
 
   return (
-    <>
       <div
-        className={`global-loader ${initialLoading ? "global-loader--visible" : ""}`}
-        aria-hidden={!initialLoading}
+        className={`global-loader ${initialLoading || navigating ? "global-loader--visible" : ""}`}
+        aria-hidden={!(initialLoading || navigating)}
         aria-label="Loading Ivory Muse"
         role="status"
       >
@@ -110,10 +128,5 @@ export function GlobalLoader({
         </div>
         <div className="global-loader__line" aria-hidden="true"><span /></div>
       </div>
-      <div
-        className={`route-progress ${navigating ? "route-progress--visible" : ""}`}
-        aria-hidden="true"
-      ><span /></div>
-    </>
   );
 }
