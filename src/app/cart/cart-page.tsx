@@ -95,15 +95,6 @@ export function CartPage() {
   return (
     <main className={styles.page}>
       <div className={styles.inner}>
-        <header className={styles.header}>
-          <div>
-            <p className={styles.eyebrow}>Your selection</p>
-            <h1>Shopping bag</h1>
-            <p>Review your pieces before continuing to secure checkout.</p>
-          </div>
-          <Link href="/collections/shop">Continue shopping</Link>
-        </header>
-
         {loading ? (
           <div className={styles.state} role="status">
             <LoaderCircle className={styles.spinner} />
