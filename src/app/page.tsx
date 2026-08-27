@@ -89,13 +89,24 @@ export default async function Home() {
               key={key}
               className="home-hero relative flex min-h-[600px] items-end text-white md:aspect-[2/1] md:min-h-0 md:max-h-[820px]"
             >
+              {section.image && (
+                <Image
+                  src={sanityImageUrl(section.image, 2800)}
+                  alt={section.heading || "Ivory Muse silk fabric"}
+                  fill
+                  priority
+                  quality={95}
+                  className="home-hero-media object-cover md:hidden"
+                  sizes="100vw"
+                />
+              )}
               <Image
                 src="/media/ivory-muse-hero.gif"
                 alt={section.heading || "Ivory Muse silk fabric"}
                 fill
-                priority
+                priority={!section.image}
                 unoptimized
-                className="home-hero-media object-cover"
+                className={`home-hero-media object-cover ${section.image ? "hidden md:block" : ""}`}
                 sizes="100vw"
               />
               <div className="absolute inset-0 bg-black/15" />
@@ -220,7 +231,7 @@ export default async function Home() {
                             alt=""
                             className="object-contain"
                             sizes="90px"
-                            quality={90}
+                            quality={95}
                           />
                         </div>
                       )}
@@ -267,7 +278,7 @@ export default async function Home() {
                     alt={section.heading || ""}
                     className="object-cover"
                     sizes="(min-width: 768px) 55vw, 100vw"
-                    quality={90}
+                    quality={95}
                   />
                 </div>
               )}
@@ -289,7 +300,7 @@ export default async function Home() {
                     alt={section.heading || ""}
                     className="object-cover object-center"
                     sizes="100vw"
-                    quality={90}
+                    quality={95}
                   />
                 )}
                 <div className="absolute inset-0 bg-black/15" />
@@ -332,7 +343,7 @@ export default async function Home() {
                     alt={section.heading || section.eyebrow || ""}
                     className="object-cover"
                     sizes="(min-width:768px) 50vw,100vw"
-                    quality={90}
+                    quality={95}
                   />
                 </div>
               )}

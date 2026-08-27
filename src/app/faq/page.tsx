@@ -35,7 +35,7 @@ export default async function FaqPage() {
   return (
     <main className={styles.page}>
       {hero && <section className={`faq--hero about-hero relative flex min-h-[600px] items-end text-white md:min-h-[450px] xl:min-h-[652px]`}>
-        {hero.image && <Image fill priority src={sanityImageUrl(hero.image, 2400)} alt={hero.image.alt || hero.heading || ""} className={styles.heroImage} sizes="100vw" />}
+        {hero.image && <Image fill priority src={sanityImageUrl(hero.image, 2800)} alt={hero.image.alt || hero.heading || ""} className={styles.heroImage} sizes="100vw" quality={95} />}
         <div className={styles.heroShade} style={{ backgroundColor: `rgba(0,0,0,${Math.min(Math.max(hero.overlayOpacity || 0, 0), 100) / 100})` }} />
         <SiteContainer className={`${styles.heroContent} home-hero-content about-hero-content`}>
           <div className={`home-hero__content-wrap about-hero__content-wrap w-full md:w-4/5 xl:w-1/2`}>{hero.heading && <h1 className="hero-title max-w-[640px] font-heading text-[34px] uppercase leading-tight lg:text-[40px]">{hero.heading}</h1>}{hero.body && <p className="mt-4 w-full max-w-[700px] text-[11px] leading-5 lg:text-xs">{hero.body}</p>}</div>
@@ -50,7 +50,7 @@ export default async function FaqPage() {
       </SiteContainer>}
 
       {cta && <section className={`${styles.cta} faq-mod__cta`}>
-        {cta.image && <Image fill src={sanityImageUrl(cta.image, 2400)} alt={cta.image.alt || cta.heading || ""} className={styles.ctaImage} sizes="100vw" />}
+        {cta.image && <Image fill src={sanityImageUrl(cta.image, 2800)} alt={cta.image.alt || cta.heading || ""} className={styles.ctaImage} sizes="100vw" quality={95} />}
         <div className={styles.ctaShade} style={{ backgroundColor: `rgba(255,249,243,${Math.min(Math.max(cta.overlayOpacity || 0, 0), 100) / 100})` }} />
         <SiteContainer className={`${styles.ctaContent} faq__cta-content`}>
           {cta.heading && <h2>{cta.heading}</h2>}

@@ -62,7 +62,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             {visibility?.showReadingTime !== false && <span>{readingMinutes(article)} {labels?.readingTimeSuffix || "min read"}</span>}
           </div>}
         </header>
-        {visibility?.showFeaturedImage !== false && article.image && <div className={styles.hero}><Image fill priority src={article.image.url} alt={article.image.altText || article.title} className={styles.heroImage} sizes="(min-width:901px) 70vw, 100vw" /></div>}
+        {visibility?.showFeaturedImage !== false && article.image && <div className={styles.hero}><Image fill priority src={article.image.url} alt={article.image.altText || article.title} className={styles.heroImage} sizes="(min-width:901px) 70vw, 100vw" quality={95} /></div>}
         <div className={styles.content} dangerouslySetInnerHTML={{ __html: article.contentHtml }} />
         {visibility?.showTags !== false && article.tags.length > 0 && <div className={styles.tags}>{article.tags.map((tag) => <Link key={tag} href={`/blog?tag=${encodeURIComponent(tag)}`}>{tag}</Link>)}</div>}
       </article>
@@ -70,7 +70,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         {visibility?.showRecent !== false && <h2 className={styles.sidebarHeading}>{labels?.recentHeading || "Recent articles"}</h2>}
         {visibility?.showRecent !== false && <>
         {recent.map((item) => <article className={styles.recentItem} key={item.id}>
-          {item.image && <Link className={styles.recentImage} href={href(item)}><Image fill src={item.image.url} alt={item.image.altText || item.title} sizes="100px" /></Link>}
+          {item.image && <Link className={styles.recentImage} href={href(item)}><Image fill src={item.image.url} alt={item.image.altText || item.title} sizes="100px" quality={95} /></Link>}
           <div><Link className={styles.recentTitle} href={href(item)}>{item.title}</Link><div className={styles.recentDate}><CalendarIcon />{formatDate(item.publishedAt)}</div></div>
         </article>)}
         </>}

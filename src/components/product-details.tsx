@@ -75,8 +75,8 @@ export function ProductDetails({ product, initialSelection, settings, relatedHea
       </nav>
       <section className={`${styles.productSection} product-info-details__columns`}>
         <div className={`${styles.gallery} product-info-details__gallery`}>
-          <div className={styles.mainImage}>{activeImage && <Image src={activeImage.url} alt={activeImage.altText || product.title} fill preload quality={90} sizes="(min-width:768px) 50vw, 100vw" />}</div>
-          {product.images.nodes.length > 1 && <div className={`${styles.thumbnails} product-details__thumbnails`}>{product.images.nodes.map((image) => <button key={image.url} aria-label={`View ${image.altText || product.title}`} className={activeImage?.url === image.url ? styles.activeThumb : undefined} onClick={() => setManualImage(image.url)}><Image src={image.url} alt={image.altText || product.title} fill quality={90} sizes="(min-width: 1200px) 12vw, (min-width: 768px) 20vw, 45vw" /></button>)}</div>}
+          <div className={styles.mainImage}>{activeImage && <Image src={activeImage.url} alt={activeImage.altText || product.title} fill preload quality={95} sizes="(min-width:768px) 50vw, 100vw" />}</div>
+          {product.images.nodes.length > 1 && <div className={`${styles.thumbnails} product-details__thumbnails`}>{product.images.nodes.map((image) => <button key={image.url} aria-label={`View ${image.altText || product.title}`} className={activeImage?.url === image.url ? styles.activeThumb : undefined} onClick={() => setManualImage(image.url)}><Image src={image.url} alt={image.altText || product.title} fill quality={95} sizes="(min-width: 1200px) 12vw, (min-width: 768px) 20vw, 45vw" /></button>)}</div>}
         </div>
         <div className={`${styles.info} product-info-details__wrapper`}>
           <div className="product--info__container">

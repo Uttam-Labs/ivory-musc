@@ -173,7 +173,7 @@ function ProductQuickView({
                     src={activeImage.url}
                     alt={activeImage.altText || product.title}
                     fill
-                    quality={90}
+                    quality={95}
                     sizes="(min-width: 900px) 45vw, 100vw"
                     className={styles.coverImage}
                     priority
@@ -188,7 +188,7 @@ function ProductQuickView({
                       className={activeImage?.url === image.url ? styles.thumbnailActive : styles.thumbnail}
                       onClick={() => setActiveImage(image)}
                     >
-                      <Image src={image.url} alt={image.altText || "Product view"} fill quality={90} sizes="90px" className={styles.coverImage} />
+                      <Image src={image.url} alt={image.altText || "Product view"} fill quality={95} sizes="90px" className={styles.coverImage} />
                     </button>
                   ))}
                 </div>
@@ -290,7 +290,7 @@ export function CollectionProductGrid({ products }: { products: Product[] }) {
                       src={product.featuredImage.url}
                       alt={product.featuredImage.altText || product.title}
                       fill
-                      quality={90}
+                      quality={95}
                       sizes="(min-width: 1200px) 25vw, (min-width: 700px) 50vw, 100vw"
                       className={styles.cardImage}
                     />

@@ -65,7 +65,7 @@ export function CollectionSlider({
                         alt={p.featuredImage.altText || p.title}
                         className="object-cover"
                         sizes="(min-width:1024px) 29vw,84vw"
-                        quality={90}
+                        quality={95}
                       />
                     )}
                   </div>

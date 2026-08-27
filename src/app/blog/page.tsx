@@ -73,7 +73,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
   return <main className={styles.page}>
     {hero && hero.enabled !== false && <section className={`blog--hero about-hero relative flex min-h-[600px] items-end text-white md:min-h-[450px] xl:min-h-[652px]`}>
-      {hero.image && <Image fill priority src={sanityImageUrl(hero.image, 2400)} alt={hero.image.alt || hero.heading || ""} className={styles.heroImage} sizes="100vw" />}
+      {hero.image && <Image fill priority src={sanityImageUrl(hero.image, 2800)} alt={hero.image.alt || hero.heading || ""} className={styles.heroImage} sizes="100vw" quality={95} />}
       <div className={styles.heroShade} style={{ backgroundColor: `rgba(0,0,0,${Math.min(Math.max(hero.overlayOpacity || 0, 0), 100) / 100})` }} />
       <SiteContainer className={`${styles.heroContent} home-hero-content about-hero-content`}><div className={`home-hero__content-wrap about-hero__content-wrap w-full md:w-4/5 xl:w-1/2`}>{hero.heading && <h1 className="hero-title max-w-[640px] font-heading text-[34px] uppercase leading-tight lg:text-[40px]">{hero.heading}</h1>}{hero.body && <p className="mt-4 w-full max-w-[700px] text-[11px] leading-5 lg:text-xs">{hero.body}</p>}</div></SiteContainer>
     </section>}
@@ -86,7 +86,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
       <div className={styles.contentGrid}>
         <div className={styles.articles}>
           {articles.length ? articles.map((article) => <article className={styles.card} key={article.id}>
-            {visibility?.showImages !== false && article.image && <Link className={styles.imageLink} href={articleHref(article)}><Image fill src={article.image.url} alt={article.image.altText || article.title} className={styles.cardImage} sizes="(min-width:901px) 32vw, (min-width:641px) 48vw, 100vw" /></Link>}
+            {visibility?.showImages !== false && article.image && <Link className={styles.imageLink} href={articleHref(article)}><Image fill src={article.image.url} alt={article.image.altText || article.title} className={styles.cardImage} sizes="(min-width:901px) 32vw, (min-width:641px) 48vw, 100vw" quality={95} /></Link>}
             {visibility?.showDates !== false && <div className={styles.date}><CalendarIcon /><time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time></div>}
             <h2><Link href={articleHref(article)}>{article.title}</Link></h2>
             {visibility?.showExcerpts !== false && <p className={styles.excerpt}>{article.excerpt || article.content}</p>}
@@ -101,7 +101,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           </form>}
           {visibility?.showRecent !== false && settings?.recentHeading && <h2 className={styles.recentHeading}>{settings.recentHeading}</h2>}
           {visibility?.showRecent !== false && <div className={styles.recentList}>{recent.map((article) => <article className={styles.recentItem} key={article.id}>
-            {article.image && <Link className={styles.recentImageWrap} href={articleHref(article)}><Image fill src={article.image.url} alt={article.image.altText || article.title} className={styles.recentImage} sizes="120px" /></Link>}
+            {article.image && <Link className={styles.recentImageWrap} href={articleHref(article)}><Image fill src={article.image.url} alt={article.image.altText || article.title} className={styles.recentImage} sizes="120px" quality={95} /></Link>}
             <div className={styles.recentCopy}><Link className={styles.recentTitle} href={articleHref(article)}>{article.title}</Link><div className={styles.recentDate}><CalendarIcon /><time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time></div></div>
           </article>)}</div>}
         </aside>}

@@ -94,10 +94,11 @@ export default async function AboutPage() {
             <Image
               fill
               priority
-              src={sanityImageUrl(hero.image, 2200)}
+              src={sanityImageUrl(hero.image, 2800)}
               alt={hero.image.alt || hero.heading || ""}
               className="object-cover"
               sizes="100vw"
+              quality={95}
             />
           )}
           <div className="absolute inset-0 bg-black/20" />
@@ -133,10 +134,11 @@ export default async function AboutPage() {
             <div className="home-split-image relative aspect-[1.88/1] w-full">
               <Image
                 fill
-                src={sanityImageUrl(why.image, 1200)}
+                src={sanityImageUrl(why.image, 2400)}
                 alt={why.image.alt || why.heading || ""}
                 className="object-cover"
-                sizes="50vw"
+                sizes="(max-width: 1023px) 100vw, 50vw"
+                quality={95}
               />
             </div>
           )}
@@ -212,10 +214,11 @@ export default async function AboutPage() {
             <div className="relative aspect-[1.43/1] w-full -order-1 lg:order-1">
               <Image
                 fill
-                src={sanityImageUrl(nature.image, 1300)}
+                src={sanityImageUrl(nature.image, 2400)}
                 alt={nature.image.alt || nature.heading || ""}
                 className="object-cover"
-                sizes="50vw"
+                sizes="(max-width: 1023px) 100vw, 55vw"
+                quality={95}
               />
             </div>
           )}
@@ -243,10 +246,11 @@ export default async function AboutPage() {
                     <div className="relative aspect-[1.09]">
                       <Image
                         fill
-                        src={sanityImageUrl(card.image, 900)}
+                        src={sanityImageUrl(card.image, 1800)}
                         alt={card.image.alt || card.title || ""}
                         className="object-cover"
-                        sizes="25vw"
+                        sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 25vw"
+                        quality={95}
                       />
                     </div>
                   )}

@@ -48,7 +48,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
       <section className={styles.orderItemsCard}>
         <div className={styles.orderSectionTitle}><Package size={22} /><h2>{c.itemsHeading}</h2></div>
         {order.lineItems.nodes.map((item, index) => <article className={styles.orderProduct} key={`${item.variant?.id || item.title}-${index}`}>
-          <div className={styles.orderProductImage}>{item.variant?.image ? <Image src={item.variant.image.url} alt={item.variant.image.altText || item.title} width={96} height={120} /> : <Package size={28} />}</div>
+          <div className={styles.orderProductImage}>{item.variant?.image ? <Image src={item.variant.image.url} alt={item.variant.image.altText || item.title} width={192} height={240} quality={95} sizes="96px" /> : <Package size={28} />}</div>
           <div className={styles.orderProductInfo}>{item.variant?.product?.handle ? <Link href={`/products/${item.variant.product.handle}`}><strong>{item.title}</strong></Link> : <strong>{item.title}</strong>}{item.variant?.title && item.variant.title !== "Default Title" && <span>{item.variant.title}</span>}{item.variant?.sku && <span>{c.skuLabel}: {item.variant.sku}</span>}<span>{c.quantityLabel}: {item.quantity}</span>{item.customAttributes.map((attribute) => <span key={attribute.key}>{attribute.key}: {attribute.value}</span>)}</div>
           <div className={styles.orderProductPrice}>{item.originalTotalPrice.amount !== item.discountedTotalPrice.amount && <del>{formatMoney(item.originalTotalPrice)}</del>}<strong>{formatMoney(item.discountedTotalPrice)}</strong></div>
         </article>)}
