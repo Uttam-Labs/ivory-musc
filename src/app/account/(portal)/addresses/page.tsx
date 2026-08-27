@@ -62,7 +62,7 @@ export default async function AddressesPage({
     firstNameLabel: "First name",
     lastNameLabel: "Last name",
     companyLabel: "Company",
-    phoneLabel: "Phone (+country code)",
+    phoneLabel: "Phone",
     address1Label: "Address",
     address2Label: "Apartment, suite, etc.",
     cityLabel: "City",
@@ -172,7 +172,13 @@ export default async function AddressesPage({
             value={edit?.lastName}
           />
           <Field name="company" label={c.companyLabel} value={edit?.company} />
-          <Field name="phone" label={c.phoneLabel} value={edit?.phone} />
+          <Field
+            name="phone"
+            label={c.phoneLabel}
+            value={edit?.phone}
+            type="tel"
+            inputMode="tel"
+          />
           <Field
             full
             name="address1"
@@ -246,12 +252,16 @@ function Field({
   value,
   required,
   full,
+  type = "text",
+  inputMode,
 }: {
   name: string;
   label: string;
   value?: string;
   required?: boolean;
   full?: boolean;
+  type?: string;
+  inputMode?: "tel";
 }) {
   return (
     <div className={`${styles.field} ${full ? styles.full : ""}`}>
@@ -259,6 +269,8 @@ function Field({
       <input
         id={name}
         name={name}
+        type={type}
+        inputMode={inputMode}
         defaultValue={value || ""}
         required={required}
       />

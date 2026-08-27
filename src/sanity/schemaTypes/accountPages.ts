@@ -350,7 +350,7 @@ export const accountAddressesPage = defineType({
     firstNameLabel: "First name",
     lastNameLabel: "Last name",
     companyLabel: "Company",
-    phoneLabel: "Phone (+country code)",
+    phoneLabel: "Phone",
     address1Label: "Address",
     address2Label: "Apartment, suite, etc.",
     cityLabel: "City",
