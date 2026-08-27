@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { shopifyFetch } from "@/lib/shopify/client";
 import { getCustomerSession } from "@/lib/customer-account/session";
-import { CART_BUYER_IDENTITY_UPDATE_MUTATION } from "@/lib/shopify/queries";
+import { CART_ATTRIBUTES_UPDATE_MUTATION, CART_BUYER_IDENTITY_UPDATE_MUTATION } from "@/lib/shopify/queries";
 import type { Cart } from "@/lib/shopify/types";
 
 const schema = z.object({ cartId: z.string().min(1) });
@@ -37,6 +37,23 @@ export async function POST(request: Request) {
     if (!cart?.checkoutUrl || cart.totalQuantity < 1)
       return NextResponse.json(
         { error: "Your cart is empty or has expired." },
+        { status: 400 },
+      );
+    const correlation = await shopifyFetch<{
+      cartAttributesUpdate: { cart: Cart | null; userErrors: Array<{ message: string }> };
+    }>({
+      query: CART_ATTRIBUTES_UPDATE_MUTATION,
+      variables: {
+        cartId,
+        attributes: [{ key: "_ivory_muse_cart_id", value: cartId }],
+      },
+      revalidate: false,
+      tags: [],
+      buyerIp,
+    });
+    if (correlation.cartAttributesUpdate.userErrors.length)
+      return NextResponse.json(
+        { error: correlation.cartAttributesUpdate.userErrors[0].message },
         { status: 400 },
       );
     return NextResponse.json(

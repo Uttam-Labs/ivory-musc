@@ -21,6 +21,9 @@ export async function shopifyFetch<T>({
 }): Promise<T> {
   if (!isShopifyConfigured) throw new ShopifyConfigurationError("Shopify is not configured");
 
+  const cacheOptions = revalidate === false
+    ? { cache: "no-store" as const }
+    : { next: { revalidate, tags } };
   const response = await fetch(
     `https://${env.SHOPIFY_STORE_DOMAIN}/api/${env.SHOPIFY_STOREFRONT_API_VERSION}/graphql.json`,
     {
@@ -31,7 +34,7 @@ export async function shopifyFetch<T>({
         ...(buyerIp ? { "Shopify-Storefront-Buyer-IP": buyerIp } : {}),
       },
       body: JSON.stringify({ query, variables }),
-      next: { revalidate, tags },
+      ...cacheOptions,
     },
   );
 

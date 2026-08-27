@@ -98,8 +98,9 @@ export function OrderList({ orders, copy }: { orders: OrderListItem[]; copy: Cop
                   <strong>{order.name}</strong>
                   <span>{new Intl.DateTimeFormat("en-AU", { dateStyle: "medium" }).format(new Date(order.processedAt))}</span>
                   <div className={styles.orderBadges}>
+                    {order.canceledAt && <span className={`${styles.orderBadge} ${styles.orderBadge_danger}`}>Cancelled</span>}
                     <span className={`${styles.orderBadge} ${styles[`orderBadge_${financialTone(order.financialStatus)}`]}`}>{readable(order.financialStatus)}</span>
-                    <span className={`${styles.orderBadge} ${styles[`orderBadge_${fulfillmentTone(order.fulfillmentStatus, Boolean(order.canceledAt))}`]}`}>{fulfilment}</span>
+                    {!order.canceledAt && <span className={`${styles.orderBadge} ${styles[`orderBadge_${fulfillmentTone(order.fulfillmentStatus, false)}`]}`}>{fulfilment}</span>}
                   </div>
                 </div>
                 <div className={styles.orderCardMeta}>

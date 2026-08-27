@@ -11,6 +11,7 @@ import {
 } from "@/lib/shopify/queries";
 import type { Cart } from "@/lib/shopify/types";
 import { getCustomerSession } from "@/lib/customer-account/session";
+import { customerAccountFetch } from "@/lib/customer-account/client";
 
 const bodySchema = z.object({
   cartId: z.string().nullable().optional(),
@@ -50,9 +51,26 @@ export async function GET(request: Request) {
       tags: [],
       buyerIp: buyerIp(request),
     });
+    if (cart && await cartHasCompletedOrder(cartId))
+      return NextResponse.json({ cart: null, completed: true });
     return NextResponse.json({ cart });
   } catch {
     return NextResponse.json({ cart: null });
+  }
+}
+
+async function cartHasCompletedOrder(cartId: string) {
+  const session = await getCustomerSession();
+  if (!session) return false;
+  try {
+    const data = await customerAccountFetch<{
+      customer: { orders: { nodes: Array<{ customAttributes: Array<{ key: string; value?: string | null }> }> } } | null;
+    }>(`query CompletedCart($customerAccessToken:String!){customer(customerAccessToken:$customerAccessToken){orders(first:10,reverse:true){nodes{customAttributes{key value}}}}}`);
+    return Boolean(data.customer?.orders.nodes.some((order) =>
+      order.customAttributes.some((attribute) => attribute.key === "_ivory_muse_cart_id" && attribute.value === cartId),
+    ));
+  } catch {
+    return false;
   }
 }
 
@@ -62,7 +80,7 @@ export async function POST(request: Request) {
     const lines = [
       { merchandiseId: body.merchandiseId, quantity: body.quantity },
     ];
-    const result = body.cartId
+    let result = body.cartId
       ? (
           await shopifyFetch<{ cartLinesAdd: MutationResult }>({
             query: CART_LINES_ADD_MUTATION,
@@ -81,6 +99,20 @@ export async function POST(request: Request) {
             buyerIp: buyerIp(request),
           })
         ).cartCreate;
+    // A cart becomes unusable after checkout and Shopify can also expire old
+    // cart IDs. Transparently create a new cart instead of making the customer
+    // retry (which previously made a successful add look intermittent).
+    if ((!result.cart || result.userErrors.length) && body.cartId) {
+      result = (
+        await shopifyFetch<{ cartCreate: MutationResult }>({
+          query: CART_CREATE_MUTATION,
+          variables: { input: { lines } },
+          revalidate: false,
+          tags: [],
+          buyerIp: buyerIp(request),
+        })
+      ).cartCreate;
+    }
     if (result.userErrors.length || !result.cart)
       return NextResponse.json(
         { error: result.userErrors[0]?.message || "Cart could not be updated" },
@@ -88,26 +120,29 @@ export async function POST(request: Request) {
       );
     const session = await getCustomerSession();
     let cart = result.cart;
-    const identityResult = (
-      await shopifyFetch<{ cartBuyerIdentityUpdate: MutationResult }>({
-        query: CART_BUYER_IDENTITY_UPDATE_MUTATION,
-        variables: {
-          cartId: cart.id,
-          buyerIdentity: session
-            ? { customerAccessToken: session.accessToken }
-            : { customerAccessToken: null, email: null, phone: null },
-        },
-        revalidate: false,
-        tags: [],
-        buyerIp: buyerIp(request),
-      })
-    ).cartBuyerIdentityUpdate;
-    if (identityResult.userErrors.length || !identityResult.cart)
-      return NextResponse.json(
-        { error: identityResult.userErrors[0]?.message || "Checkout identity could not be refreshed." },
-        { status: 400 },
-      );
-    cart = identityResult.cart;
+    // Attaching the signed-in customer is helpful for checkout, but it must not
+    // turn a completed line add into an error. Otherwise a retry adds the same
+    // item twice even though the first mutation already succeeded.
+    try {
+      const identityResult = (
+        await shopifyFetch<{ cartBuyerIdentityUpdate: MutationResult }>({
+          query: CART_BUYER_IDENTITY_UPDATE_MUTATION,
+          variables: {
+            cartId: cart.id,
+            buyerIdentity: session
+              ? { customerAccessToken: session.accessToken }
+              : { customerAccessToken: null, email: null, phone: null },
+          },
+          revalidate: false,
+          tags: [],
+          buyerIp: buyerIp(request),
+        })
+      ).cartBuyerIdentityUpdate;
+      if (!identityResult.userErrors.length && identityResult.cart)
+        cart = identityResult.cart;
+    } catch {
+      // The line mutation is already complete; return that authoritative cart.
+    }
     return NextResponse.json({ cart });
   } catch (error) {
     return NextResponse.json(

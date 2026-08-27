@@ -75,7 +75,7 @@ export default async function AddressesPage({
     heading: "Your addresses",
     defaultLabel: "Default",
     editLabel: "Edit",
-    setDefaultLabel: "Set default",
+    setDefaultLabel: "Make default address",
     deleteLabel: "Delete",
     editHeading: "Edit address",
     addHeading: "Add a new address",

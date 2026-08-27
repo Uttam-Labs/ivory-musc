@@ -32,6 +32,50 @@ async function adminFetch<T>(query: string, variables: Record<string, unknown>) 
   return result.data;
 }
 
+export type OrderPaymentSummary = {
+  gateway: string;
+  method: string;
+  maskedNumber?: string;
+  amount?: { amount: string; currencyCode: string };
+  status: string;
+};
+
+export async function getOrderPaymentSummary(orderId: string): Promise<OrderPaymentSummary | null> {
+  const data = await adminFetch<{
+    order: {
+      transactions: Array<{
+        accountNumber?: string | null;
+        formattedGateway?: string | null;
+        gateway?: string | null;
+        kind: string;
+        status: string;
+        amountSet?: { presentmentMoney?: { amount: string; currencyCode: string } | null } | null;
+        paymentDetails?:
+          | { paymentMethodName?: string | null; company?: string | null; number?: string | null }
+          | null;
+      }>;
+    } | null;
+  }>(
+    `query OrderPaymentSummary($orderId:ID!){order(id:$orderId){transactions(first:20){accountNumber formattedGateway gateway kind status amountSet{presentmentMoney{amount currencyCode}} paymentDetails{... on CardPaymentDetails{paymentMethodName company number} ... on LocalPaymentMethodsPaymentDetails{paymentMethodName} ... on PaypalWalletPaymentDetails{paymentMethodName} ... on ShopPayInstallmentsPaymentDetails{paymentMethodName}}}}}`,
+    { orderId },
+  );
+  const transactions = data.order?.transactions || [];
+  const transaction =
+    transactions.find((item) => item.status === "SUCCESS" && ["SALE", "CAPTURE"].includes(item.kind)) ||
+    transactions.find((item) => item.status === "SUCCESS" && item.kind === "AUTHORIZATION") ||
+    transactions.find((item) => !["REFUND", "VOID"].includes(item.kind));
+  if (!transaction) return null;
+
+  const details = transaction.paymentDetails;
+  return {
+    gateway: transaction.formattedGateway || transaction.gateway || "Shopify secure payment",
+    method: details?.paymentMethodName || details?.company || "Payment method",
+    maskedNumber: details?.number || transaction.accountNumber || undefined,
+    amount: transaction.amountSet?.presentmentMoney || undefined,
+    status: transaction.status,
+  };
+}
+
 export async function sendAccountInviteIfInactive(email: string) {
   const customerData = await adminFetch<{
     customers: { nodes: Array<{ id: string; state: string }> };

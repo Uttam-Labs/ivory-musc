@@ -156,3 +156,12 @@ export const CART_BUYER_IDENTITY_UPDATE_MUTATION = `#graphql
     }
   }
 `;
+export const CART_ATTRIBUTES_UPDATE_MUTATION = `#graphql
+  ${CART_FRAGMENT}
+  mutation CartAttributesUpdate($cartId: ID!, $attributes: [AttributeInput!]!) {
+    cartAttributesUpdate(cartId: $cartId, attributes: $attributes) {
+      cart { ...CartDetails }
+      userErrors { field message }
+    }
+  }
+`;

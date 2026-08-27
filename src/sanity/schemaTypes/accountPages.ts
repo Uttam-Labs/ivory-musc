@@ -358,6 +358,10 @@ export const accountOrderDetailsPage = defineType({
     deliveryLabel: "Delivery",
     noAddressText: "No address was supplied.",
     cancelledLabel: "This order was cancelled",
+    paymentDetailsHeading: "Payment method",
+    paymentActionLabel: "Update payment on Shopify",
+    paymentActionHelp: "Payment changes are completed securely on Shopify.",
+    paymentUnavailableText: "Card details are securely managed by Shopify.",
   },
   fields: [
     text("backLabel", "Back link"),
@@ -390,6 +394,10 @@ export const accountOrderDetailsPage = defineType({
     text("deliveryLabel", "Delivery label"),
     text("noAddressText", "Missing address message"),
     text("cancelledLabel", "Cancelled order message"),
+    text("paymentDetailsHeading", "Payment details heading"),
+    text("paymentActionLabel", "Payment action label"),
+    text("paymentActionHelp", "Payment action description"),
+    text("paymentUnavailableText", "Unavailable payment details message"),
   ],
 });
 
@@ -403,7 +411,7 @@ export const accountAddressesPage = defineType({
     heading: "Your addresses",
     defaultLabel: "Default",
     editLabel: "Edit",
-    setDefaultLabel: "Set default",
+    setDefaultLabel: "Make default address",
     deleteLabel: "Delete",
     editHeading: "Edit address",
     addHeading: "Add a new address",

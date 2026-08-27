@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Check, LoaderCircle, Minus, Plus, Truck } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { CollectionProductGrid } from "@/components/collection-product-grid";
 import { SiteContainer } from "@/components/site-container";
 import { formatMoney } from "@/lib/format";
@@ -36,6 +36,7 @@ export function ProductDetails({ product, initialSelection, settings, relatedHea
   const [manualImage, setManualImage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [action, setAction] = useState<"idle" | "cart" | "buy" | "added" | "error">("idle");
+  const submitting = useRef(false);
   const variant = useMemo(() => product.variants.nodes.find((item) => item.selectedOptions.every((option) => selected[option.name] === option.value)), [product.variants.nodes, selected]);
   const activeImage = manualImage ? product.images.nodes.find((image) => image.url === manualImage) || product.featuredImage : variant?.image || product.featuredImage;
   const price = variant?.price || product.priceRange.minVariantPrice;
@@ -55,16 +56,24 @@ export function ProductDetails({ product, initialSelection, settings, relatedHea
   }
 
   async function submit(mode: "cart" | "buy") {
-    if (!variant?.availableForSale) return;
+    if (!variant?.availableForSale || submitting.current) return;
+    submitting.current = true;
     setAction(mode);
     try {
       const response = await fetch("/api/cart", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ cartId: localStorage.getItem("shopify-cart-id"), merchandiseId: variant.id, quantity }) });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Cart could not be updated");
       localStorage.setItem("shopify-cart-id", payload.cart.id);
-      if (mode === "buy") window.location.assign(payload.cart.checkoutUrl);
+      if (mode === "buy") {
+        const checkoutResponse = await fetch("/api/cart/checkout", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ cartId: payload.cart.id }) });
+        const checkout = await checkoutResponse.json();
+        if (!checkoutResponse.ok || !checkout.checkoutUrl) throw new Error(checkout.error || "Checkout could not be started");
+        localStorage.setItem("shopify-checkout-cart-id", payload.cart.id);
+        window.location.assign(checkout.checkoutUrl);
+      }
       else { setAction("added"); window.dispatchEvent(new CustomEvent("cart:updated", { detail: payload.cart })); }
     } catch { setAction("error"); }
+    finally { submitting.current = false; }
   }
 
   return <main className={styles.page}>
@@ -96,8 +105,8 @@ export function ProductDetails({ product, initialSelection, settings, relatedHea
           </div>
           {!variant && <p className={styles.unavailable}>This combination is unavailable.</p>}
           <div className={`${styles.actions} product-details__actions`}>
-            {settings?.buyNowLabel && <button className={`${styles.buyButton} button buy-button`} onClick={() => submit("buy")} disabled={!variant?.availableForSale || action === "buy"}>{action === "buy" ? <LoaderCircle className="animate-spin" size={17} /> : settings.buyNowLabel}</button>}
-            {settings?.addToCartLabel && <button className={`${styles.cartButton} button button-add-to-cart`} onClick={() => submit("cart")} disabled={!variant?.availableForSale || action === "cart"}>{action === "cart" ? <LoaderCircle className="animate-spin" size={17} /> : action === "added" ? <><Check size={17} /> {settings.addToCartLabel}</> : settings.addToCartLabel}</button>}
+            {settings?.buyNowLabel && <button className={`${styles.buyButton} button buy-button`} onClick={() => submit("buy")} disabled={!variant?.availableForSale || action === "buy" || action === "cart"}>{action === "buy" ? <LoaderCircle className="animate-spin" size={17} /> : settings.buyNowLabel}</button>}
+            {settings?.addToCartLabel && <button className={`${styles.cartButton} button button-add-to-cart`} onClick={() => submit("cart")} disabled={!variant?.availableForSale || action === "cart" || action === "buy"}>{action === "cart" ? <LoaderCircle className="animate-spin" size={17} /> : action === "added" ? <><Check size={17} /> {settings.addToCartLabel}</> : settings.addToCartLabel}</button>}
             {settings?.purchaseSampleLabel && settings.purchaseSampleHref && <Link className={`${styles.sampleButton} button button-sample`} href={settings.purchaseSampleHref}>{settings.purchaseSampleLabel}</Link>}
           </div>
           {action === "error" && <p className={styles.unavailable}>Please try again.</p>}

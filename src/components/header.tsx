@@ -59,6 +59,18 @@ export function Header({
   const [customerName, setCustomerName] = useState("");
   const searchInput = useRef<HTMLInputElement>(null);
   const menuCloseButton = useRef<HTMLButtonElement>(null);
+  const cartRefreshVersion = useRef(0);
+  const changingLines = useRef(new Set<string>());
+  const cartMutationFresh = useRef(false);
+  const cartMutationTimer = useRef<number | null>(null);
+
+  const markCartMutation = useCallback(() => {
+    cartMutationFresh.current = true;
+    if (cartMutationTimer.current) window.clearTimeout(cartMutationTimer.current);
+    cartMutationTimer.current = window.setTimeout(() => {
+      cartMutationFresh.current = false;
+    }, 2500);
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -81,9 +93,14 @@ export function Header({
   }, [pathname]);
 
   const refreshCart = useCallback(async () => {
+    // Shopify cart reads can briefly lag behind the mutation response. The
+    // mutation payload is authoritative, so don't let an immediate GET rewind
+    // the count/lines shown to the customer.
+    if (cartMutationFresh.current) return;
+    const version = ++cartRefreshVersion.current;
     const cartId = localStorage.getItem("shopify-cart-id");
     if (!cartId) {
-      setCart(null);
+      if (version === cartRefreshVersion.current) setCart(null);
       return;
     }
 
@@ -95,8 +112,10 @@ export function Header({
         },
       );
       const payload = await response.json();
+      if (version !== cartRefreshVersion.current) return;
       if (!response.ok || !payload.cart) {
         localStorage.removeItem("shopify-cart-id");
+        localStorage.removeItem("shopify-checkout-cart-id");
         setCart(null);
         return;
       }
@@ -108,29 +127,45 @@ export function Header({
 
   useEffect(() => {
     const onCartUpdated = (event: Event) => {
+      markCartMutation();
+      cartRefreshVersion.current += 1;
       setCart((event as CustomEvent<Cart>).detail);
       setCartOpen(true);
     };
     const onCartChanged = (event: Event) => {
+      markCartMutation();
+      cartRefreshVersion.current += 1;
       setCart((event as CustomEvent<Cart>).detail);
     };
     const onStorage = (event: StorageEvent) => {
       if (event.key === "shopify-cart-id") void refreshCart();
     };
+    const onPageShow = () => void refreshCart();
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") void refreshCart();
+    };
 
     const hydrationTimer = window.setTimeout(() => void refreshCart(), 0);
+    const checkoutRetryTimers = localStorage.getItem("shopify-checkout-cart-id")
+      ? [window.setTimeout(() => void refreshCart(), 1800), window.setTimeout(() => void refreshCart(), 5000)]
+      : [];
     window.addEventListener("cart:updated", onCartUpdated);
     window.addEventListener("cart:changed", onCartChanged);
     window.addEventListener("storage", onStorage);
     window.addEventListener("focus", refreshCart);
+    window.addEventListener("pageshow", onPageShow);
+    document.addEventListener("visibilitychange", onVisibility);
     return () => {
       window.clearTimeout(hydrationTimer);
+      checkoutRetryTimers.forEach((timer) => window.clearTimeout(timer));
       window.removeEventListener("cart:updated", onCartUpdated);
       window.removeEventListener("cart:changed", onCartChanged);
       window.removeEventListener("storage", onStorage);
       window.removeEventListener("focus", refreshCart);
+      window.removeEventListener("pageshow", onPageShow);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [refreshCart]);
+  }, [markCartMutation, refreshCart]);
 
   useEffect(() => {
     if (!searchOpen && !cartOpen && !menuOpen) return;
@@ -187,6 +222,7 @@ export function Header({
 
   async function openCart() {
     setCartOpen(true);
+    if (cart) return;
     setCartLoading(true);
     try {
       await refreshCart();
@@ -196,7 +232,8 @@ export function Header({
   }
 
   async function changeCartLine(lineId: string, quantity?: number) {
-    if (!cart?.id || updatingLines.includes(lineId)) return;
+    if (!cart?.id || changingLines.current.has(lineId)) return;
+    changingLines.current.add(lineId);
     const action = quantity === undefined ? "remove" : "update";
     setUpdatingLines((lines) => [...lines, lineId]);
     setCartError("");
@@ -209,6 +246,8 @@ export function Header({
       const payload = await response.json();
       if (!response.ok)
         throw new Error(payload.error || "Cart could not be updated");
+      markCartMutation();
+      cartRefreshVersion.current += 1;
       setCart(payload.cart);
       window.dispatchEvent(
         new CustomEvent("cart:changed", { detail: payload.cart }),
@@ -216,6 +255,7 @@ export function Header({
     } catch (error) {
       setCartError(error instanceof Error ? error.message : "Please try again");
     } finally {
+      changingLines.current.delete(lineId);
       setUpdatingLines((lines) => lines.filter((id) => id !== lineId));
     }
   }
@@ -233,6 +273,7 @@ export function Header({
       const payload = await response.json();
       if (!response.ok || !payload.checkoutUrl)
         throw new Error(payload.error || "Checkout could not be started");
+      localStorage.setItem("shopify-checkout-cart-id", cart.id);
       window.location.assign(payload.checkoutUrl);
     } catch (error) {
       setCartError(

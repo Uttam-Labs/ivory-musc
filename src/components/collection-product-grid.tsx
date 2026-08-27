@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Check, LoaderCircle, Minus, Plus, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { formatMoney } from "@/lib/format";
 import type {
   Product,
@@ -65,6 +65,7 @@ function ProductQuickView({
   const [selected, setSelected] = useState<Record<string, string>>({});
   const [quantity, setQuantity] = useState(1);
   const [action, setAction] = useState<"idle" | "cart" | "buy" | "added">("idle");
+  const submitting = useRef(false);
   const [activeImage, setActiveImage] = useState<ShopifyImage | null>(null);
 
   useEffect(() => {
@@ -120,7 +121,8 @@ function ProductQuickView({
   }
 
   async function submit(mode: "cart" | "buy") {
-    if (!variant?.availableForSale) return;
+    if (!variant?.availableForSale || submitting.current) return;
+    submitting.current = true;
     setAction(mode);
     setError("");
     try {
@@ -134,7 +136,15 @@ function ProductQuickView({
       if (!response.ok) throw new Error(payload.error || "Cart could not be updated");
       localStorage.setItem("shopify-cart-id", payload.cart.id);
       if (mode === "buy") {
-        window.location.assign(payload.cart.checkoutUrl);
+        const checkoutResponse = await fetch("/api/cart/checkout", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ cartId: payload.cart.id }),
+        });
+        const checkout = await checkoutResponse.json();
+        if (!checkoutResponse.ok || !checkout.checkoutUrl) throw new Error(checkout.error || "Checkout could not be started");
+        localStorage.setItem("shopify-checkout-cart-id", payload.cart.id);
+        window.location.assign(checkout.checkoutUrl);
       } else {
         setAction("added");
         onClose();
@@ -145,6 +155,8 @@ function ProductQuickView({
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Please try again");
       setAction("idle");
+    } finally {
+      submitting.current = false;
     }
   }
 
@@ -247,10 +259,10 @@ function ProductQuickView({
               </div>
               {!variant && <p className={styles.error}>This option combination is unavailable.</p>}
               <div className={styles.actions}>
-                <button onClick={() => submit("buy")} disabled={!variant?.availableForSale || action === "buy"} className={styles.buyButton}>
+                <button onClick={() => submit("buy")} disabled={!variant?.availableForSale || action === "buy" || action === "cart"} className={styles.buyButton}>
                   {action === "buy" ? "Redirecting…" : "Buy now"}
                 </button>
-                <button onClick={() => submit("cart")} disabled={!variant?.availableForSale || action === "cart"} className={styles.cartButton}>
+                <button onClick={() => submit("cart")} disabled={!variant?.availableForSale || action === "cart" || action === "buy"} className={styles.cartButton}>
                   {action === "cart" ? "Adding…" : action === "added" ? <><Check size={16} /> Added to cart</> : "Add to cart"}
                 </button>
               </div>

@@ -3,12 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { LoaderCircle, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { formatMoney } from "@/lib/format";
 import type { Cart } from "@/lib/shopify/types";
 import styles from "./cart.module.css";
 
 const CART_KEY = "shopify-cart-id";
+const CHECKOUT_CART_KEY = "shopify-checkout-cart-id";
 
 export function CartPage() {
   const [cart, setCart] = useState<Cart | null>(null);
@@ -16,8 +17,22 @@ export function CartPage() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [updatingLines, setUpdatingLines] = useState<string[]>([]);
   const [error, setError] = useState("");
+  const loadVersion = useRef(0);
+  const changingLines = useRef(new Set<string>());
+  const cartMutationFresh = useRef(false);
+  const cartMutationTimer = useRef<number | null>(null);
+
+  const markCartMutation = useCallback(() => {
+    cartMutationFresh.current = true;
+    if (cartMutationTimer.current) window.clearTimeout(cartMutationTimer.current);
+    cartMutationTimer.current = window.setTimeout(() => {
+      cartMutationFresh.current = false;
+    }, 2500);
+  }, []);
 
   const loadCart = useCallback(async () => {
+    if (cartMutationFresh.current) return;
+    const version = ++loadVersion.current;
     const cartId = window.localStorage.getItem(CART_KEY);
     if (!cartId) {
       setCart(null);
@@ -29,8 +44,10 @@ export function CartPage() {
         cache: "no-store",
       });
       const payload = (await response.json()) as { cart?: Cart | null };
+      if (version !== loadVersion.current) return;
       if (!response.ok || !payload.cart) {
         window.localStorage.removeItem(CART_KEY);
+        window.localStorage.removeItem(CHECKOUT_CART_KEY);
         setCart(null);
       } else setCart(payload.cart);
     } catch {
@@ -42,11 +59,26 @@ export function CartPage() {
 
   useEffect(() => {
     const timer = window.setTimeout(() => void loadCart(), 0);
-    return () => window.clearTimeout(timer);
+    const onPageShow = () => void loadCart();
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") void loadCart();
+    };
+    const checkoutRetryTimers = window.localStorage.getItem(CHECKOUT_CART_KEY)
+      ? [window.setTimeout(() => void loadCart(), 1800), window.setTimeout(() => void loadCart(), 5000)]
+      : [];
+    window.addEventListener("pageshow", onPageShow);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.clearTimeout(timer);
+      checkoutRetryTimers.forEach((retryTimer) => window.clearTimeout(retryTimer));
+      window.removeEventListener("pageshow", onPageShow);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, [loadCart]);
 
   async function changeLine(lineId: string, quantity?: number) {
-    if (!cart?.id || updatingLines.includes(lineId)) return;
+    if (!cart?.id || changingLines.current.has(lineId)) return;
+    changingLines.current.add(lineId);
     setUpdatingLines((current) => [...current, lineId]);
     setError("");
     try {
@@ -63,11 +95,14 @@ export function CartPage() {
       const payload = (await response.json()) as { cart?: Cart; error?: string };
       if (!response.ok || !payload.cart)
         throw new Error(payload.error || "Your shopping bag could not be updated.");
+      markCartMutation();
+      loadVersion.current += 1;
       setCart(payload.cart);
       window.dispatchEvent(new CustomEvent("cart:changed", { detail: payload.cart }));
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Please try again.");
     } finally {
+      changingLines.current.delete(lineId);
       setUpdatingLines((current) => current.filter((id) => id !== lineId));
     }
   }
@@ -85,6 +120,7 @@ export function CartPage() {
       const payload = (await response.json()) as { checkoutUrl?: string; error?: string };
       if (!response.ok || !payload.checkoutUrl)
         throw new Error(payload.error || "Checkout could not be started.");
+      window.localStorage.setItem(CHECKOUT_CART_KEY, cart.id);
       window.location.assign(payload.checkoutUrl);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Please try again.");

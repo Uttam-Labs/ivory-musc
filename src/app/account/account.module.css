@@ -86,10 +86,11 @@
 .orderBadge_warning{border-color:#d9c2ba;background:#fff9f3;color:#9b504a}
 .orderBadge_info{border-color:#d9b8b1;background:#f9efeb;color:#8e4a44}
 .orderBadge_neutral{border-color:#d8cec8;background:#f7f3f0;color:#6e625c}
-.orderBadge_danger{border-color:#c98f88;background:#fbe9e6;color:#8e3934}
+.orderBadge.orderBadge_danger,.inlineStatus.orderBadge_danger{border-color:#7f3f3a;background:#7f3f3a;color:#fff}
 .orderBadge.orderBadge_paid,.inlineStatus.orderBadge_paid{border-color:#a5534d;background:#a5534d;color:#fff}
 .orderCard{grid-template-columns:minmax(18rem,1fr) auto}
 .orderCardLead .orderBadges{justify-content:flex-start;margin-top:1.2rem}
 .orderCardMeta{display:flex;align-items:center;justify-content:flex-end;gap:2.4rem}
 .orderDetailActions{align-self:center}
+.orderActionsCard{display:grid;gap:1.6rem}.paymentSummary{display:grid;margin:0;border-top:1px solid #eadfd8}.paymentSummary>div{display:flex;justify-content:space-between;gap:1.5rem;padding:1.1rem 0;border-bottom:1px solid #f0e7e1}.paymentSummary dt{color:#837a74;font-size:1.15rem}.paymentSummary dd{margin:0;color:#443e3a;font-size:1.2rem;font-weight:600;text-align:right}.orderActionRow{display:grid;gap:1rem;padding-top:.2rem}.orderActionRow>p{margin:0}.orderActionRow .primary{width:100%;min-height:4.5rem;gap:.7rem;padding:.9rem 1.2rem;text-align:center}
 @media(max-width:700px){.orderCard{grid-template-columns:1fr}.orderCardMeta{justify-content:space-between;padding-top:1.4rem;border-top:1px solid #eee3dc}.orderView{display:flex}}

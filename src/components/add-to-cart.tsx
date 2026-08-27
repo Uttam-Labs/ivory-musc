@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 export function AddToCart({
   merchandiseId,
   disabled,
@@ -10,9 +10,12 @@ export function AddToCart({
   const [state, setState] = useState<"idle" | "loading" | "added" | "error">(
     "idle",
   );
+  const adding = useRef(false);
 
   
   async function add() {
+    if (adding.current) return;
+    adding.current = true;
     setState("loading");
     try {
       const cartId = localStorage.getItem("shopify-cart-id");
@@ -30,6 +33,8 @@ export function AddToCart({
       setState("added");
     } catch {
       setState("error");
+    } finally {
+      adding.current = false;
     }
   }
   return (
