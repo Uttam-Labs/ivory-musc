@@ -20,24 +20,37 @@ export async function POST(request: Request) {
   try {
     const input = schema.parse(await request.json());
     await subscribeWaitlistProfileToKlaviyo(input.email);
-    await syncWaitlistCustomerToShopify(input.email);
-    const stored = await storeWaitlistSubscriber(input.email);
 
-    if (stored.welcomeEmailSent) {
-      return NextResponse.json({ success: true, alreadySubscribed: true });
+    await syncWaitlistCustomerToShopify(input.email).catch((error) => {
+      console.error("Waitlist Shopify sync failed:", error);
+    });
+
+    const stored = await storeWaitlistSubscriber(input.email).catch((error) => {
+      console.error("Waitlist Sanity storage failed:", error);
+      return null;
+    });
+
+    if (stored && !stored.welcomeEmailSent) {
+      const header = isSanityConfigured
+        ? await sanityFetch<{ logo?: SanityImageSource }>(HEADER_SETTINGS_QUERY).catch(() => null)
+        : null;
+      const emailSent = await sendWaitlistEmails(input.email, {
+        logoUrl: header?.logo ? sanityImageUrl(header.logo, 320) : undefined,
+        siteUrl: env.NEXT_PUBLIC_SITE_URL,
+      }).then(() => true).catch((error) => {
+        console.error("Waitlist email delivery failed:", error);
+        return false;
+      });
+      if (emailSent) {
+        await markWelcomeEmailSent(stored.id).catch((error) => {
+          console.error("Waitlist email status update failed:", error);
+        });
+      }
     }
 
-    const header = isSanityConfigured
-      ? await sanityFetch<{ logo?: SanityImageSource }>(HEADER_SETTINGS_QUERY).catch(() => null)
-      : null;
-    await sendWaitlistEmails(input.email, {
-      logoUrl: header?.logo ? sanityImageUrl(header.logo, 320) : undefined,
-      siteUrl: env.NEXT_PUBLIC_SITE_URL,
-    });
-    await markWelcomeEmailSent(stored.id);
     return NextResponse.json(
-      { success: true, alreadySubscribed: stored.alreadySubscribed },
-      { status: stored.alreadySubscribed ? 200 : 201 },
+      { success: true, alreadySubscribed: stored?.alreadySubscribed ?? false },
+      { status: stored?.alreadySubscribed ? 200 : 201 },
     );
   } catch (error) {
     console.error("Waitlist submission failed:", error);

@@ -82,12 +82,12 @@
 :global(.waitlist-form__row button) { border: 0; border-left: 1px solid rgba(62,49,41,.42); background: rgba(255,251,245,.35); padding: 0 18px; color: #201b18; cursor: pointer; font: 600 11px var(--font-body), Arial, sans-serif; letter-spacing: .18em; text-transform: uppercase; transition: background .25s ease,color .25s ease; }
 :global(.waitlist-form__row button:hover:not(:disabled)) { background: #a6544e; color: #fff; }
 :global(.waitlist-form__row button:disabled) { cursor: not-allowed; opacity: .52; }
+:global(.waitlist-form__row .waitlist-form__submit--loading) { background: #7d746e; color: #fff; opacity: 1; }
 :global(.waitlist-form__honeypot) { position: absolute; left: -9999px; }
-:global(.waitlist-form__message) { margin: 12px 0 0; font: 500 11px/1.5 var(--font-body), Arial, sans-serif; text-align: center; }
-:global(.waitlist-form__message--success),
-:global(.waitlist-form__message--error) { color: #fff; }
+:global(.waitlist-form__message) { margin: 12px 0 0; padding: 12px 16px; border: 1px solid currentColor; font: 500 11px/1.5 var(--font-body), Arial, sans-serif; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,.14); }
+:global(.waitlist-form__message--error) { border-color: rgba(151,43,43,.72); background: rgba(255,239,238,.96); color: #982f2f; }
 
-:global(.waitlist-success) { width: min(100%,500px); margin: 0 auto; padding: 28px 26px; border: 1px solid rgba(255,255,255,.7); background: rgba(23,17,14,.58); color: #fff; text-align: center; box-shadow: 0 16px 46px rgba(0,0,0,.22); backdrop-filter: blur(10px); animation: waitlist-success-in .5s ease both; }
+:global(.waitlist-success) { width: min(100%,500px); margin: 0 auto; padding: 28px 26px; border: 1px solid rgba(194,230,202,.88); background: rgba(27,92,55,.94); color: #fff; text-align: center; box-shadow: 0 16px 46px rgba(0,0,0,.22); animation: waitlist-success-in .5s ease both; }
 :global(.waitlist-success__icon) { display: grid; width: 44px; height: 44px; margin: 0 auto 14px; place-items: center; border: 1px solid currentColor; border-radius: 50%; }
 :global(.waitlist-success__eyebrow) { margin: 0 0 8px !important; font: 600 9px/1.4 var(--font-body), Arial, sans-serif !important; letter-spacing: .24em; text-transform: uppercase; }
 :global(.waitlist-success h2) { margin: 0 0 10px; font: 400 30px/1.15 var(--font-heading), Georgia, serif; }

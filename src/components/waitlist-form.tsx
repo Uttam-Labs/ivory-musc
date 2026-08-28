@@ -49,9 +49,11 @@ export function WaitlistForm({
         ? alreadySubscribedMessage
         : successMessage);
       setEmail("");
-    } catch {
+    } catch (error) {
       setStatus("error");
-      setMessage(fallbackErrorMessage);
+      setMessage(error instanceof Error && error.message
+        ? error.message
+        : fallbackErrorMessage);
     }
   }
 
@@ -91,7 +93,12 @@ export function WaitlistForm({
             disabled={status === "loading"}
             required
           />
-          <button type="submit" disabled={status === "loading"}>
+          <button
+            type="submit"
+            className={status === "loading" ? "waitlist-form__submit--loading" : undefined}
+            disabled={status === "loading"}
+            aria-busy={status === "loading"}
+          >
             {status === "loading" ? submittingLabel : submitLabel}
           </button>
         </div>
