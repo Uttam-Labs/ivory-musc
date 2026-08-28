@@ -21,9 +21,7 @@ export async function POST(request: Request) {
     const input = schema.parse(await request.json());
     await subscribeWaitlistProfileToKlaviyo(input.email);
 
-    await syncWaitlistCustomerToShopify(input.email).catch((error) => {
-      console.error("Waitlist Shopify sync failed:", error);
-    });
+    await syncWaitlistCustomerToShopify(input.email);
 
     const stored = await storeWaitlistSubscriber(input.email).catch((error) => {
       console.error("Waitlist Sanity storage failed:", error);

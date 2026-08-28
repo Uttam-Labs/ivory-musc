@@ -84,7 +84,8 @@ async function updateExistingCustomer(customerId: string, consentUpdatedAt: stri
     },
   );
   if (consentData.customerEmailMarketingConsentUpdate.userErrors.length) {
-    throw new Error(
+    console.error(
+      "Waitlist Shopify consent update failed:",
       consentData.customerEmailMarketingConsentUpdate.userErrors
         .map(({ message }) => message)
         .join("; "),
@@ -117,16 +118,13 @@ export async function syncWaitlistCustomerToShopify(email: string) {
       input: {
         email: normalizedEmail,
         tags: [WAITLIST_TAG],
-        emailMarketingConsent: {
-          marketingState: "SUBSCRIBED",
-          marketingOptInLevel: "SINGLE_OPT_IN",
-          consentUpdatedAt,
-        },
       },
     },
   );
 
-  if (data.customerCreate.customer) return data.customerCreate.customer.id;
+  if (data.customerCreate.customer) {
+    return updateExistingCustomer(data.customerCreate.customer.id, consentUpdatedAt);
+  }
 
   // A simultaneous submission can create the customer after our initial lookup.
   const customerId = await findCustomerId(normalizedEmail);

@@ -47,7 +47,7 @@ export function WaitlistForm({
       setStatus("success");
       setMessage(payload.alreadySubscribed
         ? alreadySubscribedMessage
-        : successHeading);
+        : `${successHeading} — your place on our waitlist is confirmed.`);
       setEmail("");
     } catch (error) {
       setStatus("error");
