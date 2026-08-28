@@ -81,6 +81,9 @@ export function WaitlistForm({
             name="email"
             type="email"
             inputMode="email"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             autoComplete="email"
             placeholder={emailPlaceholder}
             value={email}
