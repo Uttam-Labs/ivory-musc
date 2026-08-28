@@ -47,7 +47,7 @@ export function WaitlistForm({
       setStatus("success");
       setMessage(payload.alreadySubscribed
         ? alreadySubscribedMessage
-        : successMessage);
+        : successHeading);
       setEmail("");
     } catch (error) {
       setStatus("error");
@@ -61,14 +61,11 @@ export function WaitlistForm({
     return (
       <div className="waitlist-success" role="status" aria-live="polite">
         <div className="waitlist-success__icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="28" height="28" fill="none">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
             <path d="m6.5 12.5 3.4 3.4 7.6-8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
-        <p className="waitlist-success__eyebrow">{successEyebrow}</p>
-        <h2>{successHeading}</h2>
         <p>{message}</p>
-        <span>{successClosing}</span>
       </div>
     );
   }
