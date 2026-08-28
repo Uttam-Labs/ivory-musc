@@ -21,6 +21,14 @@ type Section = {
   buttonHref?: string;
   secondaryButtonLabel?: string;
   secondaryButtonHref?: string;
+  mobileContent?: {
+    heading?: string;
+    body?: string;
+    primaryButtonLabel?: string;
+    primaryButtonHref?: string;
+    secondaryButtonLabel?: string;
+    secondaryButtonHref?: string;
+  };
   image?: SanityImageSource;
   layout?: "split" | "banner";
   imagePosition?: "left" | "right";
@@ -113,17 +121,25 @@ export default async function Home() {
               <div className="absolute inset-0 bg-black/15" />
               <div className="home-hero-content relative mx-auto w-full max-w-[1920] px-6 sm:px-12 xl:px-24 pb-16 md:pb-20 lg:pb-36">
                 <div className="home-hero__content-wrap w-full md:w-4/5 xl:w-1/2">
-                  {section.heading && (
-                    <h1 className="hero-title max-w-full text-[25px] uppercase leading-tight sm:text-[28px] lg:whitespace-nowrap">
-                      {section.heading}
+                  <div className="home-hero__desktop-copy">
+                    {section.heading && (
+                      <h1 className="hero-title max-w-full text-[25px] uppercase leading-tight sm:text-[28px] lg:whitespace-nowrap">
+                        {section.heading}
+                      </h1>
+                    )}
+                    {section.body && (
+                      <p className="mt-3 w-full max-w-[100%] whitespace-pre-line text-[11px] leading-5 sm:text-xs">
+                        {section.body}
+                      </p>
+                    )}
+                  </div>
+                  <div className="home-hero__mobile-copy">
+                    <h1 className="hero-title">
+                      {section.mobileContent?.heading || "Exceptional Materials Matter Most"}
                     </h1>
-                  )}
-                  {section.body && (
-                    <p className="mt-3 w-full max-w-[100%] whitespace-pre-line text-[11px] leading-5 sm:text-xs">
-                      {section.body}
-                    </p>
-                  )}
-                  <div className="home-hero__buttons flex flex-wrap gap-3">
+                    <p>{section.mobileContent?.body || "Thoughtfully curated silk fabrics, chosen for beauty, quality, and performance—made to bring your creative ideas to life."}</p>
+                  </div>
+                  <div className="home-hero__buttons home-hero__desktop-buttons flex flex-wrap gap-3">
                     <Button
                       label={section.buttonLabel}
                       href={section.buttonHref}
@@ -133,6 +149,21 @@ export default async function Home() {
                     <Button
                       label={section.secondaryButtonLabel}
                       href={section.secondaryButtonHref}
+                      className="button custom-button btn-transparent"
+                      light
+                      variant="secondary"
+                    />
+                  </div>
+                  <div className="home-hero__buttons home-hero__mobile-buttons">
+                    <Button
+                      label={section.mobileContent?.primaryButtonLabel || "Shop"}
+                      href={section.mobileContent?.primaryButtonHref || "/collections/shop"}
+                      className="button custom-button btn-white"
+                      light
+                    />
+                    <Button
+                      label={section.mobileContent?.secondaryButtonLabel || "Discover Ivory Muse"}
+                      href={section.mobileContent?.secondaryButtonHref || "/about"}
                       className="button custom-button btn-transparent"
                       light
                       variant="secondary"

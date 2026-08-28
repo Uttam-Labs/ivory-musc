@@ -431,6 +431,137 @@ a {
     }
 }
 
+/* Homepage hero uses a shorter, purpose-written message on mobile. */
+.home-hero__mobile-copy,
+.home-hero__mobile-buttons {
+    display: none;
+}
+@media (max-width: 640px) {
+    .home-philosophy {
+        display: none !important;
+    }
+    .home-page {
+        display: flex;
+        flex-direction: column;
+    }
+    .home-page > section {
+        order: 2;
+    }
+    .home-page > .home-hero {
+        order: 0;
+    }
+    .home-page > .home-bestseller {
+        order: 1;
+    }
+    .home-hero {
+        min-height: clamp(38rem, calc(52svh + 2rem), 44rem) !important;
+    }
+    .home-hero-content {
+        padding-bottom: 2.4rem !important;
+    }
+    .home-bestseller {
+        width: 100%;
+        min-height: calc(100svh - clamp(38rem, calc(52svh + 2rem), 44rem));
+        box-sizing: border-box;
+        margin-top: 0;
+        padding-top: 3.5rem;
+        padding-right: 1.4rem;
+        padding-bottom: 3.5rem;
+        padding-left: 1.4rem;
+    }
+    .home-bestseller .bestseller-track {
+        gap: 1.2rem;
+        margin-left: 0;
+    }
+    .home-bestseller .bestseller-card {
+        flex: 0 0 calc((100% - 1.2rem) / 2);
+        padding-left: 0;
+    }
+    .home-bestseller .bestseller-card > a {
+        height: 100%;
+    }
+    .home-bestseller .bestseller-card-media {
+        aspect-ratio: 1 / 1;
+    }
+    .home-bestseller .bestseller-image-frame {
+        padding: .8rem;
+    }
+    .home-bestseller .bestseller-card-content {
+        padding-top: 1.2rem;
+        font-size: 1.05rem;
+    }
+    .home-bestseller .bestseller-card-content h3 {
+        display: -webkit-box;
+        min-height: 3.1rem;
+        margin-top: 0;
+        overflow: hidden;
+        font-size: 1.35rem;
+        line-height: 1.15;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+    }
+    .home-bestseller .bestseller-card-content p {
+        display: none;
+    }
+    .home-bestseller .bestseller-card-content .explore--link {
+        display: -webkit-box;
+        min-height: 2.7rem;
+        overflow: hidden;
+        font-size: 1.05rem;
+        line-height: 1.3;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+    }
+    .home-bestseller .section__heading {
+        margin-bottom: 1.6rem;
+    }
+    .home-bestseller .slider--button {
+        width: 3.6rem;
+        height: 3.6rem;
+    }
+    .home-bestseller .slider-button--prev {
+        left: 1.2rem;
+    }
+    .home-bestseller .slider-button--next {
+        right: 1.2rem;
+    }
+    .home-hero__desktop-copy,
+    .home-hero__desktop-buttons {
+        display: none;
+    }
+    .home-hero__mobile-copy {
+        display: block;
+        width: 100%;
+    }
+    .home-hero__mobile-copy .hero-title {
+        width: 100%;
+        max-width: none;
+        font-size: clamp(1.45rem, 4.3vw, 1.75rem);
+        line-height: 1.1;
+        letter-spacing: -.015em;
+        white-space: nowrap;
+    }
+    .home-hero__mobile-copy p {
+        max-width: 39rem;
+        margin-top: 1.4rem;
+        font-size: 1.45rem;
+        line-height: 1.55;
+    }
+    .home-hero__mobile-buttons {
+        display: grid;
+        grid-template-columns: minmax(0,.72fr) minmax(0,1.45fr);
+        gap: .8rem;
+        width: 100%;
+        margin-top: 2.2rem;
+    }
+    .home-hero__mobile-buttons .button {
+        width: 100%;
+        min-width: 0;
+        padding-inline: 1rem;
+        white-space: nowrap;
+    }
+}
+
 .section__heading {
     margin-bottom: 4.8rem;
 }

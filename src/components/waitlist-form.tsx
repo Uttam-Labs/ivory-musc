@@ -2,9 +2,32 @@
 
 import { FormEvent, useState } from "react";
 
-export function WaitlistForm() {
+type WaitlistFormProps = {
+  emailLabel?: string;
+  emailPlaceholder?: string;
+  submitLabel?: string;
+  submittingLabel?: string;
+  successEyebrow?: string;
+  successHeading?: string;
+  successMessage?: string;
+  alreadySubscribedMessage?: string;
+  successClosing?: string;
+  fallbackErrorMessage?: string;
+};
+
+export function WaitlistForm({
+  emailLabel = "Email address",
+  emailPlaceholder = "EMAIL ADDRESS",
+  submitLabel = "JOIN THE LIST",
+  submittingLabel = "JOINING…",
+  successEyebrow = "Registration confirmed",
+  successHeading = "Welcome to Ivory Muse",
+  successMessage = "Welcome to Ivory Muse. Please check your inbox for our confirmation email.",
+  alreadySubscribedMessage = "You are already on the Ivory Muse waitlist.",
+  successClosing = "We look forward to sharing our world of fine silk with you.",
+  fallbackErrorMessage = "We could not join you to the list. Please try again.",
+}: WaitlistFormProps) {
   const [email, setEmail] = useState("");
-  const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
 
@@ -17,19 +40,18 @@ export function WaitlistForm() {
       const response = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email, marketingConsent: consent, website: form.get("website") || "" }),
+        body: JSON.stringify({ email, marketingConsent: true, website: form.get("website") || "" }),
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Registration failed.");
       setStatus("success");
       setMessage(payload.alreadySubscribed
-        ? "You are already on the Ivory Muse waitlist."
-        : "Welcome to Ivory Muse. Please check your inbox for our confirmation email.");
+        ? alreadySubscribedMessage
+        : successMessage);
       setEmail("");
-      setConsent(false);
-    } catch (error) {
+    } catch {
       setStatus("error");
-      setMessage(error instanceof Error ? error.message : "Please try again.");
+      setMessage(fallbackErrorMessage);
     }
   }
 
@@ -41,10 +63,10 @@ export function WaitlistForm() {
             <path d="m6.5 12.5 3.4 3.4 7.6-8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
-        <p className="waitlist-success__eyebrow">Registration confirmed</p>
-        <h2>Welcome to Ivory Muse</h2>
+        <p className="waitlist-success__eyebrow">{successEyebrow}</p>
+        <h2>{successHeading}</h2>
         <p>{message}</p>
-        <span>We look forward to sharing our world of fine silk with you.</span>
+        <span>{successClosing}</span>
       </div>
     );
   }
@@ -52,7 +74,7 @@ export function WaitlistForm() {
   return (
     <form onSubmit={submit} className="waitlist-form">
       <div className="waitlist-form__field">
-        <label htmlFor="waitlist-email">Email address</label>
+        <label htmlFor="waitlist-email">{emailLabel}</label>
         <div className="waitlist-form__row">
           <input
             id="waitlist-email"
@@ -60,26 +82,17 @@ export function WaitlistForm() {
             type="email"
             inputMode="email"
             autoComplete="email"
-            placeholder="Enter your email address"
+            placeholder={emailPlaceholder}
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             disabled={status === "loading"}
             required
           />
-          <button type="submit" disabled={status === "loading" || !consent}>
-            {status === "loading" ? "Joining…" : "Join the waitlist"}
+          <button type="submit" disabled={status === "loading"}>
+            {status === "loading" ? submittingLabel : submitLabel}
           </button>
         </div>
       </div>
-      <label className="waitlist-form__consent">
-        <input
-          type="checkbox"
-          checked={consent}
-          onChange={(event) => setConsent(event.target.checked)}
-          required
-        />
-        <span>I agree to receive Ivory Muse launch news, collection updates and marketing emails. I can unsubscribe at any time.</span>
-      </label>
       <div className="waitlist-form__honeypot" aria-hidden="true">
         <label htmlFor="waitlist-website">Website</label>
         <input id="waitlist-website" name="website" type="text" tabIndex={-1} autoComplete="off" />

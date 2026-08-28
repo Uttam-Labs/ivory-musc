@@ -225,7 +225,7 @@ export function CartPage() {
             <h2>Your shopping bag is empty</h2>
             <p>Discover considered silks selected for timeless garments and interiors.</p>
             {error && <p className={styles.error} role="alert">{error}</p>}
-            <Link href="/collections/shop">Explore the collection</Link>
+            <Link href="/collections/shop">Continue shopping</Link>
           </section>
         )}
       </div>

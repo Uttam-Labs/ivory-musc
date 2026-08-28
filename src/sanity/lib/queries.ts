@@ -3,6 +3,8 @@ export const SITE_SETTINGS_QUERY = defineQuery(`*[_type == "siteSettings"][0]{ti
 export const HEADER_SETTINGS_QUERY = defineQuery(`*[_id == "headerSettings"][0]{title, logo, logoSizeDesktop, logoSizeMobile, navigation[]{label, href}, showSearch, searchHref, showAccount, accountHref, showCart, cartHref}`);
 export const FOOTER_SETTINGS_QUERY = defineQuery(`*[_id == "footerSettings"][0]{footerColumns[]{heading, links[]{label, href}}, contactHeading, contactEmail, socialHeading, instagramUrl, facebookUrl, copyright}`);
 export const HOME_PAGE_QUERY = defineQuery(`*[_type == "homePage"][0]{_updatedAt, title, sections[]{..., collectionHandle, image{..., alt}, features[]{..., icon}}}`);
+
+export const WAITLIST_PAGE_QUERY = defineQuery(`*[_id == "waitlistPage"][0]{seoTitle, seoDescription, backgroundImage{..., alt, "assetUrl": asset->url}, brandName, tagline, heading, description, formHeading, emailLabel, emailPlaceholder, submitLabel, submittingLabel, confirmationText, unsubscribeText, successEyebrow, successHeading, successMessage, alreadySubscribedMessage, successClosing, fallbackErrorMessage}`);
 export const ABOUT_PAGE_QUERY = defineQuery(`*[_id == "aboutPage"][0]{_updatedAt,title,sections[]{...,image{...,alt},items[]{...,icon{...,alt}},cards[]{...,image{...,alt}}}}`);
 export const PAGE_QUERY = defineQuery(`*[_type == "page" && slug.current == $slug][0]{title, seoDescription, body}`);
 export const PRODUCT_PAGE_QUERY = defineQuery(`*[_id == "productPage" && _type == "productPage"][0]{_updatedAt,title,sections[]{...}}`);

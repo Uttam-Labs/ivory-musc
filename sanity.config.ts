@@ -91,6 +91,12 @@ export default defineConfig({
                       "articlePage",
                       "articlePage",
                     ),
+                    singletonPage(
+                      S,
+                      "Coming soon page",
+                      "waitlistPage",
+                      "waitlistPage",
+                    ),
                   ]),
               ),
             S.divider(),

@@ -740,12 +740,13 @@ export function Header({
               <div className="flex h-full flex-col items-center justify-center text-center">
                 <CartIcon className="h-10 w-9 text-stone-400" />
                 <p className="mt-5 font-heading text-xl">Your cart is empty</p>
-                <button
+                <Link
+                  href="/collections/shop"
                   onClick={() => setCartOpen(false)}
-                  className="mt-5 border border-[var(--accent)] px-6 py-3 text-[10px] uppercase tracking-wider"
+                  className="mt-5 inline-flex min-h-12 items-center justify-center border border-[var(--accent)] bg-[var(--accent)] px-7 py-3 text-[11px] font-medium uppercase tracking-[.12em] text-white no-underline transition-colors hover:bg-transparent hover:text-[var(--accent)]"
                 >
                   Continue shopping
-                </button>
+                </Link>
               </div>
             )}
             {cartError && (

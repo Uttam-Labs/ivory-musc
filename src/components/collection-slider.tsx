@@ -46,31 +46,31 @@ export function CollectionSlider({
   return (
     <div className="relative">
       <div ref={ref} className="overflow-hidden">
-        <div className="-ml-8 flex">
+        <div className="bestseller-track -ml-3 flex sm:-ml-8">
           {products.map((p) => (
             <article
               key={p.id}
-              className="bestseller-card min-w-0 flex-[0_0_100%] pl-8 sm:flex-[0_0_50%] lg:flex-[0_0_33.333%]"
+              className="bestseller-card min-w-0 flex-[0_0_50%] pl-3 sm:pl-8 lg:flex-[0_0_33.333%]"
             >
               <Link
                 href={`/products/${p.handle}`}
                 className="block text-center"
               >
-                <div className="bg-[white] p-7 lg:p-8">
-                  <div className="relative aspect-[.79] overflow-hidden">
+                <div className="bestseller-image-frame bg-[white] p-3 sm:p-7 lg:p-8">
+                  <div className="bestseller-card-media relative aspect-[.79] overflow-hidden">
                     {p.featuredImage && (
                       <Image
                         fill
                         src={p.featuredImage.url}
                         alt={p.featuredImage.altText || p.title}
                         className="object-cover"
-                        sizes="(min-width:1024px) 29vw,84vw"
+                        sizes="(min-width:1024px) 29vw, (min-width:640px) 45vw, 44vw"
                         quality={95}
                       />
                     )}
                   </div>
                 </div>
-                <div className="bestseller-card-content pt-8">
+                <div className="bestseller-card-content pt-4 sm:pt-8">
                   <h3 className="mt-5 font-heading text-[var(--accent)]">
                     {p.title}
                   </h3>

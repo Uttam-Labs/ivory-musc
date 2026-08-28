@@ -3,6 +3,7 @@ import type { SanityImageSource } from "@sanity/image-url";
 import { z } from "zod";
 import { env, isSanityConfigured } from "@/lib/env";
 import { sendWaitlistEmails } from "@/lib/waitlist/email";
+import { subscribeWaitlistProfileToKlaviyo } from "@/lib/waitlist/klaviyo";
 import { syncWaitlistCustomerToShopify } from "@/lib/waitlist/shopify-customer";
 import { markWelcomeEmailSent, storeWaitlistSubscriber } from "@/lib/waitlist/store";
 import { sanityFetch } from "@/sanity/lib/client";
@@ -18,8 +19,9 @@ const schema = z.object({
 export async function POST(request: Request) {
   try {
     const input = schema.parse(await request.json());
-    const stored = await storeWaitlistSubscriber(input.email);
+    await subscribeWaitlistProfileToKlaviyo(input.email);
     await syncWaitlistCustomerToShopify(input.email);
+    const stored = await storeWaitlistSubscriber(input.email);
 
     if (stored.welcomeEmailSent) {
       return NextResponse.json({ success: true, alreadySubscribed: true });

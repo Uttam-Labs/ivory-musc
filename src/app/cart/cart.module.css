@@ -3,4 +3,5 @@
 @media(max-width:600px){.inner{width:calc(100% - 3.2rem);padding:4.5rem 0 6rem}.header{gap:1.8rem;padding-bottom:2.4rem}.header h1{font-size:3rem}.header p:last-child{font-size:1.35rem;line-height:1.55}.layout{gap:2rem;padding-top:2.5rem}.itemsHeading{padding:1.8rem}.itemsHeading h2{font-size:2.15rem}.item{grid-template-columns:10.5rem minmax(0,1fr);gap:1.5rem;padding:1.8rem}.itemTop h3{font-size:1.8rem}.itemBottom{align-items:flex-start;flex-direction:column}.price{justify-items:start}.quantity{grid-template-columns:3.7rem 4rem 3.7rem;height:4rem}.summary{padding:2.5rem 2rem}.empty{min-height:36rem}.empty h2{font-size:2.7rem}}
 .inner{padding-top:3rem;padding-bottom:3.5rem}.state,.empty{min-height:30rem}
 @media(max-width:600px){.inner{padding-top:2rem;padding-bottom:3rem}.state,.empty{min-height:24rem}}
+.empty>a{min-width:24rem;font-weight:500;letter-spacing:.12em;transition:background-color .25s ease,color .25s ease}.empty>a:hover{background:transparent;color:#a5534d}
 @media(prefers-reduced-motion:reduce){.spinner{animation:none}}

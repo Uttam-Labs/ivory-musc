@@ -1,0 +1,30 @@
+import { defineField, defineType } from "sanity";
+
+export const waitlistPage = defineType({
+  name: "waitlistPage",
+  title: "Coming soon page",
+  type: "document",
+  fields: [
+    defineField({ name: "seoTitle", title: "SEO title", type: "string", initialValue: "Coming Soon | Ivory Muse" }),
+    defineField({ name: "seoDescription", title: "SEO description", type: "text", rows: 2 }),
+    defineField({ name: "backgroundImage", title: "Full-screen background image", type: "image", options: { hotspot: true }, fields: [defineField({ name: "alt", title: "Alternative text", type: "string" })] }),
+    defineField({ name: "brandName", title: "Brand name", type: "string", initialValue: "IVORY MUSE" }),
+    defineField({ name: "tagline", title: "Brand tagline", type: "text", rows: 2, initialValue: "Exceptional creations\nbegin with exceptional materials." }),
+    defineField({ name: "heading", title: "Main heading", type: "string", initialValue: "COMING SOON" }),
+    defineField({ name: "description", title: "Collection description", type: "text", rows: 3, initialValue: "A considered collection of mulberry silk fabrics\nfor designers, dressmakers & creators." }),
+    defineField({ name: "formHeading", title: "Form heading", type: "string", initialValue: "GET ON THE LIST" }),
+    defineField({ name: "emailLabel", title: "Email field label", type: "string", initialValue: "Email address" }),
+    defineField({ name: "emailPlaceholder", title: "Email placeholder", type: "string", initialValue: "EMAIL ADDRESS" }),
+    defineField({ name: "submitLabel", title: "Submit button label", type: "string", initialValue: "JOIN THE LIST" }),
+    defineField({ name: "submittingLabel", title: "Submitting label", type: "string", initialValue: "JOINING…" }),
+    defineField({ name: "confirmationText", title: "Text below form", type: "text", rows: 2, initialValue: "Be the first to know about our launch, new collections\nand exclusive updates." }),
+    defineField({ name: "unsubscribeText", title: "Unsubscribe note", type: "string", initialValue: "You can unsubscribe at any time." }),
+    defineField({ name: "successEyebrow", title: "Success eyebrow", type: "string", initialValue: "Registration confirmed" }),
+    defineField({ name: "successHeading", title: "Success heading", type: "string", initialValue: "Welcome to Ivory Muse" }),
+    defineField({ name: "successMessage", title: "New subscriber success message", type: "text", rows: 2, initialValue: "Welcome to Ivory Muse. Please check your inbox for our confirmation email." }),
+    defineField({ name: "alreadySubscribedMessage", title: "Existing subscriber message", type: "string", initialValue: "You are already on the Ivory Muse waitlist." }),
+    defineField({ name: "successClosing", title: "Success closing text", type: "string", initialValue: "We look forward to sharing our world of fine silk with you." }),
+    defineField({ name: "fallbackErrorMessage", title: "Fallback error message", type: "string", initialValue: "We could not join you to the list. Please try again." }),
+  ],
+  preview: { prepare: () => ({ title: "Coming soon page" }) },
+});

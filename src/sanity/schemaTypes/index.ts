@@ -11,6 +11,7 @@ import { contactPage } from "./contactPage";
 import { blogPage } from "./blogPage";
 import { articlePage } from "./articlePage";
 import { waitlistSubscriber } from "./waitlistSubscriber";
+import { waitlistPage } from "./waitlistPage";
 import {
   accountAddressesPage,
   accountDashboardPage,
@@ -34,6 +35,7 @@ export const schemaTypes = [
   contactPage,
   blogPage,
   articlePage,
+  waitlistPage,
   accountNavigation,
   accountLoginPage,
   accountRegisterPage,
