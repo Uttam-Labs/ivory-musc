@@ -17,6 +17,7 @@ export const waitlistPage = defineType({
     defineField({ name: "emailPlaceholder", title: "Email placeholder", type: "string", initialValue: "EMAIL ADDRESS" }),
     defineField({ name: "submitLabel", title: "Submit button label", type: "string", initialValue: "JOIN THE LIST" }),
     defineField({ name: "submittingLabel", title: "Submitting label", type: "string", initialValue: "JOINING…" }),
+    defineField({ name: "consentText", title: "Consent checkbox text", type: "text", rows: 3, initialValue: "I agree to receive emails from Ivory Muse about new collections, restocks, exclusive offers and brand updates. I can unsubscribe at any time." }),
     defineField({ name: "confirmationText", title: "Text below form", type: "text", rows: 2, initialValue: "Be the first to know about our launch, new collections\nand exclusive updates." }),
     defineField({ name: "unsubscribeText", title: "Unsubscribe note", type: "string", initialValue: "You can unsubscribe at any time." }),
     defineField({ name: "successEyebrow", title: "Success eyebrow", type: "string", initialValue: "Registration confirmed" }),

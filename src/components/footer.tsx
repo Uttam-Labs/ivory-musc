@@ -5,6 +5,10 @@ type Column = {
   heading?: string;
   links?: Array<{ label?: string; href?: string }>;
 };
+
+const IVORY_MUSE_INSTAGRAM_URL =
+  "https://www.instagram.com/ivorymuse.silkhaus/";
+
 export function Footer({
   contactHeading,
   email,
@@ -28,8 +32,9 @@ export function Footer({
     /\b(?:19|20)\d{2}\b/g,
     String(new Date().getFullYear()),
   );
+  const instagramUrl = IVORY_MUSE_INSTAGRAM_URL;
   return (
-    <footer className="footer bg-[#fff9f3] text-[var(--foreground)] pt-20 sm:pt-24 lg:pt-36">
+    <footer className="footer bg-[#fff9f3] text-[var(--foreground)] pt-12 sm:pt-16 lg:pt-20">
       <div className="mx-auto max-w-[1920] px-6 sm:px-12 xl:px-24">
         <div className="footer__top flex flex-col items-center gap-12 border-t border-[var(--foreground)]/20 py-10 text-center md:py-12">
           {columns.map((column, index) => (
@@ -57,10 +62,18 @@ export function Footer({
               {contactHeading && (
                 <h3 className="mb-3 footer--heading text-base">{contactHeading}</h3>
               )}
-              <p>Email - {email}</p>
+              <p>
+                Email -{" "}
+                <a
+                  className="font-semibold !text-[#a8514b] transition-opacity hover:opacity-60"
+                  href={`mailto:${email}`}
+                >
+                  {email}
+                </a>
+              </p>
             </div>
           )}
-          {(instagram || facebook) && (
+          {(instagramUrl || facebook) && (
             <div className="footer__socials lg:pt-12">
               {socialHeading && (
                 <h3 className="mb-3 footer--heading text-base">{socialHeading}</h3>
@@ -77,11 +90,11 @@ export function Footer({
                     <FacebookIcon className="size-[30px] lg:size-[50px]" />
                   </a>
                 )}
-                {instagram && (
+                {instagramUrl && (
                   <a
                     aria-label="Instagram"
                     className="inline-flex rounded-full transition duration-300 ease-out hover:-translate-y-1 hover:scale-105 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-stone-900 motion-reduce:transform-none"
-                    href={instagram}
+                    href={instagramUrl}
                     target="_blank"
                     rel="noreferrer"
                   >

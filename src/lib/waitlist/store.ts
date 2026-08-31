@@ -17,7 +17,12 @@ function documentId(email: string) {
   return `waitlistSubscriber.${createHash("sha256").update(email.toLowerCase()).digest("hex")}`;
 }
 
-export async function storeWaitlistSubscriber(email: string) {
+export async function storeWaitlistSubscriber(
+  email: string,
+  consentText?: string,
+  consentedAt = new Date().toISOString(),
+  source = "Ivory Muse waitlist page",
+) {
   if (!env.NEXT_PUBLIC_SANITY_PROJECT_ID || !token) {
     throw new Error("Waitlist storage is not configured.");
   }
@@ -25,6 +30,15 @@ export async function storeWaitlistSubscriber(email: string) {
   const id = documentId(email);
   const existing = await writeClient.getDocument<{ _id: string; welcomeEmailSent?: boolean }>(id);
   if (existing) {
+    await writeClient
+      .patch(id)
+      .set({
+        marketingConsent: true,
+        consentText,
+        consentedAt,
+        source,
+      })
+      .commit();
     return {
       id,
       alreadySubscribed: true,
@@ -37,9 +51,11 @@ export async function storeWaitlistSubscriber(email: string) {
     _type: "waitlistSubscriber",
     email: email.toLowerCase(),
     marketingConsent: true,
+    consentText,
+    consentedAt,
     tag: "Ivory Muse Waitlist",
-    source: "Instagram waitlist landing page",
-    subscribedAt: new Date().toISOString(),
+    source,
+    subscribedAt: consentedAt,
     welcomeEmailSent: false,
   });
   return { id, alreadySubscribed: false, welcomeEmailSent: false };

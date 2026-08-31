@@ -7,6 +7,8 @@ export const waitlistSubscriber = defineType({
   fields: [
     defineField({ name: "email", title: "Email", type: "string", readOnly: true }),
     defineField({ name: "marketingConsent", title: "Marketing consent", type: "boolean", readOnly: true }),
+    defineField({ name: "consentText", title: "Consent text accepted", type: "text", rows: 3, readOnly: true }),
+    defineField({ name: "consentedAt", title: "Consent accepted at", type: "datetime", readOnly: true }),
     defineField({ name: "tag", title: "Tag", type: "string", readOnly: true }),
     defineField({ name: "source", title: "Source", type: "string", readOnly: true }),
     defineField({ name: "subscribedAt", title: "Subscribed at", type: "datetime", readOnly: true }),

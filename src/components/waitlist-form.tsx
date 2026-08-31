@@ -7,6 +7,7 @@ type WaitlistFormProps = {
   emailPlaceholder?: string;
   submitLabel?: string;
   submittingLabel?: string;
+  consentText?: string;
   successEyebrow?: string;
   successHeading?: string;
   successMessage?: string;
@@ -20,6 +21,7 @@ export function WaitlistForm({
   emailPlaceholder = "EMAIL ADDRESS",
   submitLabel = "JOIN THE LIST",
   submittingLabel = "JOINING…",
+  consentText = "I agree to receive emails from Ivory Muse about new collections, restocks, exclusive offers and brand updates. I can unsubscribe at any time.",
   successEyebrow = "Registration confirmed",
   successHeading = "Welcome to Ivory Muse",
   successMessage = "Welcome to Ivory Muse. Please check your inbox for our confirmation email.",
@@ -28,6 +30,7 @@ export function WaitlistForm({
   fallbackErrorMessage = "We could not join you to the list. Please try again.",
 }: WaitlistFormProps) {
   const [email, setEmail] = useState("");
+  const [marketingConsent, setMarketingConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
 
@@ -40,7 +43,7 @@ export function WaitlistForm({
       const response = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email, marketingConsent: true, website: form.get("website") || "" }),
+        body: JSON.stringify({ email, marketingConsent, website: form.get("website") || "" }),
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Registration failed.");
@@ -49,6 +52,7 @@ export function WaitlistForm({
         ? alreadySubscribedMessage
         : `${successHeading} — your place on our waitlist is confirmed.`);
       setEmail("");
+      setMarketingConsent(false);
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error && error.message
@@ -104,6 +108,17 @@ export function WaitlistForm({
         <label htmlFor="waitlist-website">Website</label>
         <input id="waitlist-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
       </div>
+      <label className="waitlist-form__consent">
+        <input
+          type="checkbox"
+          name="marketingConsent"
+          checked={marketingConsent}
+          onChange={(event) => setMarketingConsent(event.target.checked)}
+          disabled={status === "loading"}
+          required
+        />
+        <span>{consentText}</span>
+      </label>
       {message && <p className={`waitlist-form__message waitlist-form__message--${status}`} role="alert">{message}</p>}
     </form>
   );

@@ -10,6 +10,13 @@ type KlaviyoProfileResponse = KlaviyoErrorResponse & {
   data?: { id?: string };
 };
 
+type WaitlistConsent = {
+  marketingConsent: true;
+  consentText: string;
+  consentedAt: string;
+  consentSource: string;
+};
+
 function headers() {
   return {
     accept: "application/vnd.api+json",
@@ -27,7 +34,10 @@ async function errorMessage(response: Response) {
     .join(";") || `Klaviyo request failed (${response.status}).`;
 }
 
-export async function subscribeWaitlistProfileToKlaviyo(email: string) {
+export async function subscribeWaitlistProfileToKlaviyo(
+  email: string,
+  consent: WaitlistConsent,
+) {
   if (!env.KLAVIYO_PRIVATE_API_KEY || !env.KLAVIYO_WAITLIST_LIST_ID) {
     throw new Error("Klaviyo waitlist sync is not configured.");
   }
@@ -39,7 +49,17 @@ export async function subscribeWaitlistProfileToKlaviyo(email: string) {
     body: JSON.stringify({
       data: {
         type: "profile",
-        attributes: { email: normalizedEmail },
+        attributes: {
+          email: normalizedEmail,
+          properties: {
+            signup_source: "Ivory Muse coming soon page",
+            waitlist_name: "Ivory Muse Waitlist",
+            marketing_consent: consent.marketingConsent,
+            consent_text: consent.consentText,
+            consented_at: consent.consentedAt,
+            consent_source: consent.consentSource,
+          },
+        },
       },
     }),
     cache: "no-store",

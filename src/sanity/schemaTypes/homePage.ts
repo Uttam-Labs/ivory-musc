@@ -23,6 +23,7 @@ export const homePage = defineType({
           type: "object",
           options: { collapsible: true, collapsed: false },
           fields: [
+            defineField({ name: "image", title: "Mobile banner image", type: "image", description: "Optional. Leave empty to use the desktop banner image.", options: { hotspot: true }, fields: [defineField({ name: "alt", type: "string" })] }),
             defineField({ name: "heading", title: "Heading", type: "string", initialValue: "Exceptional Materials Matter Most" }),
             defineField({ name: "body", title: "Short text", type: "text", rows: 3, initialValue: "Thoughtfully curated silk fabrics, chosen for beauty, quality, and performance—made to bring your creative ideas to life." }),
             defineField({ name: "primaryButtonLabel", title: "First button label", type: "string", initialValue: "Shop" }),

@@ -22,6 +22,7 @@ type Section = {
   secondaryButtonLabel?: string;
   secondaryButtonHref?: string;
   mobileContent?: {
+    image?: SanityImageSource;
     heading?: string;
     body?: string;
     primaryButtonLabel?: string;
@@ -92,16 +93,17 @@ export default async function Home() {
     <main className="home-page flex-1 overflow-hidden bg-[#fff9f3]">
       {sections.map((section, index) => {
         const key = section._key || index;
-        if (section._type === "hero")
+        if (section._type === "hero") {
+          const mobileImage = section.mobileContent?.image || section.image;
           return (
             <section
               key={key}
               className="home-hero relative flex min-h-[600px] items-end text-white md:aspect-[2/1] md:min-h-0 md:max-h-[820px]"
             >
-              {section.image && (
+              {mobileImage && (
                 <Image
-                  src={sanityImageUrl(section.image, 3840)}
-                  alt={section.heading || "Ivory Muse silk fabric"}
+                  src={sanityImageUrl(mobileImage, 2400)}
+                  alt={section.mobileContent?.heading || section.heading || "Ivory Muse silk fabric"}
                   fill
                   priority
                   quality={95}
@@ -134,10 +136,14 @@ export default async function Home() {
                     )}
                   </div>
                   <div className="home-hero__mobile-copy">
-                    <h1 className="hero-title">
-                      {section.mobileContent?.heading || "Exceptional Materials Matter Most"}
-                    </h1>
-                    <p>{section.mobileContent?.body || "Thoughtfully curated silk fabrics, chosen for beauty, quality, and performance—made to bring your creative ideas to life."}</p>
+                    {(section.mobileContent?.heading || section.heading) && (
+                      <h1 className="hero-title">
+                        {section.mobileContent?.heading || section.heading}
+                      </h1>
+                    )}
+                    {(section.mobileContent?.body || section.body) && (
+                      <p>{section.mobileContent?.body || section.body}</p>
+                    )}
                   </div>
                   <div className="home-hero__buttons home-hero__desktop-buttons flex flex-wrap gap-3">
                     <Button
@@ -156,14 +162,14 @@ export default async function Home() {
                   </div>
                   <div className="home-hero__buttons home-hero__mobile-buttons">
                     <Button
-                      label={section.mobileContent?.primaryButtonLabel || "Shop"}
-                      href={section.mobileContent?.primaryButtonHref || "/collections/shop"}
+                      label={section.mobileContent?.primaryButtonLabel || section.buttonLabel}
+                      href={section.mobileContent?.primaryButtonHref || section.buttonHref}
                       className="button custom-button btn-white"
                       light
                     />
                     <Button
-                      label={section.mobileContent?.secondaryButtonLabel || "Discover Ivory Muse"}
-                      href={section.mobileContent?.secondaryButtonHref || "/about"}
+                      label={section.mobileContent?.secondaryButtonLabel || section.secondaryButtonLabel}
+                      href={section.mobileContent?.secondaryButtonHref || section.secondaryButtonHref}
                       className="button custom-button btn-transparent"
                       light
                       variant="secondary"
@@ -173,6 +179,7 @@ export default async function Home() {
               </div>
             </section>
           );
+        }
         if (section._type === "collectionSlider") {
           if (!products.length) return null;
           return (

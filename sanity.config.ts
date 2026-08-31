@@ -101,6 +101,34 @@ export default defineConfig({
               ),
             S.divider(),
             S.listItem()
+              .title("Policies")
+              .child(
+                S.list()
+                  .title("Policies")
+                  .items([
+                    singletonPage(
+                      S,
+                      "Shipping",
+                      "policyPage",
+                      "policy.shipping",
+                    ),
+                    singletonPage(S, "Returns", "policyPage", "policy.returns"),
+                    singletonPage(
+                      S,
+                      "Privacy Policy",
+                      "policyPage",
+                      "policy.privacy",
+                    ),
+                    singletonPage(
+                      S,
+                      "Terms & Conditions",
+                      "policyPage",
+                      "policy.terms",
+                    ),
+                  ]),
+              ),
+            S.divider(),
+            S.listItem()
               .title("Account")
               .child(
                 S.list()

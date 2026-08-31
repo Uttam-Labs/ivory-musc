@@ -21,6 +21,7 @@ type WaitlistContent = {
   emailPlaceholder?: string;
   submitLabel?: string;
   submittingLabel?: string;
+  consentText?: string;
   confirmationText?: string;
   unsubscribeText?: string;
   successEyebrow?: string;
@@ -43,6 +44,7 @@ const fallback: Required<Omit<WaitlistContent, "backgroundImage">> = {
   emailPlaceholder: "EMAIL ADDRESS",
   submitLabel: "JOIN THE LIST",
   submittingLabel: "JOINING…",
+  consentText: "I agree to receive emails from Ivory Muse about new collections, restocks, exclusive offers and brand updates. I can unsubscribe at any time.",
   confirmationText: "Be the first to know about our launch, new collections\nand exclusive updates.",
   unsubscribeText: "You can unsubscribe at any time.",
   successEyebrow: "Registration confirmed",
@@ -60,6 +62,12 @@ async function getContent() {
   const populated = Object.fromEntries(
     Object.entries(content || {}).filter(([, value]) => value !== null && value !== undefined && value !== ""),
   ) as WaitlistContent;
+  if (
+    populated.consentText ===
+    "I agree to receive Ivory Muse launch news, collection updates and marketing emails."
+  ) {
+    populated.consentText = fallback.consentText;
+  }
   return { ...fallback, ...populated };
 }
 
@@ -81,7 +89,7 @@ export default async function WaitlistPage() {
         <h1 id="waitlist-title">{content.heading}</h1>
         <p className={styles.intro}>{content.description}</p>
         <p className={styles.formTitle}>{content.formHeading}</p>
-        <WaitlistForm emailLabel={content.emailLabel} emailPlaceholder={content.emailPlaceholder} submitLabel={content.submitLabel} submittingLabel={content.submittingLabel} successEyebrow={content.successEyebrow} successHeading={content.successHeading} successMessage={content.successMessage} alreadySubscribedMessage={content.alreadySubscribedMessage} successClosing={content.successClosing} fallbackErrorMessage={content.fallbackErrorMessage} />
+        <WaitlistForm emailLabel={content.emailLabel} emailPlaceholder={content.emailPlaceholder} submitLabel={content.submitLabel} submittingLabel={content.submittingLabel} consentText={content.consentText} successEyebrow={content.successEyebrow} successHeading={content.successHeading} successMessage={content.successMessage} alreadySubscribedMessage={content.alreadySubscribedMessage} successClosing={content.successClosing} fallbackErrorMessage={content.fallbackErrorMessage} />
         <p className={styles.note}>{content.confirmationText}</p>
         <p className={styles.unsubscribe}>{content.unsubscribeText}</p>
       </section>

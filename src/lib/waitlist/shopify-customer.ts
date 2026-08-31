@@ -94,9 +94,11 @@ async function updateExistingCustomer(customerId: string, consentUpdatedAt: stri
   return customerId;
 }
 
-export async function syncWaitlistCustomerToShopify(email: string) {
+export async function syncWaitlistCustomerToShopify(
+  email: string,
+  consentUpdatedAt = new Date().toISOString(),
+) {
   const normalizedEmail = email.trim().toLowerCase();
-  const consentUpdatedAt = new Date().toISOString();
   const existingCustomerId = await findCustomerId(normalizedEmail);
   if (existingCustomerId) {
     return updateExistingCustomer(existingCustomerId, consentUpdatedAt);

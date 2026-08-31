@@ -16,14 +16,31 @@ const schema = z.object({
   website: z.string().max(0).optional().default(""),
 });
 
+const WAITLIST_CONSENT_TEXT =
+  "I agree to receive emails from Ivory Muse about new collections, restocks, exclusive offers and brand updates. I can unsubscribe at any time.";
+const WAITLIST_CONSENT_SOURCE = "Ivory Muse waitlist page";
+
 export async function POST(request: Request) {
   try {
     const input = schema.parse(await request.json());
-    await subscribeWaitlistProfileToKlaviyo(input.email);
+    const consentedAt = new Date().toISOString();
+    const consent = {
+      marketingConsent: true as const,
+      consentText: WAITLIST_CONSENT_TEXT,
+      consentedAt,
+      consentSource: WAITLIST_CONSENT_SOURCE,
+    };
 
-    await syncWaitlistCustomerToShopify(input.email);
+    await subscribeWaitlistProfileToKlaviyo(input.email, consent);
 
-    const stored = await storeWaitlistSubscriber(input.email).catch((error) => {
+    await syncWaitlistCustomerToShopify(input.email, consentedAt);
+
+    const stored = await storeWaitlistSubscriber(
+      input.email,
+      WAITLIST_CONSENT_TEXT,
+      consentedAt,
+      WAITLIST_CONSENT_SOURCE,
+    ).catch((error) => {
       console.error("Waitlist Sanity storage failed:", error);
       return null;
     });

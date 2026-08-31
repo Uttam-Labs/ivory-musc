@@ -4,9 +4,10 @@ export const HEADER_SETTINGS_QUERY = defineQuery(`*[_id == "headerSettings"][0]{
 export const FOOTER_SETTINGS_QUERY = defineQuery(`*[_id == "footerSettings"][0]{footerColumns[]{heading, links[]{label, href}}, contactHeading, contactEmail, socialHeading, instagramUrl, facebookUrl, copyright}`);
 export const HOME_PAGE_QUERY = defineQuery(`*[_type == "homePage"][0]{_updatedAt, title, sections[]{..., collectionHandle, image{..., alt}, features[]{..., icon}}}`);
 
-export const WAITLIST_PAGE_QUERY = defineQuery(`*[_id == "waitlistPage"][0]{seoTitle, seoDescription, backgroundImage{..., alt, "assetUrl": asset->url}, brandName, tagline, heading, description, formHeading, emailLabel, emailPlaceholder, submitLabel, submittingLabel, confirmationText, unsubscribeText, successEyebrow, successHeading, successMessage, alreadySubscribedMessage, successClosing, fallbackErrorMessage}`);
+export const WAITLIST_PAGE_QUERY = defineQuery(`*[_id == "waitlistPage"][0]{seoTitle, seoDescription, backgroundImage{..., alt, "assetUrl": asset->url}, brandName, tagline, heading, description, formHeading, emailLabel, emailPlaceholder, submitLabel, submittingLabel, consentText, confirmationText, unsubscribeText, successEyebrow, successHeading, successMessage, alreadySubscribedMessage, successClosing, fallbackErrorMessage}`);
 export const ABOUT_PAGE_QUERY = defineQuery(`*[_id == "aboutPage"][0]{_updatedAt,title,sections[]{...,image{...,alt},items[]{...,icon{...,alt}},cards[]{...,image{...,alt}}}}`);
 export const PAGE_QUERY = defineQuery(`*[_type == "page" && slug.current == $slug][0]{title, seoDescription, body}`);
+export const POLICY_PAGE_QUERY = defineQuery(`*[_type == "policyPage" && slug.current == $slug][0]{_type,title,navigationLabel,seoDescription,body}`);
 export const PRODUCT_PAGE_QUERY = defineQuery(`*[_id == "productPage" && _type == "productPage"][0]{_updatedAt,title,sections[]{...}}`);
 export const COLLECTION_PAGE_QUERY = defineQuery(`*[_id == "collectionPage" && _type == "collectionPage"][0]{_updatedAt,heading}`);
 export const FAQ_PAGE_QUERY = defineQuery(`*[_id == "faqPage" && _type == "faqPage"][0]{_updatedAt,title,seoDescription,sections[]{...,image{...,alt},items[]{...}}}`);
