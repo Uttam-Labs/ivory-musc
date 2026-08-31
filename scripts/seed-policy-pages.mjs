@@ -93,11 +93,13 @@ export const policies = [
     content: `
 Ivory Muse offers delivery Australia-wide through **Australia Post**.
 
-We take care when preparing and packaging each order to ensure your fabric arrives safely.
+We take care when preparing and packaging each order.
 
 ## Delivery Timeframes
 
-Once your order has been dispatched, delivery is estimated to take approximately **2–6 business days**, depending on your location.
+Once your order has been dispatched, delivery is estimated to take approximately **2–6 business days for standard shipping** and approximately **1-3 business days for express shipping**.
+
+This depends on your location.
 
 Delivery timeframes are estimates and may vary during peak periods, public holidays or due to delays experienced by Australia Post.
 
@@ -166,7 +168,7 @@ Where available, we recommend ordering a swatch before purchasing a larger quant
 
 ## Faulty, Damaged or Incorrect Orders
 
-If your fabric arrives faulty or damaged, you receive an incorrect item, or there is another issue with your order, please contact us so we can review the matter and assist you.
+If your fabric arrives faulty or damaged, you received an incorrect item, or there is another issue with your order, please contact us so we can review the matter and assist you.
 
 We recommend inspecting your fabric upon arrival and before cutting, washing, sewing or otherwise altering it.
 
@@ -375,7 +377,7 @@ If you have any questions about this Privacy Policy, would like to request acces
 
 **Ivory Muse**
 
-**Email:** info@ivory-muse.com.au`,
+**Email:**info@ivory-muse.com.au`,
   },
   {
     _id: "policy.terms",

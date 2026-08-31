@@ -53,6 +53,7 @@ export function GlobalLoader({
   useEffect(() => {
     if (previousPathname.current === pathname) return;
     previousPathname.current = pathname;
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     const elapsed = performance.now() - navigationStartedAt.current;
     const timer = window.setTimeout(
       () => {
