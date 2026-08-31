@@ -454,14 +454,14 @@ a {
         order: 1;
     }
     .home-hero {
-        min-height: 56svh !important;
+        min-height: 58svh !important;
     }
     .home-hero-content {
         padding-bottom: 2.4rem !important;
     }
     .home-bestseller {
         width: 100%;
-        min-height: calc(44svh + 1px);
+        min-height: calc(46svh + 1px);
         box-sizing: border-box;
         margin-top: 0;
         padding-top: 3.4rem;
