@@ -1,4 +1,5 @@
 :global(body:has(.waitlist-page) > header),
+:global(body:has(.waitlist-page) > .site-header-spacer),
 :global(body:has(.waitlist-page) > footer) { display: none; }
 
 .waitlistPage {

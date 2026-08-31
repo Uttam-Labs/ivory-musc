@@ -48,6 +48,7 @@ export function Header({
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [headerScrolled, setHeaderScrolled] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Product[]>([]);
   const [searching, setSearching] = useState(false);
@@ -63,6 +64,14 @@ export function Header({
   const changingLines = useRef(new Set<string>());
   const cartMutationFresh = useRef(false);
   const cartMutationTimer = useRef<number | null>(null);
+
+  useEffect(() => {
+    const updateHeader = () => setHeaderScrolled(window.scrollY > 12);
+
+    updateHeader();
+    window.addEventListener("scroll", updateHeader, { passive: true });
+    return () => window.removeEventListener("scroll", updateHeader);
+  }, [pathname]);
 
   const markCartMutation = useCallback(() => {
     cartMutationFresh.current = true;
@@ -290,13 +299,19 @@ export function Header({
   }
 
   if (!title && !logoUrl && !navigation.length) return null;
-  const iconClass =
-    "inline-flex size-9 items-center justify-center rounded-full transition duration-300 hover:bg-white/15 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2";
+  const headerElevated = !overlaysHero || headerScrolled;
+  const iconClass = `inline-flex size-9 items-center justify-center rounded-full transition duration-300 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 ${
+    headerElevated ? "hover:bg-black/5" : "hover:bg-white/15"
+  }`;
 
   return (
     <>
       <header
-        className={`${overlaysHero ? "absolute text-white" : "relative text-[var(--foreground)]"} z-50 w-full`}
+        className={`fixed inset-x-0 top-0 z-50 w-full transition-[background-color,color,box-shadow,backdrop-filter] duration-300 ${
+          headerElevated
+            ? "bg-[#fff9f3]/95 text-[var(--foreground)] shadow-[0_1px_0_rgba(99,58,51,.12)] backdrop-blur-md"
+            : "bg-transparent text-white"
+        }`}
       >
         <div className="mx-auto grid h-[88px] lg:h-[100px] max-w-[1920] px-6 sm:px-12 xl:px-24 grid-cols-[1fr_auto_1fr] items-center">
           <nav className="hidden header__nav items-center gap-7 text-[10px] lg:flex">
@@ -356,9 +371,9 @@ export function Header({
                   } as React.CSSProperties
                 }
                 className={`header-logo h-auto max-h-[72px] w-full origin-center object-contain transition-[filter,opacity] duration-300 ${
-                  overlaysHero
-                    ? "drop-shadow-[0_1px_1px_rgba(0,0,0,.12)]"
-                    : "brightness-0 opacity-40"
+                  headerElevated
+                    ? "brightness-0 opacity-40"
+                    : "drop-shadow-[0_1px_1px_rgba(0,0,0,.12)]"
                 }`}
               />
             ) : title ? (
@@ -416,6 +431,12 @@ export function Header({
           </div>
         </div>
       </header>
+      {!overlaysHero && (
+        <div
+          aria-hidden="true"
+          className="site-header-spacer h-[88px] lg:h-[100px]"
+        />
+      )}
 
       <div
         aria-hidden={!menuOpen}
