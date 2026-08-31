@@ -23,9 +23,10 @@ export function MobileRevealSection({
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry?.isIntersecting) return;
-        section.classList.add("is-mobile-reveal-visible");
-        observer.disconnect();
+        section.classList.toggle(
+          "is-mobile-reveal-visible",
+          Boolean(entry?.isIntersecting && entry.intersectionRatio >= 0.12),
+        );
       },
       { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
     );
