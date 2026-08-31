@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CollectionSlider } from "@/components/collection-slider";
 import { NewsletterForm } from "@/components/newsletter-form";
+import { MobileRevealSection } from "@/components/mobile-reveal-section";
 import { isSanityConfigured, isShopifyConfigured } from "@/lib/env";
 import { getCollection } from "@/lib/shopify";
 import { normalizeShopHref } from "@/lib/navigation";
@@ -367,8 +368,9 @@ export default async function Home() {
             );
           const reverse = section.imagePosition === "right";
           const isChosen = section._key === "chosen";
+          const SplitSection = isChosen ? MobileRevealSection : "section";
           return (
-            <section
+            <SplitSection
               key={key}
               className={`home-split mx-auto grid max-w-[100%] items-start bg-[#fff9f3] lg:grid-cols-2 ${isChosen ? "home-chosen pt-20 pb-10 sm:pt-24 lg:pt-36 lg:pb-0" : "home-philosophy"}`}
             >
@@ -403,7 +405,7 @@ export default async function Home() {
                   <Button className="custom-button" label={section.buttonLabel} href={section.buttonHref} />
                 </div>
               </div>
-            </section>
+            </SplitSection>
           );
         }
         return null;

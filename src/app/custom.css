@@ -461,7 +461,7 @@ a {
     }
     .home-bestseller {
         width: 100%;
-        min-height: calc(46svh + 33px);
+        min-height: calc(46svh + 1px);
         box-sizing: border-box;
         margin-top: 0;
         padding-top: 3.4rem;
@@ -583,6 +583,19 @@ a {
     }
     .home-story .home-story-copy {
         margin-bottom: 0;
+    }
+    .home-chosen {
+        opacity: 0;
+        transition: opacity .45s ease;
+    }
+    .home-chosen.is-mobile-reveal-visible {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 640px) and (prefers-reduced-motion: reduce) {
+    .home-chosen {
+        transition: none;
     }
 }
 
