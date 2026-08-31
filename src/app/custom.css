@@ -461,7 +461,7 @@ a {
     }
     .home-bestseller {
         width: 100%;
-        min-height: calc(46svh + 1px);
+        min-height: calc(46svh + 33px);
         box-sizing: border-box;
         margin-top: 0;
         padding-top: 3.4rem;
