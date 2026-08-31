@@ -587,10 +587,12 @@ a {
     .home-chosen {
         opacity: 0;
         will-change: opacity;
-        transition: opacity .9s cubic-bezier(.22, 1, .36, 1);
+        transition: opacity .9s ease-out;
     }
     .home-chosen.is-mobile-reveal-visible {
         opacity: 1;
+        transition-duration: 1.2s;
+        transition-timing-function: ease-in;
     }
 }
 
