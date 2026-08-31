@@ -454,19 +454,19 @@ a {
         order: 1;
     }
     .home-hero {
-        min-height: clamp(38rem, calc(52svh + 2rem), 44rem) !important;
+        min-height: clamp(40rem, calc(52svh + 4rem), 46rem) !important;
     }
     .home-hero-content {
         padding-bottom: 2.4rem !important;
     }
     .home-bestseller {
         width: 100%;
-        min-height: 0;
+        min-height: calc(100svh - clamp(40rem, calc(52svh + 4rem), 46rem));
         box-sizing: border-box;
         margin-top: 0;
-        padding-top: 2.2rem;
+        padding-top: 3.4rem;
         padding-right: 1.4rem;
-        padding-bottom: 1.4rem;
+        padding-bottom: 1.8rem;
         padding-left: 1.4rem;
     }
     .home-bestseller .bestseller-track {
@@ -481,11 +481,11 @@ a {
         height: 100%;
     }
     .home-bestseller .bestseller-card-media {
-        aspect-ratio: 1.02 / 1;
-        margin-inline: .15rem;
+        aspect-ratio: 1 / 1;
+        margin-inline: 0;
     }
     .home-bestseller .bestseller-image-frame {
-        padding: .8rem;
+        padding: .5rem;
     }
     .home-bestseller .bestseller-card-content {
         padding-top: 1.2rem;
