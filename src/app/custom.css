@@ -464,9 +464,9 @@ a {
         min-height: calc(100svh - clamp(38rem, calc(52svh + 2rem), 44rem));
         box-sizing: border-box;
         margin-top: 0;
-        padding-top: 3.5rem;
+        padding-top: 2.2rem;
         padding-right: 1.4rem;
-        padding-bottom: 3.5rem;
+        padding-bottom: 2.4rem;
         padding-left: 1.4rem;
     }
     .home-bestseller .bestseller-track {
@@ -481,7 +481,8 @@ a {
         height: 100%;
     }
     .home-bestseller .bestseller-card-media {
-        aspect-ratio: 1 / 1;
+        aspect-ratio: 1.08 / 1;
+        margin-inline: .35rem;
     }
     .home-bestseller .bestseller-image-frame {
         padding: .8rem;
@@ -513,7 +514,7 @@ a {
         -webkit-line-clamp: 2;
     }
     .home-bestseller .section__heading {
-        margin-bottom: 1.6rem;
+        margin-bottom: 1.2rem;
     }
     .home-bestseller .slider--button {
         width: 3.6rem;
