@@ -40,3 +40,33 @@
         color: var(--white);
     }
 }
+
+/* A compact but readable type scale across every mobile page. */
+@media only screen and (max-width:640px) {
+    :root {
+        --body-font-size: 15px !important;
+        --button-font-size: 13px !important;
+    }
+
+    html {
+        font-size: 60%;
+    }
+
+    /* Keep text actions inside their mobile containers without changing
+       icon-only controls, slider arrows, or header icons. */
+    button:not([aria-label]),
+    a.button,
+    a.custom-button,
+    a[class*="_primary_"],
+    a[class*="_secondary_"],
+    a[class*="_action_"],
+    a[class*="_checkout_"],
+    a[class*="_submit_"] {
+        min-width: 0;
+        max-width: 100%;
+        overflow-wrap: anywhere;
+        line-height: 1.3;
+        text-align: center;
+        white-space: normal;
+    }
+}

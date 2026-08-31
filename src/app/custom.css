@@ -531,7 +531,9 @@ a {
     }
     .home-hero__mobile-copy {
         display: block;
+        min-width: 0;
         width: 100%;
+        max-width: 100%;
     }
     .home-hero__mobile-copy .hero-title {
         width: 100%;
@@ -549,16 +551,25 @@ a {
     }
     .home-hero__mobile-buttons {
         display: grid;
-        grid-template-columns: minmax(0,.72fr) minmax(0,1.45fr);
+        grid-template-columns: minmax(0,.9fr) minmax(0,1.35fr);
         gap: .8rem;
+        min-width: 0;
         width: 100%;
+        max-width: 100%;
         margin-top: 2.2rem;
+        overflow: hidden;
     }
     .home-hero__mobile-buttons .button {
         width: 100%;
         min-width: 0;
-        padding-inline: 1rem;
-        white-space: nowrap;
+        height: auto;
+        min-height: 4.2rem;
+        overflow-wrap: anywhere;
+        padding: .8rem .7rem;
+        font-size: clamp(.8rem, 2.35vw, .95rem);
+        line-height: 1.25;
+        letter-spacing: .07em;
+        white-space: normal;
     }
 }
 
