@@ -170,7 +170,7 @@ export default async function Home() {
                     <Button
                       label={section.mobileContent?.secondaryButtonLabel || section.secondaryButtonLabel}
                       href={section.mobileContent?.secondaryButtonHref || section.secondaryButtonHref}
-                      className="button custom-button btn-transparent"
+                      className="home-hero-secondary-cta button custom-button btn-transparent"
                       light
                       variant="secondary"
                     />
@@ -223,13 +223,13 @@ export default async function Home() {
                   </h2>
                 )}
                 {storyParagraphs?.length ? (
-                  <div className="mt-5 mb-5 space-y-3">
+                  <div className="home-story-copy mt-5 mb-5 space-y-3">
                     {storyParagraphs.map((paragraph, paragraphIndex) => (
                       <p key={paragraphIndex}>{paragraph}</p>
                     ))}
                   </div>
                 ) : null}
-                <Button className="custom-button" label={section.buttonLabel} href={section.buttonHref} />
+                <Button className="home-story-cta custom-button" label={section.buttonLabel} href={section.buttonHref} />
               </header>
             </section>
           );
@@ -358,7 +358,7 @@ export default async function Home() {
                   <Button
                     label={section.buttonLabel}
                     href={section.buttonHref}
-                    className="custom-button btn-white"
+                    className="home-campaign-cta custom-button btn-white"
                     light
                   />
                   </div>

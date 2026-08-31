@@ -454,14 +454,14 @@ a {
         order: 1;
     }
     .home-hero {
-        min-height: 54svh !important;
+        min-height: 56svh !important;
     }
     .home-hero-content {
         padding-bottom: 2.4rem !important;
     }
     .home-bestseller {
         width: 100%;
-        min-height: calc(46svh + 1px);
+        min-height: calc(44svh + 1px);
         box-sizing: border-box;
         margin-top: 0;
         padding-top: 3.4rem;
@@ -555,9 +555,8 @@ a {
         line-height: 1.5;
     }
     .home-hero__mobile-buttons {
-        display: grid;
-        grid-template-columns: minmax(0,.9fr) minmax(0,1.35fr);
-        gap: .8rem;
+        display: flex;
+        justify-content: center;
         min-width: 0;
         width: 100%;
         max-width: 100%;
@@ -566,7 +565,7 @@ a {
         text-align: center;
     }
     .home-hero__mobile-buttons .button {
-        width: 100%;
+        width: min(100%, 22rem);
         min-width: 0;
         height: auto;
         min-height: 4.2rem;
@@ -576,6 +575,14 @@ a {
         line-height: 1.25;
         letter-spacing: .07em;
         white-space: normal;
+    }
+    .home-hero__mobile-buttons .home-hero-secondary-cta,
+    .home-campaign .home-campaign-cta,
+    .home-story .home-story-cta {
+        display: none !important;
+    }
+    .home-story .home-story-copy {
+        margin-bottom: 0;
     }
 }
 
