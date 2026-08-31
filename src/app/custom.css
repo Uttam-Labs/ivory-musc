@@ -539,9 +539,10 @@ a {
         text-align: center;
     }
     .home-hero__mobile-copy .hero-title {
-        width: 100%;
-        max-width: none;
-        font-size: clamp(1.45rem, 4.6vw, 1.75rem);
+        width: calc(100% - 2rem);
+        max-width: calc(100% - 2rem);
+        margin-inline: auto;
+        font-size: clamp(1.35rem, 4.2vw, 1.65rem);
         font-weight: 600;
         line-height: 1.1;
         letter-spacing: -.015em;
