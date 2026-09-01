@@ -121,7 +121,7 @@ export default async function AboutPage() {
                 <Button
                   label={hero.secondaryLabel}
                   href={hero.secondaryHref}
-                  className="button custom-button btn-transparent"
+                  className="about-hero-secondary-cta button custom-button btn-transparent"
                 />
               </div>
             </div>
@@ -130,7 +130,7 @@ export default async function AboutPage() {
       )}
 
       {why && (
-        <section className="home-split about-image-split mx-auto grid max-w-[1920] px-6 sm:px-12 xl:px-24 items-start gap-0 py-20 lg:grid-cols-2 lg:gap-0 lg:py-36">
+        <section className="home-split about-image-split about-first-editorial mx-auto grid max-w-[1920] px-6 sm:px-12 xl:px-24 items-start gap-0 py-20 lg:grid-cols-2 lg:gap-0 lg:py-36">
           {why.image && (
             <div className="home-split-image relative aspect-[1.88/1] w-full">
               <Image

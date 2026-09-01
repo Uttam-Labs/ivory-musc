@@ -397,6 +397,40 @@ a {
 /* End Home split */
 
 @media (max-width: 767px) {
+    .about-hero .about-hero__content-wrap {
+        width: 100%;
+        max-width: 100%;
+        text-align: center;
+    }
+    .about-hero .about-hero__content-wrap .hero-title,
+    .about-hero .about-hero__content-wrap > p {
+        margin-right: auto;
+        margin-left: auto;
+    }
+    .about-hero .home-hero__buttons {
+        justify-content: center;
+    }
+    .about-hero .about-hero-secondary-cta {
+        display: none !important;
+    }
+    .about-page .about-first-editorial {
+        padding-top: 0;
+        padding-right: 0;
+        padding-left: 0;
+    }
+    .about-page .about-first-editorial .home-split-content {
+        padding-right: 2.2rem;
+        padding-left: 2.2rem;
+    }
+    .contact-form__main {
+        padding-top: 0 !important;
+        padding-right: 0 !important;
+        padding-left: 0 !important;
+    }
+    .contact-form__main .contact-form__card {
+        margin-right: 2rem;
+        margin-left: 2rem;
+    }
     /* Keep the first editorial section visually connected to the hero. */
     .home-chosen {
         gap: 0;
