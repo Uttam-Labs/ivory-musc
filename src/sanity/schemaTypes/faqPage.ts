@@ -28,6 +28,12 @@ export const faqPage = defineType({
           fields: [
             imageField,
             defineField({ name: "heading", title: "Heading", type: "string" }),
+            defineField({
+              name: "mobileHeading",
+              title: "Mobile heading",
+              description: "A shorter heading used on mobile. Falls back to the main heading when empty.",
+              type: "string",
+            }),
             defineField({ name: "body", title: "Description", type: "text", rows: 3 }),
             defineField({
               name: "overlayOpacity",
