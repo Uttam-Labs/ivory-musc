@@ -1,6 +1,7 @@
 import type { SanityImageSource } from "@sanity/image-url";
 import Image from "next/image";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { isSanityConfigured } from "@/lib/env";
 import { normalizeShopHref } from "@/lib/navigation";
 import { sanityFetch } from "@/sanity/lib/client";
@@ -31,16 +32,25 @@ type Section = Item & {
 };
 type Content = { sections?: Section[] } | null;
 
-function Paragraphs({ text }: { text?: string }) {
+function Paragraphs({
+  text,
+  afterParagraph,
+  afterIndex = 1,
+}: {
+  text?: string;
+  afterParagraph?: ReactNode;
+  afterIndex?: number;
+}) {
   if (!text) return null;
+  const paragraphs = text.split(/\n\s*\n/).filter(Boolean);
   return (
     <div className="space-y-4">
-      {text
-        .split(/\n\s*\n/)
-        .filter(Boolean)
-        .map((p, i) => (
-          <p key={i}>{p.replace(/\s*\n\s*/g, " ")}</p>
-        ))}
+      {paragraphs.map((p, i) => (
+        <div key={i}>
+          <p>{p.replace(/\s*\n\s*/g, " ")}</p>
+          {i === Math.min(afterIndex, paragraphs.length - 1) ? afterParagraph : null}
+        </div>
+      ))}
     </div>
   );
 }
@@ -132,7 +142,7 @@ export default async function AboutPage() {
       {why && (
         <section className="home-split about-image-split about-first-editorial mx-auto grid max-w-[1920] px-6 sm:px-12 xl:px-24 items-start gap-0 py-20 lg:grid-cols-2 lg:gap-0 lg:py-36">
           {why.image && (
-            <div className="home-split-image relative aspect-[1.88/1] w-full">
+            <div className="home-split-image about-why__desktop-image relative aspect-[1.88/1] w-full">
               <Image
                 fill
                 src={sanityImageUrl(why.image, 3200)}
@@ -148,7 +158,21 @@ export default async function AboutPage() {
               <h2 className="title text-[24px] uppercase text-[var(--accent)] lg:text-[30px]">
                 {why.heading}
               </h2>
-              <Paragraphs text={why.body} />
+              <Paragraphs
+                text={why.body}
+                afterParagraph={why.image ? (
+                  <div className="about-why__mobile-image relative aspect-[1.88/1] w-full">
+                    <Image
+                      fill
+                      src={sanityImageUrl(why.image, 1600)}
+                      alt={why.image.alt || why.heading || ""}
+                      className="object-cover"
+                      sizes="calc(100vw - 4.4rem)"
+                      quality={95}
+                    />
+                  </div>
+                ) : null}
+              />
             </div>
           </div>
         </section>

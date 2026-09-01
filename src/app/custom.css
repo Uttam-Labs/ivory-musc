@@ -396,6 +396,10 @@ a {
 
 /* End Home split */
 
+.about-why__mobile-image {
+    display: none;
+}
+
 @media (max-width: 767px) {
     .about-hero {
         align-items: center;
@@ -441,10 +445,20 @@ a {
         padding-right: 2.2rem;
         padding-left: 2.2rem;
     }
+    .about-page .about-first-editorial .about-why__desktop-image {
+        display: none;
+    }
+    .about-page .about-why__mobile-image {
+        display: block;
+        margin-top: 2rem;
+    }
     .contact-form__main {
         padding-top: 0 !important;
         padding-right: 0 !important;
         padding-left: 0 !important;
+    }
+    .contact-form__main .contact-left-image {
+        display: none;
     }
     .contact-form__main .contact-form__card {
         margin-right: 2rem;
