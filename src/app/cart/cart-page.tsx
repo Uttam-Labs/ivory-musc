@@ -10,6 +10,8 @@ import styles from "./cart.module.css";
 
 const CART_KEY = "shopify-cart-id";
 const CHECKOUT_CART_KEY = "shopify-checkout-cart-id";
+type CartLine = Cart["lines"]["nodes"][number];
+const isSampleLine = (line: CartLine) => line.attributes.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample");
 
 export function CartPage() {
   const [cart, setCart] = useState<Cart | null>(null);
@@ -145,6 +147,7 @@ export function CartPage() {
               </div>
               {cart.lines.nodes.map((line) => {
                 const updating = updatingLines.includes(line.id);
+                const sample = isSampleLine(line);
                 return (
                   <article className={styles.item} key={line.id}>
                     <Link className={styles.image} href={`/products/${line.merchandise.product.handle}`}>
@@ -165,6 +168,7 @@ export function CartPage() {
                             <h3>{line.merchandise.product.title}</h3>
                           </Link>
                           {line.merchandise.title !== "Default Title" && <p>{line.merchandise.title}</p>}
+                          {sample && <p className={styles.sampleType}>Type: Sample</p>}
                         </div>
                         <button
                           type="button"
@@ -177,7 +181,7 @@ export function CartPage() {
                         </button>
                       </div>
                       <div className={styles.itemBottom}>
-                        <div className={styles.quantity} aria-label="Quantity selector">
+                        {sample ? <p className={styles.sampleQuantity}>Quantity: 1</p> : <div className={styles.quantity} aria-label="Quantity selector">
                           <button
                             type="button"
                             aria-label={`Decrease ${line.merchandise.product.title} quantity`}
@@ -191,7 +195,7 @@ export function CartPage() {
                             disabled={updating || line.quantity >= 20}
                             onClick={() => changeLine(line.id, line.quantity + 1)}
                           ><Plus size={14} /></button>
-                        </div>
+                        </div>}
                         <div className={styles.price}>
                           <strong>{formatMoney(line.cost.totalAmount)}</strong>
                           <span>{line.quantity} × {formatMoney(line.cost.amountPerQuantity)}</span>

@@ -167,6 +167,13 @@ export async function POST(request: Request) {
 export async function PATCH(request: Request) {
   try {
     const body = changeLineSchema.parse(await request.json());
+    if (body.action === "update") {
+      const current = await shopifyFetch<{ cart: Cart | null }>({ query: CART_QUERY, variables: { id: body.cartId }, revalidate: false, tags: [], buyerIp: buyerIp(request) });
+      const line = current.cart?.lines.nodes.find((item) => item.id === body.lineId);
+      const sample = line?.attributes.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample");
+      if (sample && body.quantity !== 1)
+        return NextResponse.json({ error: "Sample quantity cannot be changed." }, { status: 400 });
+    }
     const result = body.action === "update"
       ? (
           await shopifyFetch<{ cartLinesUpdate: MutationResult }>({

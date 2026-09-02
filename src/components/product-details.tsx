@@ -139,7 +139,7 @@ export function ProductDetails({ product, initialSelection, settings, relatedHea
           {sampleAction === "error" && <p className={styles.unavailable}>This sample is already in your cart, or the 10-sample limit has been reached.</p>}
           {sampleProduct && <div className={styles.sampleInformation}>
             <h2>{settings?.sampleDetailsHeading || "Sample details"}</h2>
-            <p><strong>{formatMoney(sampleProduct.priceRange.minVariantPrice)}</strong> {settings?.sampleShippingNote || "per sample, excluding shipping"}</p>
+            <p><strong>{formatMoney(sampleVariant?.price || sampleProduct.priceRange.minVariantPrice)}</strong> {settings?.sampleShippingNote || "per sample, excluding shipping"}</p>
             <p>{settings?.sampleSizeText || "Sample size: 10 CM × 15 CM"}</p>
             <p>{settings?.sampleStandardShippingText || "Standard sample shipping: $7 · 2–6 business days"}</p>
             <p>{settings?.sampleExpressShippingText || "Express sample shipping: $13 · 1–3 business days"}</p>
