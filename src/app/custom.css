@@ -897,6 +897,21 @@ a {
     padding-top: 0;
 }
 
+@media screen and (max-width: 767px) {
+    .product__details .product-details__thumbnails {
+        width: 100%;
+        margin-top: 0;
+        gap: 0;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .product__details .product-details__thumbnails > button {
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+    }
+}
+
 /* Tablet / Desktop */
 @media screen and (min-width: 768px) {
     .product__details .product-info-details__columns {
