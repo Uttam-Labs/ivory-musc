@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Check, LoaderCircle, Minus, Plus, Truck } from "lucide-react";
+import { Check, LoaderCircle, Minus, Plus, Truck, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CollectionProductGrid } from "@/components/collection-product-grid";
 import { SiteContainer } from "@/components/site-container";
 import { formatMoney } from "@/lib/format";
@@ -24,6 +24,79 @@ export type ProductDetailsSettings = {
   compositionLabel?: string; weightLabel?: string; widthLabel?: string; careLabel?: string;
 };
 
+function SampleProductModal({ product, settings, onClose }: { product: Product; settings?: ProductDetailsSettings; onClose: () => void }) {
+  const firstVariant = product.variants.nodes.find((item) => item.availableForSale) || product.variants.nodes[0];
+  const [selected, setSelected] = useState<Record<string, string>>(() => Object.fromEntries((firstVariant?.selectedOptions || []).map((option) => [option.name, option.value])));
+  const [quantity, setQuantity] = useState(1);
+  const [action, setAction] = useState<"idle" | "cart" | "buy" | "added" | "error">("idle");
+  const submitting = useRef(false);
+  const variant = useMemo(() => product.variants.nodes.find((item) => item.selectedOptions.every((option) => selected[option.name] === option.value)), [product.variants.nodes, selected]);
+  const price = variant?.price || product.priceRange.minVariantPrice;
+  const specifications = [[settings?.compositionLabel, product.composition?.value], [settings?.weightLabel, product.fabricWeight?.value], [settings?.widthLabel, product.fabricWidth?.value], [settings?.careLabel, product.care?.value]].filter((item): item is [string, string] => Boolean(item[0] && item[1]));
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") onClose(); };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => { document.body.style.overflow = previousOverflow; window.removeEventListener("keydown", closeOnEscape); };
+  }, [onClose]);
+
+  function choose(name: string, value: string) {
+    const requested = { ...selected, [name]: value };
+    const match = product.variants.nodes.find((item) => item.selectedOptions.every((option) => requested[option.name] === option.value)) || product.variants.nodes.find((item) => item.selectedOptions.some((option) => option.name === name && option.value === value));
+    setSelected(match ? Object.fromEntries(match.selectedOptions.map((option) => [option.name, option.value])) : requested);
+    setAction("idle");
+  }
+
+  async function submit(mode: "cart" | "buy") {
+    if (!variant?.availableForSale || submitting.current) return;
+    submitting.current = true;
+    setAction(mode);
+    try {
+      const response = await fetch("/api/cart", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ cartId: localStorage.getItem("shopify-cart-id"), merchandiseId: variant.id, quantity }) });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "Cart could not be updated");
+      localStorage.setItem("shopify-cart-id", payload.cart.id);
+      window.dispatchEvent(new CustomEvent("cart:updated", { detail: payload.cart }));
+      if (mode === "buy") {
+        const checkoutResponse = await fetch("/api/cart/checkout", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ cartId: payload.cart.id }) });
+        const checkout = await checkoutResponse.json();
+        if (!checkoutResponse.ok || !checkout.checkoutUrl) throw new Error(checkout.error || "Checkout could not be started");
+        localStorage.setItem("shopify-checkout-cart-id", payload.cart.id);
+        window.location.assign(checkout.checkoutUrl);
+      } else setAction("added");
+    } catch { setAction("error"); }
+    finally { submitting.current = false; }
+  }
+
+  return <div className={styles.sampleModal} role="dialog" aria-modal="true" aria-labelledby="sample-product-title">
+    <button type="button" className={styles.sampleBackdrop} aria-label="Close sample product" onClick={onClose} />
+    <div className={styles.sampleDialog}>
+      <button type="button" className={styles.sampleClose} aria-label="Close sample product" onClick={onClose}><X size={22} /></button>
+      <div className={styles.sampleImage}>{product.featuredImage && <Image src={product.featuredImage.url} alt={product.featuredImage.altText || product.title} fill quality={95} sizes="(min-width:768px) 42vw, 100vw" />}</div>
+      <div className={styles.sampleContent}>
+        {product.featuredTitle?.value && <p className={styles.sampleEyebrow}>{product.featuredTitle.value}</p>}
+        <h2 id="sample-product-title">{product.title}</h2>
+        {product.description && <p className={styles.sampleDescription}>{product.description}</p>}
+        <div className={styles.samplePrice}>{variant?.compareAtPrice && Number(variant.compareAtPrice.amount) > Number(price.amount) && <del>{formatMoney(variant.compareAtPrice)}</del>}<strong>{formatMoney(price)}</strong></div>
+        {(product.options || []).filter((option) => option.name !== "Title").map((option) => <fieldset key={option.id} aria-label={option.name} className={styles.options}>
+          <legend>{option.name}</legend>
+          <div className={isColor(option.name) ? styles.colorOptions : styles.optionList}>{option.optionValues.map((value) => isColor(option.name) ? <button key={value.id} type="button" title={value.name} aria-label={`${option.name}: ${value.name}`} aria-pressed={selected[option.name] === value.name} className={`${styles.swatch} ${selected[option.name] === value.name ? styles.selectedSwatch : ""}`} onClick={() => choose(option.name, value.name)}><span style={swatchStyle(value)} /><small>{value.name}</small></button> : <button key={value.id} type="button" aria-pressed={selected[option.name] === value.name} className={`${styles.optionButton} ${selected[option.name] === value.name ? styles.selectedOption : ""}`} onClick={() => choose(option.name, value.name)}>{value.name}</button>)}</div>
+        </fieldset>)}
+        <div className={styles.sampleQuantity}><span>{settings?.quantityLabel || "Quantity"}</span><div className={styles.quantityPicker}><button type="button" onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label="Decrease quantity"><Minus size={15} /></button><output>{quantity}</output><button type="button" onClick={() => setQuantity((value) => Math.min(20, value + 1))} aria-label="Increase quantity"><Plus size={15} /></button></div></div>
+        <div className={styles.sampleActions}>
+          <button type="button" className={styles.buyButton} onClick={() => submit("buy")} disabled={!variant?.availableForSale || action === "buy" || action === "cart"}>{action === "buy" ? <LoaderCircle className="animate-spin" size={17} /> : settings?.buyNowLabel || "Buy now"}</button>
+          <button type="button" className={styles.cartButton} onClick={() => submit("cart")} disabled={!variant?.availableForSale || action === "cart" || action === "buy"}>{action === "cart" ? <LoaderCircle className="animate-spin" size={17} /> : action === "added" ? <><Check size={17} /> Added to cart</> : settings?.addToCartLabel || "Add to cart"}</button>
+        </div>
+        {!variant?.availableForSale && <p className={styles.unavailable}>This sample is currently unavailable.</p>}
+        {action === "error" && <p className={styles.unavailable}>Please try again.</p>}
+        {specifications.length > 0 && <div className={`${styles.specifications} ${styles.sampleSpecifications}`}>{specifications.map(([label, value]) => <div key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>}
+      </div>
+    </div>
+  </div>;
+}
+
 export function ProductDetails({ product, initialSelection, settings, relatedHeading, relatedProducts }: { product: Product; initialSelection: Record<string, string>; settings?: ProductDetailsSettings; relatedHeading?: string; relatedProducts: Product[] }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -35,6 +108,7 @@ export function ProductDetails({ product, initialSelection, settings, relatedHea
   });
   const [manualImage, setManualImage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [sampleOpen, setSampleOpen] = useState(false);
   const [action, setAction] = useState<"idle" | "cart" | "buy" | "added" | "error">("idle");
   const submitting = useRef(false);
   const variant = useMemo(() => product.variants.nodes.find((item) => item.selectedOptions.every((option) => selected[option.name] === option.value)), [product.variants.nodes, selected]);
@@ -107,7 +181,7 @@ export function ProductDetails({ product, initialSelection, settings, relatedHea
           <div className={`${styles.actions} product-details__actions`}>
             {settings?.buyNowLabel && <button className={`${styles.buyButton} button buy-button`} onClick={() => submit("buy")} disabled={!variant?.availableForSale || action === "buy" || action === "cart"}>{action === "buy" ? <LoaderCircle className="animate-spin" size={17} /> : settings.buyNowLabel}</button>}
             {settings?.addToCartLabel && <button className={`${styles.cartButton} button button-add-to-cart`} onClick={() => submit("cart")} disabled={!variant?.availableForSale || action === "cart" || action === "buy"}>{action === "cart" ? <LoaderCircle className="animate-spin" size={17} /> : action === "added" ? <><Check size={17} /> {settings.addToCartLabel}</> : settings.addToCartLabel}</button>}
-            {settings?.purchaseSampleLabel && settings.purchaseSampleHref && <Link className={`${styles.sampleButton} button button-sample`} href={settings.purchaseSampleHref}>{settings.purchaseSampleLabel}</Link>}
+            {product.sampleProduct?.reference && <button type="button" className={`${styles.sampleButton} button button-sample`} onClick={() => setSampleOpen(true)}>{settings?.purchaseSampleLabel || "Purchase sample"}</button>}
           </div>
           {action === "error" && <p className={styles.unavailable}>Please try again.</p>}
           {settings?.shippingText && <div className={`${styles.shipping} product-details__shippings`}><Truck size={17} strokeWidth={1.5} /><span>{settings.shippingText}</span></div>}
@@ -117,5 +191,6 @@ export function ProductDetails({ product, initialSelection, settings, relatedHea
       </section>
       {relatedProducts.length > 0 && <section className={styles.related}>{relatedHeading && <h2 className="common-heading">{relatedHeading}</h2>}<div className={styles.relatedGrid}><CollectionProductGrid products={relatedProducts} /></div></section>}
     </SiteContainer>
+    {sampleOpen && product.sampleProduct?.reference && <SampleProductModal product={product.sampleProduct.reference} settings={settings} onClose={() => setSampleOpen(false)} />}
   </main>;
 }

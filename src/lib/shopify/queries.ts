@@ -33,6 +33,37 @@ export const PRODUCT_QUERY = `#graphql
       fabricWeight: metafield(namespace: "custom", key: "weight") { value }
       fabricWidth: metafield(namespace: "custom", key: "width") { value }
       care: metafield(namespace: "custom", key: "care") { value }
+      sampleProduct: metafield(namespace: "custom", key: "sample_product") {
+        reference {
+          ... on Product {
+            id handle title description
+            featuredTitle: metafield(namespace: "custom", key: "featured_title") { value }
+            composition: metafield(namespace: "custom", key: "composition") { value }
+            fabricWeight: metafield(namespace: "custom", key: "weight") { value }
+            fabricWidth: metafield(namespace: "custom", key: "width") { value }
+            care: metafield(namespace: "custom", key: "care") { value }
+            featuredImage { url altText width height }
+            images(first: 10) { nodes { url altText width height } }
+            priceRange { minVariantPrice { amount currencyCode } }
+            options {
+              id name
+              optionValues {
+                id name
+                swatch { color image { previewImage { url } } }
+              }
+            }
+            variants(first: 100) {
+              nodes {
+                id title availableForSale
+                price { amount currencyCode }
+                compareAtPrice { amount currencyCode }
+                image { url altText width height }
+                selectedOptions { name value }
+              }
+            }
+          }
+        }
+      }
       featuredImage { url altText width height }
       images(first: 20) { nodes { url altText width height } }
       priceRange { minVariantPrice { amount currencyCode } }
