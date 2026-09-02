@@ -17,6 +17,7 @@ const bodySchema = z.object({
   cartId: z.string().nullable().optional(),
   merchandiseId: z.string().min(1),
   quantity: z.number().int().min(1).max(20).default(1),
+  attributes: z.array(z.object({ key: z.string().min(1).max(255), value: z.string().max(255) })).max(10).optional(),
 });
 const changeLineSchema = z.discriminatedUnion("action", [
   z.object({
@@ -77,8 +78,16 @@ async function cartHasCompletedOrder(cartId: string) {
 export async function POST(request: Request) {
   try {
     const body = bodySchema.parse(await request.json());
+    const isSample = body.attributes?.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample") || false;
+    if (isSample && body.quantity !== 1)
+      return NextResponse.json({ error: "Only one sample can be purchased." }, { status: 400 });
+    if (isSample && body.cartId) {
+      const existing = await shopifyFetch<{ cart: Cart | null }>({ query: CART_QUERY, variables: { id: body.cartId }, revalidate: false, tags: [], buyerIp: buyerIp(request) }).catch(() => ({ cart: null }));
+      const alreadyAdded = existing.cart?.lines.nodes.some((line) => line.merchandise.id === body.merchandiseId && line.attributes.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample"));
+      if (alreadyAdded) return NextResponse.json({ error: "This sample is already in your cart." }, { status: 400 });
+    }
     const lines = [
-      { merchandiseId: body.merchandiseId, quantity: body.quantity },
+      { merchandiseId: body.merchandiseId, quantity: body.quantity, ...(body.attributes?.length ? { attributes: body.attributes } : {}) },
     ];
     let result = body.cartId
       ? (

@@ -143,7 +143,7 @@ export const CART_FRAGMENT = `#graphql
   fragment CartDetails on Cart {
     id checkoutUrl totalQuantity
     cost { subtotalAmount { amount currencyCode } totalAmount { amount currencyCode } }
-    lines(first: 100) { nodes { id quantity cost { amountPerQuantity { amount currencyCode } totalAmount { amount currencyCode } } merchandise { ... on ProductVariant { id title price { amount currencyCode } compareAtPrice { amount currencyCode } image { url altText width height } product { handle title } } } } }
+    lines(first: 100) { nodes { id quantity attributes { key value } cost { amountPerQuantity { amount currencyCode } totalAmount { amount currencyCode } } merchandise { ... on ProductVariant { id title price { amount currencyCode } compareAtPrice { amount currencyCode } image { url altText width height } product { handle title } } } } }
   }
 `;
 

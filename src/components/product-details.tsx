@@ -27,7 +27,6 @@ export type ProductDetailsSettings = {
 function SampleProductModal({ product, settings, onClose }: { product: Product; settings?: ProductDetailsSettings; onClose: () => void }) {
   const firstVariant = product.variants.nodes.find((item) => item.availableForSale) || product.variants.nodes[0];
   const [selected, setSelected] = useState<Record<string, string>>(() => Object.fromEntries((firstVariant?.selectedOptions || []).map((option) => [option.name, option.value])));
-  const [quantity, setQuantity] = useState(1);
   const [action, setAction] = useState<"idle" | "cart" | "buy" | "added" | "error">("idle");
   const submitting = useRef(false);
   const variant = useMemo(() => product.variants.nodes.find((item) => item.selectedOptions.every((option) => selected[option.name] === option.value)), [product.variants.nodes, selected]);
@@ -54,7 +53,7 @@ function SampleProductModal({ product, settings, onClose }: { product: Product; 
     submitting.current = true;
     setAction(mode);
     try {
-      const response = await fetch("/api/cart", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ cartId: localStorage.getItem("shopify-cart-id"), merchandiseId: variant.id, quantity }) });
+      const response = await fetch("/api/cart", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ cartId: localStorage.getItem("shopify-cart-id"), merchandiseId: variant.id, quantity: 1, attributes: [{ key: "Type", value: "Sample" }] }) });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Cart could not be updated");
       localStorage.setItem("shopify-cart-id", payload.cart.id);
@@ -86,7 +85,6 @@ function SampleProductModal({ product, settings, onClose }: { product: Product; 
           <legend>{option.name}</legend>
           <div className={isColor(option.name) ? styles.colorOptions : styles.optionList}>{option.optionValues.map((value) => isColor(option.name) ? <button key={value.id} type="button" title={value.name} aria-label={`${option.name}: ${value.name}`} aria-pressed={selected[option.name] === value.name} className={`${styles.swatch} ${selected[option.name] === value.name ? styles.selectedSwatch : ""}`} onClick={() => choose(option.name, value.name)}><span style={swatchStyle(value)} /><small>{value.name}</small></button> : <button key={value.id} type="button" aria-pressed={selected[option.name] === value.name} className={`${styles.optionButton} ${selected[option.name] === value.name ? styles.selectedOption : ""}`} onClick={() => choose(option.name, value.name)}>{value.name}</button>)}</div>
         </fieldset>)}
-        <div className={styles.sampleQuantity}><span>{settings?.quantityLabel || "Quantity"}</span><div className={styles.quantityPicker}><button type="button" onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label="Decrease quantity"><Minus size={15} /></button><output>{quantity}</output><button type="button" onClick={() => setQuantity((value) => Math.min(20, value + 1))} aria-label="Increase quantity"><Plus size={15} /></button></div></div>
         <div className={styles.sampleActions}>
           <button type="button" className={styles.buyButton} onClick={() => submit("buy")} disabled={!variant?.availableForSale || action === "buy" || action === "cart"}>{action === "buy" ? <LoaderCircle className="animate-spin" size={17} /> : settings?.buyNowLabel || "Buy now"}</button>
           <button type="button" className={styles.cartButton} onClick={() => submit("cart")} disabled={!variant?.availableForSale || action === "cart" || action === "buy"}>{action === "cart" ? <LoaderCircle className="animate-spin" size={17} /> : action === "added" ? <><Check size={17} /> Added to cart</> : settings?.addToCartLabel || "Add to cart"}</button>

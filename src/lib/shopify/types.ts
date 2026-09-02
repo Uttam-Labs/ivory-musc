@@ -62,5 +62,5 @@ export type Cart = {
   checkoutUrl: string;
   totalQuantity: number;
   cost: { subtotalAmount: Money; totalAmount: Money };
-  lines: { nodes: Array<{ id: string; quantity: number; cost: { amountPerQuantity: Money; totalAmount: Money }; merchandise: { id: string; title: string; product: Pick<Product, "handle" | "title">; image: ShopifyImage | null; price: Money; compareAtPrice: Money | null } }> };
+  lines: { nodes: Array<{ id: string; quantity: number; attributes: Array<{ key: string; value: string }>; cost: { amountPerQuantity: Money; totalAmount: Money }; merchandise: { id: string; title: string; product: Pick<Product, "handle" | "title">; image: ShopifyImage | null; price: Money; compareAtPrice: Money | null } }> };
 };

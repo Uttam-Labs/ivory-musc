@@ -11,6 +11,8 @@ import type { Cart, Product } from "@/lib/shopify/types";
 import { AccountIcon, CartIcon, SearchIcon } from "./header-icons";
 
 type NavItem = { label?: string; href?: string };
+type CartLine = Cart["lines"]["nodes"][number];
+const isSampleLine = (line: CartLine) => line.attributes.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample");
 type Props = {
   title?: string;
   logoUrl?: string;
@@ -670,7 +672,8 @@ export function Header({
                           {line.merchandise.title}
                         </p>
                       )}
-                      <div className="mt-4 flex h-[38px] w-[126px] items-center border border-stone-300 bg-white/50">
+                      {isSampleLine(line) && <p className="mt-2 text-[12px] font-medium uppercase tracking-[.08em] text-[var(--accent)]">Type: Sample</p>}
+                      {isSampleLine(line) ? <p className="mt-4 text-[13px] text-stone-600">Quantity: 1</p> : <div className="mt-4 flex h-[38px] w-[126px] items-center border border-stone-300 bg-white/50">
                         <button
                           type="button"
                           aria-label={`Decrease ${line.merchandise.product.title} quantity`}
@@ -728,7 +731,7 @@ export function Header({
                         >
                           <Plus size={13} />
                         </button>
-                      </div>
+                      </div>}
                       <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                         {line.merchandise.compareAtPrice &&
                           Number(line.merchandise.compareAtPrice.amount) >
@@ -750,7 +753,7 @@ export function Header({
                       </div>
                       <p className="mt-1 text-[12px] text-stone-500">
                         {line.quantity}{" "}
-                        {line.quantity === 1 ? "meter" : "meters"} ×{" "}
+                        {isSampleLine(line) ? "sample" : line.quantity === 1 ? "meter" : "meters"} ×{" "}
                         {formatMoney(line.cost.amountPerQuantity)}
                       </p>
                     </div>
