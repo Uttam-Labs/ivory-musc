@@ -94,11 +94,8 @@ export function ProductDetails({ product, initialSelection, settings, relatedHea
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Sample could not be added");
       localStorage.setItem("shopify-cart-id", payload.cart.id);
-      const checkoutResponse = await fetch("/api/cart/checkout", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ cartId: payload.cart.id }) });
-      const checkout = await checkoutResponse.json();
-      if (!checkoutResponse.ok || !checkout.checkoutUrl) throw new Error(checkout.error || "Checkout could not be started");
-      localStorage.setItem("shopify-checkout-cart-id", payload.cart.id);
-      window.location.assign(checkout.checkoutUrl);
+      setSampleAction("idle");
+      window.dispatchEvent(new CustomEvent("cart:updated", { detail: payload.cart }));
     } catch { setSampleAction("error"); }
   }
 
