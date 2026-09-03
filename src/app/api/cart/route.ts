@@ -84,7 +84,11 @@ export async function POST(request: Request) {
     if (isSample && body.cartId) {
       const existing = await shopifyFetch<{ cart: Cart | null }>({ query: CART_QUERY, variables: { id: body.cartId }, revalidate: false, tags: [], buyerIp: buyerIp(request) }).catch(() => ({ cart: null }));
       const sampleLines = existing.cart?.lines.nodes.filter((line) => line.attributes.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample")) || [];
-      const alreadyAdded = sampleLines.some((line) => line.merchandise.id === body.merchandiseId);
+      const requestedMainProduct = body.attributes?.find((attribute) => attribute.key.toLowerCase() === "main product")?.value.trim().toLowerCase();
+      const alreadyAdded = sampleLines.some((line) => {
+        const lineMainProduct = line.attributes.find((attribute) => attribute.key.toLowerCase() === "main product")?.value.trim().toLowerCase();
+        return requestedMainProduct ? lineMainProduct === requestedMainProduct : line.merchandise.id === body.merchandiseId;
+      });
       if (alreadyAdded) return NextResponse.json({ error: "This sample is already in your cart." }, { status: 400 });
       if (sampleLines.reduce((total, line) => total + line.quantity, 0) >= 10)
         return NextResponse.json({ error: "A maximum of 10 samples can be purchased per order." }, { status: 400 });

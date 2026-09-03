@@ -12,6 +12,7 @@ const CART_KEY = "shopify-cart-id";
 const CHECKOUT_CART_KEY = "shopify-checkout-cart-id";
 type CartLine = Cart["lines"]["nodes"][number];
 const isSampleLine = (line: CartLine) => line.attributes.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample");
+const mainProductTitle = (line: CartLine) => line.attributes.find((attribute) => attribute.key.toLowerCase() === "main product")?.value;
 
 export function CartPage() {
   const [cart, setCart] = useState<Cart | null>(null);
@@ -169,6 +170,7 @@ export function CartPage() {
                           </Link>
                           {line.merchandise.title !== "Default Title" && <p>{line.merchandise.title}</p>}
                           {sample && <p className={styles.sampleType}>Type: Sample</p>}
+                          {mainProductTitle(line) && <p>Main Product: {mainProductTitle(line)}</p>}
                         </div>
                         <button
                           type="button"

@@ -34,7 +34,6 @@ export type Product = {
   fabricWeight?: { value: string } | null;
   fabricWidth?: { value: string } | null;
   care?: { value: string } | null;
-  sampleProduct?: { reference: Product | null } | null;
   featuredImage: ShopifyImage | null;
   priceRange: { minVariantPrice: Money };
   options?: ProductOption[];

@@ -25,13 +25,14 @@ export type ProductDetailsSettings = {
   homeLabel?: string; homeHref?: string; collectionLabel?: string; collectionHref?: string; perUnitLabel?: string;
   quantityLabel?: string; totalLabel?: string; minimumPurchaseText?: string;
   buyNowLabel?: string; addToCartLabel?: string; purchaseSampleLabel?: string;
+  sampleProductHandle?: string;
   purchaseSampleHref?: string; shippingText?: string; specificationsHeading?: string;
   compositionLabel?: string; weightLabel?: string; widthLabel?: string; careLabel?: string;
   sampleDetailsHeading?: string; sampleSizeText?: string; sampleShippingNote?: string;
   sampleStandardShippingText?: string; sampleExpressShippingText?: string;
 };
 
-export function ProductDetails({ product, initialSelection, settings, relatedHeading, relatedProducts }: { product: Product; initialSelection: Record<string, string>; settings?: ProductDetailsSettings; relatedHeading?: string; relatedProducts: Product[] }) {
+export function ProductDetails({ product, sampleProduct, initialSelection, settings, relatedHeading, relatedProducts }: { product: Product; sampleProduct: Product | null; initialSelection: Record<string, string>; settings?: ProductDetailsSettings; relatedHeading?: string; relatedProducts: Product[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const [selected, setSelected] = useState<Record<string, string>>(() => {
@@ -50,7 +51,6 @@ export function ProductDetails({ product, initialSelection, settings, relatedHea
   const price = variant?.price || product.priceRange.minVariantPrice;
   const total = { ...price, amount: String(Number(price.amount) * quantity) };
   const specifications = [[settings?.compositionLabel, product.composition?.value], [settings?.weightLabel, product.fabricWeight?.value], [settings?.widthLabel, formatWidth(product.fabricWidth?.value)], [settings?.careLabel, product.care?.value]].filter((item): item is [string, string] => Boolean(item[0] && item[1]));
-  const sampleProduct = product.sampleProduct?.reference;
   const sampleVariant = sampleProduct?.variants.nodes.find((item) => item.availableForSale);
   const breadcrumbItems = [
     settings?.homeLabel?.trim() ? { label: settings.homeLabel.trim(), href: settings.homeHref?.trim() || "/" } : null,
@@ -90,7 +90,7 @@ export function ProductDetails({ product, initialSelection, settings, relatedHea
     if (!sampleVariant || sampleAction === "loading") return;
     setSampleAction("loading");
     try {
-      const response = await fetch("/api/cart", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ cartId: localStorage.getItem("shopify-cart-id"), merchandiseId: sampleVariant.id, quantity: 1, attributes: [{ key: "Type", value: "Sample" }] }) });
+      const response = await fetch("/api/cart", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ cartId: localStorage.getItem("shopify-cart-id"), merchandiseId: sampleVariant.id, quantity: 1, attributes: [{ key: "type", value: "sample" }, { key: "Main Product", value: product.title }] }) });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Sample could not be added");
       localStorage.setItem("shopify-cart-id", payload.cart.id);

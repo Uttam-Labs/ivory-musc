@@ -13,6 +13,7 @@ import { AccountIcon, CartIcon, SearchIcon } from "./header-icons";
 type NavItem = { label?: string; href?: string };
 type CartLine = Cart["lines"]["nodes"][number];
 const isSampleLine = (line: CartLine) => line.attributes.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample");
+const mainProductTitle = (line: CartLine) => line.attributes.find((attribute) => attribute.key.toLowerCase() === "main product")?.value;
 type Props = {
   title?: string;
   logoUrl?: string;
@@ -673,6 +674,7 @@ export function Header({
                         </p>
                       )}
                       {isSampleLine(line) && <p className="mt-2 text-[12px] font-medium uppercase tracking-[.08em] text-[var(--accent)]">Type: Sample</p>}
+                      {mainProductTitle(line) && <p className="mt-1 text-[13px] leading-snug text-stone-600">Main Product: {mainProductTitle(line)}</p>}
                       {isSampleLine(line) ? <p className="mt-4 text-[13px] text-stone-600">Quantity: 1</p> : <div className="mt-4 flex h-[38px] w-[126px] items-center border border-stone-300 bg-white/50">
                         <button
                           type="button"

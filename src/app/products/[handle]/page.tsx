@@ -15,10 +15,15 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
   const { handle } = await params;
   const product = await getProduct(handle);
   if (!product) notFound();
-  const [pageData, recommendations] = await Promise.all([isSanityConfigured ? sanityFetch<ProductPageData>(PRODUCT_PAGE_QUERY) : null, getProductRecommendations(product.id).catch(() => [])]);
+  const [pageData, recommendations] = await Promise.all([
+    isSanityConfigured ? sanityFetch<ProductPageData>(PRODUCT_PAGE_QUERY) : null,
+    getProductRecommendations(product.id).catch(() => []),
+  ]);
   const detailSettings = pageData?.sections?.find((section) => section._type === "productDetailsSettings") as (({ _type: "productDetailsSettings" } & ProductDetailsSettings) | undefined);
   const relatedSettings = pageData?.sections?.find((section) => section._type === "relatedProductsSettings") as ({ heading?: string; productLimit?: number } | undefined);
+  const sampleProductHandle = detailSettings?.sampleProductHandle?.trim() || "sample-product";
+  const sampleProduct = handle === sampleProductHandle ? null : await getProduct(sampleProductHandle).catch(() => null);
   const raw = await searchParams;
   const initialSelection = Object.fromEntries(Object.entries(raw).flatMap(([key, value]) => typeof value === "string" ? [[key, value]] : []));
-  return <ProductDetails product={product} initialSelection={initialSelection} settings={detailSettings} relatedHeading={relatedSettings?.heading} relatedProducts={recommendations.slice(0, relatedSettings?.productLimit || 4)} />;
+  return <ProductDetails product={product} sampleProduct={sampleProduct} initialSelection={initialSelection} settings={detailSettings} relatedHeading={relatedSettings?.heading} relatedProducts={recommendations.slice(0, relatedSettings?.productLimit || 4)} />;
 }
