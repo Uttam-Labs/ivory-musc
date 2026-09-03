@@ -648,9 +648,8 @@ export function Header({
                       <div className="flex items-start justify-between gap-2">
                         {isSampleLine(line) ? (
                           <div className="min-w-0">
-                            <span className="inline-flex rounded-full bg-[#f3e4de] px-3 py-1 text-[10px] font-medium uppercase tracking-[.12em] text-[var(--accent)]">Fabric sample</span>
-                            <p className="mt-3 text-[12px] uppercase tracking-[.1em] text-stone-500">Main product</p>
-                            <p className="mt-1 font-heading text-[18px] leading-snug text-[var(--accent)]">{mainProductTitle(line) || line.merchandise.product.title}</p>
+                            <p className="font-heading text-[18px] leading-snug text-[var(--accent)]">{mainProductTitle(line) || line.merchandise.product.title}</p>
+                            <p className="mt-2 text-[12px] uppercase tracking-[.1em] text-stone-500">Type: Sample</p>
                           </div>
                         ) : (
                           <Link

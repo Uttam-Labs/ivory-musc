@@ -166,7 +166,7 @@ export function CartPage() {
                     <div className={styles.itemDetails}>
                       <div className={styles.itemTop}>
                         <div>
-                          {sample ? <><p className={styles.sampleType}>Fabric sample</p><h3>{sampleFor || line.merchandise.product.title}</h3></> : <Link href={`/products/${line.merchandise.product.handle}`}><h3>{line.merchandise.product.title}</h3></Link>}
+                          {sample ? <><h3>{sampleFor || line.merchandise.product.title}</h3><p className={styles.sampleType}>Type: Sample</p></> : <Link href={`/products/${line.merchandise.product.handle}`}><h3>{line.merchandise.product.title}</h3></Link>}
                           {!sample && line.merchandise.title !== "Default Title" && <p>{line.merchandise.title}</p>}
                         </div>
                         <button
