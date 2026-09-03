@@ -138,8 +138,8 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
             <h2>{settings?.sampleDetailsHeading || "Sample details"}</h2>
             <p><strong>{formatMoney(sampleVariant?.price || sampleProduct.priceRange.minVariantPrice)}</strong> {settings?.sampleShippingNote || "per sample, excluding shipping"}</p>
             <p>{settings?.sampleSizeText || "Sample size: 10 CM × 15 CM"}</p>
-            <p>{settings?.sampleStandardShippingText || "Standard sample shipping: $7 · 2–6 business days"}</p>
-            <p>{settings?.sampleExpressShippingText || "Express sample shipping: $13 · 1–3 business days"}</p>
+            <p>{settings?.sampleStandardShippingText || "Standard sample shipping: $6 · 2–6 business days"}</p>
+            <p>{settings?.sampleExpressShippingText || "Express sample shipping: $12 · 1–3 business days"}</p>
           </div>}
           {specifications.length > 0 && <div className={`${styles.specifications} product-details__specifications`}>{settings?.specificationsHeading && <h2>{settings.specificationsHeading}</h2>}{specifications.map(([label, value]) => <div className="spec" key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>}
         </div>
