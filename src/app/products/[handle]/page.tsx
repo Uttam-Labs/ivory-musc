@@ -21,7 +21,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
   ]);
   const detailSettings = pageData?.sections?.find((section) => section._type === "productDetailsSettings") as (({ _type: "productDetailsSettings" } & ProductDetailsSettings) | undefined);
   const relatedSettings = pageData?.sections?.find((section) => section._type === "relatedProductsSettings") as ({ heading?: string; productLimit?: number } | undefined);
-  const sampleProductHandle = detailSettings?.sampleProductHandle?.trim() || "sample-product";
+  const sampleProductHandle = detailSettings?.sampleProductHandle?.trim() || "sample-proudct";
   const sampleProduct = handle === sampleProductHandle ? null : await getProduct(sampleProductHandle).catch(() => null);
   const raw = await searchParams;
   const initialSelection = Object.fromEntries(Object.entries(raw).flatMap(([key, value]) => typeof value === "string" ? [[key, value]] : []));

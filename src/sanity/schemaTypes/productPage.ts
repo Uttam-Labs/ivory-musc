@@ -33,7 +33,7 @@ export const productPage = defineType({
               title: "Sample product handle",
               description: "Shopify handle of the shared sample product used on every product page.",
               type: "string",
-              initialValue: "sample-product",
+              initialValue: "sample-proudct",
               validation: (rule) => rule.regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, { name: "Shopify product handle" }),
             }),
             defineField({ name: "purchaseSampleHref", title: "Purchase sample link", type: "string" }),
