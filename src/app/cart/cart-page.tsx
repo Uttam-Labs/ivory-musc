@@ -149,8 +149,9 @@ export function CartPage() {
               {cart.lines.nodes.map((line) => {
                 const updating = updatingLines.includes(line.id);
                 const sample = isSampleLine(line);
+                const sampleFor = mainProductTitle(line);
                 return (
-                  <article className={styles.item} key={line.id}>
+                  <article className={`${styles.item} ${!line.merchandise.image ? styles.itemNoImage : ""}`} key={line.id}>
                     <Link className={styles.image} href={`/products/${line.merchandise.product.handle}`}>
                       {line.merchandise.image ? (
                         <Image
@@ -165,12 +166,8 @@ export function CartPage() {
                     <div className={styles.itemDetails}>
                       <div className={styles.itemTop}>
                         <div>
-                          <Link href={`/products/${line.merchandise.product.handle}`}>
-                            <h3>{line.merchandise.product.title}</h3>
-                          </Link>
-                          {line.merchandise.title !== "Default Title" && <p>{line.merchandise.title}</p>}
-                          {sample && <p className={styles.sampleType}>Type: Sample</p>}
-                          {mainProductTitle(line) && <p>Main Product: {mainProductTitle(line)}</p>}
+                          {sample ? <><p className={styles.sampleType}>Fabric sample</p><h3>{sampleFor || line.merchandise.product.title}</h3></> : <Link href={`/products/${line.merchandise.product.handle}`}><h3>{line.merchandise.product.title}</h3></Link>}
+                          {!sample && line.merchandise.title !== "Default Title" && <p>{line.merchandise.title}</p>}
                         </div>
                         <button
                           type="button"

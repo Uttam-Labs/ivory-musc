@@ -628,7 +628,7 @@ export function Header({
                 {cart.lines.nodes.map((line) => (
                   <div
                     key={line.id}
-                    className="grid grid-cols-[104px_1fr] gap-5 border-b border-stone-200 pb-7 last:border-0"
+                    className={`grid border-b border-stone-200 pb-7 last:border-0 ${line.merchandise.image ? "grid-cols-[104px_1fr] gap-5" : "grid-cols-1"}`}
                   >
                     {line.merchandise.image && (
                       <Image
@@ -646,13 +646,21 @@ export function Header({
                     )}
                     <div className="min-w-0">
                       <div className="flex items-start justify-between gap-2">
-                        <Link
-                          onClick={() => setCartOpen(false)}
-                          href={`/products/${line.merchandise.product.handle}`}
-                          className="font-heading text-[17px] leading-tight text-[var(--accent)] hover:opacity-70"
-                        >
-                          {line.merchandise.product.title}
-                        </Link>
+                        {isSampleLine(line) ? (
+                          <div className="min-w-0">
+                            <span className="inline-flex rounded-full bg-[#f3e4de] px-3 py-1 text-[10px] font-medium uppercase tracking-[.12em] text-[var(--accent)]">Fabric sample</span>
+                            <p className="mt-3 text-[12px] uppercase tracking-[.1em] text-stone-500">Main product</p>
+                            <p className="mt-1 font-heading text-[18px] leading-snug text-[var(--accent)]">{mainProductTitle(line) || line.merchandise.product.title}</p>
+                          </div>
+                        ) : (
+                          <Link
+                            onClick={() => setCartOpen(false)}
+                            href={`/products/${line.merchandise.product.handle}`}
+                            className="font-heading text-[17px] leading-tight text-[var(--accent)] hover:opacity-70"
+                          >
+                            {line.merchandise.product.title}
+                          </Link>
+                        )}
                         <button
                           type="button"
                           aria-label={`Remove ${line.merchandise.product.title}`}
@@ -668,13 +676,11 @@ export function Header({
                           )}
                         </button>
                       </div>
-                      {line.merchandise.title !== "Default Title" && (
+                      {!isSampleLine(line) && line.merchandise.title !== "Default Title" && (
                         <p className="mt-2 text-[14px] leading-snug text-stone-500">
                           {line.merchandise.title}
                         </p>
                       )}
-                      {isSampleLine(line) && <p className="mt-2 text-[12px] font-medium uppercase tracking-[.08em] text-[var(--accent)]">Type: Sample</p>}
-                      {mainProductTitle(line) && <p className="mt-1 text-[13px] leading-snug text-stone-600">Main Product: {mainProductTitle(line)}</p>}
                       {isSampleLine(line) ? <p className="mt-4 text-[13px] text-stone-600">Quantity: 1</p> : <div className="mt-4 flex h-[38px] w-[126px] items-center border border-stone-300 bg-white/50">
                         <button
                           type="button"
