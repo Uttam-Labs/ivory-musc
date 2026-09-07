@@ -1,6 +1,6 @@
 "use client";
 
-import { Minus, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useState } from "react";
 import styles from "./silk-guide.module.css";
 
@@ -15,9 +15,10 @@ export function Characteristics({ items }: { items: Characteristic[] }) {
   const [open, setOpen] = useState(0);
   return <div className={styles.accordion}>{items.map((item, index) => {
     const expanded = open === index;
+    const panelId = `silk-characteristic-${index}`;
     return <article className={styles.accordionItem} key={item._key || item.title || index}>
-      <button type="button" aria-expanded={expanded} onClick={() => setOpen(expanded ? -1 : index)}><span>{item.title}</span>{expanded ? <Minus size={16} /> : <Plus size={16} />}</button>
-      {expanded && <div className={styles.accordionBody}><Paragraphs text={item.body} /></div>}
+      <button type="button" aria-expanded={expanded} aria-controls={panelId} onClick={() => setOpen(expanded ? -1 : index)}><span>{item.title}</span><Plus className={expanded ? styles.accordionIconOpen : styles.accordionIcon} size={16} /></button>
+      <div id={panelId} aria-hidden={!expanded} className={`${styles.accordionPanel} ${expanded ? styles.accordionPanelOpen : ""}`}><div><div className={styles.accordionBody}><Paragraphs text={item.body} /></div></div></div>
     </article>;
   })}</div>;
 }
