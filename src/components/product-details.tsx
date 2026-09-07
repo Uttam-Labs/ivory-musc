@@ -49,7 +49,9 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
   const variant = useMemo(() => product.variants.nodes.find((item) => item.selectedOptions.every((option) => selected[option.name] === option.value)), [product.variants.nodes, selected]);
   const galleryImages = useMemo(() => {
     const images = [product.featuredImage, ...product.images.nodes, ...product.variants.nodes.map((item) => item.image)];
-    return images.filter((image, index, all): image is NonNullable<typeof image> => Boolean(image) && all.findIndex((item) => item?.url === image?.url) === index);
+    return images
+      .filter((image, index, all): image is NonNullable<typeof image> => Boolean(image) && all.findIndex((item) => item?.url === image?.url) === index)
+      .slice(0, 3);
   }, [product.featuredImage, product.images.nodes, product.variants.nodes]);
   const activeImage = manualImage ? galleryImages.find((image) => image.url === manualImage) || product.featuredImage : variant?.image || product.featuredImage || galleryImages[0];
   const thumbnailImages = galleryImages.filter((image) => image.url !== activeImage?.url);
