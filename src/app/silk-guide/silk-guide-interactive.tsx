@@ -5,7 +5,7 @@ import { useState } from "react";
 import styles from "./silk-guide.module.css";
 
 export type Characteristic = { _key?: string; title?: string; body?: string };
-export type GuideSection = { _key?: string; navigationLabel?: string; heading?: string; body?: string; bullets?: string[]; notes?: Array<{ _key?: string; eyebrow?: string; title?: string; body?: string }> };
+export type GuideSection = { _key?: string; navigationLabel?: string; heading?: string; body?: string; closingText?: string; bullets?: string[]; notes?: Array<{ _key?: string; eyebrow?: string; title?: string; body?: string }> };
 
 function Paragraphs({ text }: { text?: string }) {
   return text?.split(/\n\s*\n/).filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph.replace(/\s*\n\s*/g, " ")}</p>) || null;
@@ -27,13 +27,20 @@ export function DetailedGuide({ sections }: { sections: GuideSection[] }) {
   const [active, setActive] = useState(0);
   const section = sections[active] || sections[0];
   if (!section) return null;
+  const hasNotes = Boolean(section.notes?.length);
+  const extractedClosing = section.bullets?.length && !section.closingText
+    ? section.body?.match(/\s+(These questions will help narrow your selection\.)\s*$/i)
+    : null;
+  const body = extractedClosing ? section.body?.slice(0, extractedClosing.index).trim() : section.body;
+  const closingText = section.closingText || extractedClosing?.[1];
   return <div className={styles.guideLayout}>
     <nav className={styles.guideNav} aria-label="Silk guide topics">{sections.map((item, index) => <button type="button" key={item._key || item.navigationLabel || index} className={active === index ? styles.guideNavActive : ""} onClick={() => setActive(index)}>{item.navigationLabel}</button>)}</nav>
-    <article className={styles.guideContent}>
+    <article className={`${styles.guideContent} ${hasNotes ? "" : styles.guideContentFull}`}>
       <h2>{section.heading}</h2>
-      <Paragraphs text={section.body} />
+      <Paragraphs text={body} />
       {section.bullets?.length ? <ol>{section.bullets.map((item) => <li key={item}>{item}</li>)}</ol> : null}
-      {section.notes?.length ? <div className={styles.notes}>{section.notes.map((note, index) => <div key={note._key || note.title || index}><small>{note.eyebrow}</small><h3>{note.title}</h3><Paragraphs text={note.body} /></div>)}</div> : null}
+      {closingText ? <p className={styles.guideClosing}>{closingText}</p> : null}
+      {hasNotes ? <div className={styles.notes}>{section.notes!.map((note, index) => <div key={note._key || note.title || index}><small>{note.eyebrow}</small><h3>{note.title}</h3><Paragraphs text={note.body} /></div>)}</div> : null}
     </article>
   </div>;
 }
