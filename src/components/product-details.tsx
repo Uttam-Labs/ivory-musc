@@ -159,7 +159,9 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
           <div className="product--info__container">
           {product.featuredTitle?.value && <p className={`${styles.eyebrow} product-eyebrow`}>{product.featuredTitle.value}</p>}
           <h1 className="product__title">{product.title}</h1>
-          {product.description && <p className={`${styles.description} product-description`}>{product.description}</p>}
+          {product.descriptionHtml
+            ? <div className={`${styles.description} product-description`} dangerouslySetInnerHTML={{ __html: product.descriptionHtml }} />
+            : product.description && <p className={`${styles.description} product-description`}>{product.description}</p>}
           <div className={`${styles.priceRow} product-details__price-row`}>{variant?.compareAtPrice && Number(variant.compareAtPrice.amount) > Number(price.amount) && <del>{formatMoney(variant.compareAtPrice)}</del>}<p className={`${styles.price} product-details__price`}>{formatMoney(price)}</p>{settings?.perUnitLabel && <small className="label-unit">{settings.perUnitLabel}</small>}</div>
           {(product.options || []).filter((option) => option.name !== "Title").map((option) => <fieldset key={option.id} aria-label={option.name} className={`${styles.options} product-details__options`}>
             {!isColor(option.name) && <legend className="option-label">{option.name}</legend>}

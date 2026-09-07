@@ -28,6 +28,7 @@ export type Product = {
   handle: string;
   title: string;
   description: string;
+  descriptionHtml?: string;
   featuredTitle?: { value: string } | null;
   featuredDescription?: { value: string; type: string } | null;
   composition?: { value: string } | null;

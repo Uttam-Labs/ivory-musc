@@ -27,7 +27,7 @@ export const PRODUCTS_QUERY = `#graphql
 export const PRODUCT_QUERY = `#graphql
   query Product($handle: String!) {
     product(handle: $handle) {
-      id handle title description
+      id handle title description descriptionHtml
       featuredTitle: metafield(namespace: "custom", key: "featured_title") { value }
       composition: metafield(namespace: "custom", key: "composition") { value }
       fabricWeight: metafield(namespace: "custom", key: "weight") { value }
