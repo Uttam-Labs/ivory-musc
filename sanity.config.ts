@@ -67,6 +67,12 @@ export default defineConfig({
                     singletonPage(S, "About page", "aboutPage", "aboutPage"),
                     singletonPage(
                       S,
+                      "Silk guide page",
+                      "silkGuidePage",
+                      "silkGuidePage",
+                    ),
+                    singletonPage(
+                      S,
                       "Collection page",
                       "collectionPage",
                       "collectionPage",

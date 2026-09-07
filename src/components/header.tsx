@@ -10,10 +10,11 @@ import { normalizeShopHref } from "@/lib/navigation";
 import type { Cart, Product } from "@/lib/shopify/types";
 import { AccountIcon, CartIcon, SearchIcon } from "./header-icons";
 
-type NavItem = { label?: string; href?: string };
+type NavItem = { label?: string; href?: string; isVisible?: boolean };
 type CartLine = Cart["lines"]["nodes"][number];
 const isSampleLine = (line: CartLine) => line.attributes.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample");
-const mainProductTitle = (line: CartLine) => line.attributes.find((attribute) => attribute.key.toLowerCase() === "main product")?.value;
+const sampleOptionAttributes = (line: CartLine) => line.attributes.filter((attribute) => Boolean(attribute.value.trim()));
+const sampleAttributeLabel = (key: string) => key.charAt(0).toUpperCase() + key.slice(1);
 type Props = {
   title?: string;
   logoUrl?: string;
@@ -41,10 +42,12 @@ export function Header({
 }: Props) {
   const pathname = usePathname();
   const router = useRouter();
+  const visibleNavigation = navigation.filter((item) => item.isVisible !== false);
   const normalizedPathname = pathname === "/index" ? "/" : pathname;
   const overlaysHero =
     normalizedPathname === "/" ||
     normalizedPathname === "/about" ||
+    normalizedPathname === "/silk-guide" ||
     normalizedPathname === "/faq" ||
     normalizedPathname === "/contact" ||
     normalizedPathname === "/blog";
@@ -301,7 +304,7 @@ export function Header({
       router.push(`/search?q=${encodeURIComponent(query.trim())}`);
   }
 
-  if (!title && !logoUrl && !navigation.length) return null;
+  if (!title && !logoUrl && !visibleNavigation.length) return null;
   const headerElevated = !overlaysHero || headerScrolled;
   const iconClass = `inline-flex size-9 items-center justify-center rounded-full transition duration-300 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 ${
     headerElevated ? "hover:bg-black/5" : "hover:bg-white/15"
@@ -318,7 +321,7 @@ export function Header({
       >
         <div className="mx-auto grid h-[88px] lg:h-[100px] max-w-[1920] px-6 sm:px-12 xl:px-24 grid-cols-[1fr_auto_1fr] items-center">
           <nav className="hidden header__nav items-center gap-7 text-[10px] lg:flex">
-            {navigation.map((item) =>
+            {visibleNavigation.map((item) =>
               item.href && item.label ? (
                 <Link
                   aria-current={
@@ -343,7 +346,7 @@ export function Header({
               ) : null,
             )}
           </nav>
-          {navigation.length > 0 && (
+          {visibleNavigation.length > 0 && (
             <button
               aria-label="Open menu"
               aria-expanded={menuOpen}
@@ -473,7 +476,7 @@ export function Header({
           </div>
 
           <nav className="flex-1 overflow-y-auto px-6 py-7">
-            {navigation.map((item) =>
+            {visibleNavigation.map((item) =>
               item.href && item.label ? (
                 <Link
                   onClick={() => setMenuOpen(false)}
@@ -648,8 +651,17 @@ export function Header({
                       <div className="flex items-start justify-between gap-2">
                         {isSampleLine(line) ? (
                           <div className="min-w-0">
-                            <p className="font-heading text-[18px] leading-snug text-[var(--accent)]">{mainProductTitle(line) || line.merchandise.product.title}</p>
-                            <p className="mt-2 text-[12px] uppercase tracking-[.1em] text-stone-500">Type: Sample</p>
+                            <p className="text-[14px] font-semibold leading-snug text-stone-900">{line.merchandise.product.title}</p>
+                            {sampleOptionAttributes(line).length > 0 && (
+                              <dl className="mt-2 grid gap-1">
+                                {sampleOptionAttributes(line).map((attribute) => (
+                                  <div key={attribute.key} className="grid grid-cols-[auto_1fr] items-baseline gap-1 text-[12px] leading-relaxed">
+                                    <dt className="text-stone-500">{sampleAttributeLabel(attribute.key)}:</dt>
+                                    <dd className="m-0 text-stone-600">{attribute.value}</dd>
+                                  </div>
+                                ))}
+                              </dl>
+                            )}
                           </div>
                         ) : (
                           <Link
@@ -680,7 +692,7 @@ export function Header({
                           {line.merchandise.title}
                         </p>
                       )}
-                      {isSampleLine(line) ? <p className="mt-4 text-[13px] text-stone-600">Quantity: 1</p> : <div className="mt-4 flex h-[38px] w-[126px] items-center border border-stone-300 bg-white/50">
+                      {isSampleLine(line) ? <p className="mt-4 text-[12px] leading-relaxed text-stone-600">Quantity: 1</p> : <div className="mt-4 flex h-[38px] w-[126px] items-center border border-stone-300 bg-white/50">
                         <button
                           type="button"
                           aria-label={`Decrease ${line.merchandise.product.title} quantity`}

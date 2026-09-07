@@ -113,6 +113,20 @@ You will receive confirmation once your order has been dispatched.
 
 Shipping costs will be displayed at checkout before you complete your purchase.
 
+### Products
+
+- Standard shipping: **A$16 including GST**
+- Express shipping: **A$25 including GST**
+
+### Samples
+
+Product sample details:
+
+- Each sample costs **A$3**, excluding sample shipping.
+- Each sample measures **10 cm × 15 cm**.
+- Standard sample shipping is **A$6 including GST** and takes approximately **2–6 business days**.
+- Express sample shipping is **A$12 including GST** and takes approximately **1–3 business days**.
+
 ## Tracking Your Order
 
 Once your order has been dispatched, tracking information will be sent to the email address provided with your order.
@@ -460,7 +474,7 @@ For questions regarding these Terms & Conditions, please contact:
   },
 ];
 
-async function seedPolicies() {
+async function seedPolicies(onlySlug) {
   const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
   const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
   const token = process.env.SANITY_API_WRITE_TOKEN || process.env.SANITY_API_READ_TOKEN;
@@ -471,7 +485,10 @@ async function seedPolicies() {
   }
 
   const client = createClient({ projectId, dataset, token, apiVersion, useCdn: false });
-  for (const policy of policies) {
+  const selectedPolicies = onlySlug ? policies.filter((policy) => policy.slug === onlySlug) : policies;
+  if (onlySlug && selectedPolicies.length === 0) throw new Error(`Unknown policy slug: ${onlySlug}`);
+
+  for (const policy of selectedPolicies) {
     await client.createOrReplace({
       _id: policy._id,
       _type: "policyPage",
@@ -486,5 +503,6 @@ async function seedPolicies() {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  await seedPolicies();
+  const onlySlug = process.argv.find((argument) => argument.startsWith("--only="))?.slice("--only=".length);
+  await seedPolicies(onlySlug);
 }

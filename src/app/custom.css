@@ -901,8 +901,8 @@ a {
     .product__details .product-details__thumbnails {
         width: 100%;
         margin-top: 0;
-        gap: 0;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.8rem;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .product__details .product-details__thumbnails > button {

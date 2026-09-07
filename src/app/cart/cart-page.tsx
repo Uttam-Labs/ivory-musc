@@ -12,7 +12,8 @@ const CART_KEY = "shopify-cart-id";
 const CHECKOUT_CART_KEY = "shopify-checkout-cart-id";
 type CartLine = Cart["lines"]["nodes"][number];
 const isSampleLine = (line: CartLine) => line.attributes.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample");
-const mainProductTitle = (line: CartLine) => line.attributes.find((attribute) => attribute.key.toLowerCase() === "main product")?.value;
+const sampleOptionAttributes = (line: CartLine) => line.attributes.filter((attribute) => Boolean(attribute.value.trim()));
+const sampleAttributeLabel = (key: string) => key.charAt(0).toUpperCase() + key.slice(1);
 
 export function CartPage() {
   const [cart, setCart] = useState<Cart | null>(null);
@@ -149,11 +150,10 @@ export function CartPage() {
               {cart.lines.nodes.map((line) => {
                 const updating = updatingLines.includes(line.id);
                 const sample = isSampleLine(line);
-                const sampleFor = mainProductTitle(line);
                 return (
                   <article className={`${styles.item} ${!line.merchandise.image ? styles.itemNoImage : ""}`} key={line.id}>
-                    <Link className={styles.image} href={`/products/${line.merchandise.product.handle}`}>
-                      {line.merchandise.image ? (
+                    {line.merchandise.image && (
+                      <Link className={styles.image} href={`/products/${line.merchandise.product.handle}`}>
                         <Image
                           src={line.merchandise.image.url}
                           alt={line.merchandise.image.altText || line.merchandise.product.title}
@@ -161,12 +161,12 @@ export function CartPage() {
                           quality={95}
                           sizes="(max-width: 640px) 112px, 170px"
                         />
-                      ) : <ShoppingBag aria-hidden="true" />}
-                    </Link>
+                      </Link>
+                    )}
                     <div className={styles.itemDetails}>
                       <div className={styles.itemTop}>
                         <div>
-                          {sample ? <><h3>{sampleFor || line.merchandise.product.title}</h3><p className={styles.sampleType}>Type: Sample</p></> : <Link href={`/products/${line.merchandise.product.handle}`}><h3>{line.merchandise.product.title}</h3></Link>}
+                          {sample ? <><h3 className={styles.sampleTitle}>{line.merchandise.product.title}</h3>{sampleOptionAttributes(line).length > 0 && <dl className={styles.sampleOptions}>{sampleOptionAttributes(line).map((attribute) => <div key={attribute.key}><dt>{sampleAttributeLabel(attribute.key)}:</dt><dd>{attribute.value}</dd></div>)}</dl>}</> : <Link href={`/products/${line.merchandise.product.handle}`}><h3>{line.merchandise.product.title}</h3></Link>}
                           {!sample && line.merchandise.title !== "Default Title" && <p>{line.merchandise.title}</p>}
                         </div>
                         <button

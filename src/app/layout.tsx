@@ -122,7 +122,7 @@ type HeaderData = {
   logo?: SanityImageSource;
   logoSizeDesktop?: number;
   logoSizeMobile?: number;
-  navigation?: Array<{ label?: string; href?: string }>;
+  navigation?: Array<{ label?: string; href?: string; isVisible?: boolean }>;
   showSearch?: boolean;
   searchHref?: string;
   showAccount?: boolean;

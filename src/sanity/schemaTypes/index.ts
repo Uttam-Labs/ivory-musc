@@ -13,6 +13,7 @@ import { articlePage } from "./articlePage";
 import { waitlistSubscriber } from "./waitlistSubscriber";
 import { waitlistPage } from "./waitlistPage";
 import { policyPage } from "./policyPage";
+import { silkGuidePage } from "./silkGuidePage";
 import {
   accountAddressesPage,
   accountDashboardPage,
@@ -38,6 +39,7 @@ export const schemaTypes = [
   articlePage,
   waitlistPage,
   policyPage,
+  silkGuidePage,
   accountNavigation,
   accountLoginPage,
   accountRegisterPage,

@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Check, LoaderCircle, Minus, Plus } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, LoaderCircle, Minus, Plus, X, ZoomIn } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CollectionProductGrid } from "@/components/collection-product-grid";
 import { SiteContainer } from "@/components/site-container";
 import { formatMoney } from "@/lib/format";
@@ -29,7 +29,6 @@ export type ProductDetailsSettings = {
   purchaseSampleHref?: string; shippingText?: string; specificationsHeading?: string;
   compositionLabel?: string; weightLabel?: string; widthLabel?: string; careLabel?: string;
   sampleDetailsHeading?: string; sampleSizeText?: string; sampleShippingNote?: string;
-  sampleStandardShippingText?: string; sampleExpressShippingText?: string;
 };
 
 export function ProductDetails({ product, sampleProduct, initialSelection, settings, relatedHeading, relatedProducts }: { product: Product; sampleProduct: Product | null; initialSelection: Record<string, string>; settings?: ProductDetailsSettings; relatedHeading?: string; relatedProducts: Product[] }) {
@@ -41,13 +40,19 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
     const requestedVariant = product.variants.nodes.find((variant) => Object.entries(initialSelection).every(([name, value]) => variant.selectedOptions.some((option) => option.name === name && option.value === value)));
     return requestedVariant ? Object.fromEntries(requestedVariant.selectedOptions.map((option) => [option.name, option.value])) : base;
   });
-  const [manualImage, setManualImage] = useState<string | null>(null);
+  const [manualImage, setManualImage] = useState<string | null>(() => product.featuredImage?.url || null);
+  const [zoomOpen, setZoomOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [sampleAction, setSampleAction] = useState<"idle" | "loading" | "error">("idle");
   const [action, setAction] = useState<"idle" | "cart" | "buy" | "added" | "error">("idle");
   const submitting = useRef(false);
   const variant = useMemo(() => product.variants.nodes.find((item) => item.selectedOptions.every((option) => selected[option.name] === option.value)), [product.variants.nodes, selected]);
-  const activeImage = manualImage ? product.images.nodes.find((image) => image.url === manualImage) || product.featuredImage : variant?.image || product.featuredImage;
+  const galleryImages = useMemo(() => {
+    const images = [product.featuredImage, ...product.images.nodes, ...product.variants.nodes.map((item) => item.image)];
+    return images.filter((image, index, all): image is NonNullable<typeof image> => Boolean(image) && all.findIndex((item) => item?.url === image?.url) === index);
+  }, [product.featuredImage, product.images.nodes, product.variants.nodes]);
+  const activeImage = manualImage ? galleryImages.find((image) => image.url === manualImage) || product.featuredImage : variant?.image || product.featuredImage || galleryImages[0];
+  const thumbnailImages = galleryImages.filter((image) => image.url !== activeImage?.url);
   const price = variant?.price || product.priceRange.minVariantPrice;
   const total = { ...price, amount: String(Number(price.amount) * quantity) };
   const specifications = [[settings?.compositionLabel, product.composition?.value], [settings?.weightLabel, product.fabricWeight?.value], [settings?.widthLabel, formatWidth(product.fabricWidth?.value)], [settings?.careLabel, product.care?.value]].filter((item): item is [string, string] => Boolean(item[0] && item[1]));
@@ -56,6 +61,25 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
     settings?.homeLabel?.trim() ? { label: settings.homeLabel.trim(), href: settings.homeHref?.trim() || "/" } : null,
     settings?.collectionLabel?.trim() ? { label: settings.collectionLabel.trim(), href: SHOP_HREF } : null,
   ].filter((item): item is { label: string; href: string } => Boolean(item));
+
+  useEffect(() => {
+    if (!zoomOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const closeOnEscape = (event: KeyboardEvent) => event.key === "Escape" && setZoomOpen(false);
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [zoomOpen]);
+
+  function moveGallery(direction: -1 | 1) {
+    if (!activeImage || galleryImages.length < 2) return;
+    const currentIndex = galleryImages.findIndex((image) => image.url === activeImage.url);
+    const nextIndex = (currentIndex + direction + galleryImages.length) % galleryImages.length;
+    setManualImage(galleryImages[nextIndex].url);
+  }
 
   function choose(name: string, value: string) {
     const requested = { ...selected, [name]: value };
@@ -90,7 +114,24 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
     if (!sampleVariant || sampleAction === "loading") return;
     setSampleAction("loading");
     try {
-      const response = await fetch("/api/cart", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ cartId: localStorage.getItem("shopify-cart-id"), merchandiseId: sampleVariant.id, quantity: 1, attributes: [{ key: "type", value: "sample" }, { key: "Main Product", value: product.title }] }) });
+      const selectedVariantAttributes = (variant?.selectedOptions || [])
+        .filter((option) => option.name !== "Title")
+        .slice(0, 8)
+        .map((option) => ({ key: option.name, value: option.value }));
+      const response = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          cartId: localStorage.getItem("shopify-cart-id"),
+          merchandiseId: sampleVariant.id,
+          quantity: 1,
+          attributes: [
+            { key: "type", value: "sample" },
+            { key: "Main Product", value: product.title },
+            ...selectedVariantAttributes,
+          ],
+        }),
+      });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Sample could not be added");
       localStorage.setItem("shopify-cart-id", payload.cart.id);
@@ -108,8 +149,11 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
       </nav>
       <section className={`${styles.productSection} product-info-details__columns`}>
         <div className={`${styles.gallery} product-info-details__gallery`}>
-          <div className={styles.mainImage}>{activeImage && <Image src={activeImage.url} alt={activeImage.altText || product.title} fill preload quality={95} sizes="(min-width:768px) 50vw, 100vw" />}</div>
-          {product.images.nodes.length > 1 && <div className={`${styles.thumbnails} product-details__thumbnails`}>{product.images.nodes.slice(0, 2).map((image) => <button key={image.url} aria-label={`View ${image.altText || product.title}`} className={activeImage?.url === image.url ? styles.activeThumb : undefined} onClick={() => setManualImage(image.url)}><Image src={image.url} alt={image.altText || product.title} fill quality={95} sizes="(min-width: 1200px) 12vw, (min-width: 768px) 20vw, 45vw" /></button>)}</div>}
+          <button type="button" className={styles.mainImage} onClick={() => activeImage && setZoomOpen(true)} aria-label={`Zoom ${activeImage?.altText || product.title}`}>
+            {activeImage && <Image src={activeImage.url} alt={activeImage.altText || product.title} fill preload quality={95} sizes="(min-width:768px) 50vw, 100vw" />}
+            {activeImage && <span className={styles.zoomHint}><ZoomIn size={18} /> Click to zoom</span>}
+          </button>
+          {thumbnailImages.length > 0 && <div className={`${styles.thumbnails} product-details__thumbnails`}>{thumbnailImages.map((image) => <button key={image.url} aria-label={`View ${image.altText || product.title}`} onClick={() => setManualImage(image.url)}><Image src={image.url} alt={image.altText || product.title} fill quality={95} sizes="(min-width: 1200px) 16vw, (min-width: 768px) 20vw, 33vw" /></button>)}</div>}
         </div>
         <div className={`${styles.info} product-info-details__wrapper`}>
           <div className="product--info__container">
@@ -138,8 +182,6 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
             <h2>{settings?.sampleDetailsHeading || "Sample details"}</h2>
             <p><strong>{formatMoney(sampleVariant?.price || sampleProduct.priceRange.minVariantPrice)}</strong> {settings?.sampleShippingNote || "per sample, excluding shipping"}</p>
             <p>{settings?.sampleSizeText || "Sample size: 10 CM × 15 CM"}</p>
-            <p>{settings?.sampleStandardShippingText || "Standard sample shipping: $6 · 2–6 business days"}</p>
-            <p>{settings?.sampleExpressShippingText || "Express sample shipping: $12 · 1–3 business days"}</p>
           </div>}
           {specifications.length > 0 && <div className={`${styles.specifications} product-details__specifications`}>{settings?.specificationsHeading && <h2>{settings.specificationsHeading}</h2>}{specifications.map(([label, value]) => <div className="spec" key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>}
         </div>
@@ -147,5 +189,12 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
       </section>
       {relatedProducts.length > 0 && <section className={styles.related}>{relatedHeading && <h2 className="common-heading">{relatedHeading}</h2>}<div className={styles.relatedGrid}><CollectionProductGrid products={relatedProducts} /></div></section>}
     </SiteContainer>
+    {zoomOpen && activeImage && <div className={styles.lightbox} role="dialog" aria-modal="true" aria-label={`${product.title} image zoom`} onMouseDown={(event) => event.target === event.currentTarget && setZoomOpen(false)}>
+      <button type="button" className={styles.lightboxClose} onClick={() => setZoomOpen(false)} aria-label="Close zoom view"><X size={24} /></button>
+      {galleryImages.length > 1 && <button type="button" className={`${styles.lightboxArrow} ${styles.lightboxPrevious}`} onClick={() => moveGallery(-1)} aria-label="Previous product image"><ChevronLeft size={30} /></button>}
+      <div className={styles.lightboxImage}><Image src={activeImage.url} alt={activeImage.altText || product.title} fill quality={100} sizes="96vw" /></div>
+      {galleryImages.length > 1 && <button type="button" className={`${styles.lightboxArrow} ${styles.lightboxNext}`} onClick={() => moveGallery(1)} aria-label="Next product image"><ChevronRight size={30} /></button>}
+      <p className={styles.lightboxCount}>{galleryImages.findIndex((image) => image.url === activeImage.url) + 1} / {galleryImages.length}</p>
+    </div>}
   </main>;
 }

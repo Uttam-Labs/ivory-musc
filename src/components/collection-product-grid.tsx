@@ -291,10 +291,8 @@ export function CollectionProductGrid({ products }: { products: Product[] }) {
   return (
     <>
       <div className={styles.grid}>
-        {products.map((product) => {
-          const colorOption = product.options?.find((option) => isColorOption(option.name));
-          return (
-            <article className={styles.card} key={product.id}>
+        {products.map((product) => (
+          <article className={styles.card} key={product.id}>
               <div className={styles.imageWrap}>
                 <Link href={`/products/${product.handle}`} aria-label={product.title}>
                   {product.featuredImage ? (
@@ -314,25 +312,10 @@ export function CollectionProductGrid({ products }: { products: Product[] }) {
               </div>
               <div className={styles.cardContent}>
                 <h2><Link href={`/products/${product.handle}`}>{product.title}</Link></h2>
-                {product.description && <p>{product.description}</p>}
                 <strong>{formatMoney(product.priceRange.minVariantPrice)} <small>/ meter</small></strong>
-                {colorOption && (
-                  <div className={styles.cardSwatches} aria-label={`Available ${colorOption.name}`}>
-                    {colorOption.optionValues.slice(0, 7).map((value) => (
-                      <Link
-                        key={value.id}
-                        href={`/products/${product.handle}?${new URLSearchParams({ [colorOption.name]: value.name }).toString()}`}
-                        title={`View ${product.title} in ${value.name}`}
-                        aria-label={`${product.title}: select ${value.name}`}
-                        style={swatchStyle(value)}
-                      />
-                    ))}
-                  </div>
-                )}
               </div>
-            </article>
-          );
-        })}
+          </article>
+        ))}
       </div>
       {quickView && <ProductQuickView handle={quickView} onClose={() => setQuickView(null)} />}
     </>
