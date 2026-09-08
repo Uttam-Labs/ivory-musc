@@ -47,6 +47,7 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
   const [action, setAction] = useState<"idle" | "cart" | "buy" | "added" | "error">("idle");
   const submitting = useRef(false);
   const variant = useMemo(() => product.variants.nodes.find((item) => item.selectedOptions.every((option) => selected[option.name] === option.value)), [product.variants.nodes, selected]);
+  const isOutOfStock = Boolean(variant && !variant.availableForSale);
   const galleryImages = useMemo(() => {
     const images = [product.featuredImage, ...product.images.nodes, ...product.variants.nodes.map((item) => item.image)];
     return images
@@ -92,7 +93,7 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
   }
 
   async function submit(mode: "cart" | "buy") {
-    if (!variant?.availableForSale || submitting.current) return;
+    if (!variant?.availableForSale || isOutOfStock || submitting.current) return;
     submitting.current = true;
     setAction(mode);
     try {
@@ -176,8 +177,8 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
           </div>
           {!variant && <p className={styles.unavailable}>This combination is unavailable.</p>}
           <div className={`${styles.actions} ${sampleProduct ? "" : styles.actionsWithoutSample} product-details__actions`}>
-            {settings?.buyNowLabel && <button className={`${styles.buyButton} button buy-button`} onClick={() => submit("buy")} disabled={!variant?.availableForSale || action === "buy" || action === "cart"}>{action === "buy" ? <LoaderCircle className="animate-spin" size={17} /> : settings.buyNowLabel}</button>}
-            {settings?.addToCartLabel && <button className={`${styles.cartButton} button button-add-to-cart`} onClick={() => submit("cart")} disabled={!variant?.availableForSale || action === "cart" || action === "buy"}>{action === "cart" ? <LoaderCircle className="animate-spin" size={17} /> : action === "added" ? <><Check size={17} /> {settings.addToCartLabel}</> : settings.addToCartLabel}</button>}
+            {settings?.buyNowLabel && <button className={`${styles.buyButton} button buy-button`} onClick={() => submit("buy")} disabled={!variant?.availableForSale || isOutOfStock || action === "buy" || action === "cart"}>{isOutOfStock ? "Out of stock" : action === "buy" ? <LoaderCircle className="animate-spin" size={17} /> : settings.buyNowLabel}</button>}
+            {settings?.addToCartLabel && <button className={`${styles.cartButton} button button-add-to-cart`} onClick={() => submit("cart")} disabled={!variant?.availableForSale || isOutOfStock || action === "cart" || action === "buy"}>{isOutOfStock ? "Out of stock" : action === "cart" ? <LoaderCircle className="animate-spin" size={17} /> : action === "added" ? <><Check size={17} /> {settings.addToCartLabel}</> : settings.addToCartLabel}</button>}
             {sampleProduct && <button type="button" className={`${styles.sampleButton} button button-sample`} onClick={purchaseSample} disabled={!sampleVariant || sampleAction === "loading"}>{sampleAction === "loading" ? <LoaderCircle className="animate-spin" size={17} /> : settings?.purchaseSampleLabel || "Purchase sample"}</button>}
           </div>
           {action === "error" && <p className={styles.unavailable}>Please try again.</p>}
