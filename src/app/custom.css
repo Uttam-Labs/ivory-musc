@@ -233,7 +233,6 @@ a {
     width: 10rem;
     height: 9rem;
     object-fit: contain;
-    filter: brightness(0) opacity(.42);
 }
 .global-loader__line {
     justify-self: center;

@@ -378,11 +378,7 @@ export function Header({
                     "--logo-scale-desktop": logoSizeDesktop / 100,
                   } as React.CSSProperties
                 }
-                className={`header-logo h-auto max-h-[72px] w-full origin-center object-contain transition-[filter,opacity] duration-300 ${
-                  lightHeaderAtTop
-                    ? "brightness-0 opacity-40"
-                    : "brightness-0 invert drop-shadow-[0_1px_1px_rgba(0,0,0,.12)]"
-                }`}
+                className="header-logo h-auto max-h-[72px] w-full origin-center object-contain drop-shadow-[0_1px_1px_rgba(0,0,0,.12)]"
               />
             ) : title ? (
               <span className="font-heading text-2xl">{title}</span>
