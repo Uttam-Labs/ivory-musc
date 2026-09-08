@@ -306,16 +306,14 @@ export function Header({
 
   if (!title && !logoUrl && !visibleNavigation.length) return null;
   const headerElevated = !overlaysHero || headerScrolled;
-  const iconClass = `inline-flex size-9 items-center justify-center rounded-full transition duration-300 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 ${
-    headerElevated ? "hover:bg-black/5" : "hover:bg-white/15"
-  }`;
+  const iconClass = "inline-flex size-9 items-center justify-center rounded-full transition duration-300 hover:bg-white/15 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2";
 
   return (
     <>
       <header
         className={`fixed inset-x-0 top-0 z-50 w-full transition-[background-color,color,box-shadow,backdrop-filter] duration-300 ${
           headerElevated
-            ? "bg-[#fff9f3]/95 text-[var(--foreground)] shadow-[0_1px_0_rgba(99,58,51,.12)] backdrop-blur-md"
+            ? "bg-[var(--accent)] text-white shadow-[0_5px_18px_rgba(45,27,24,.16)]"
             : "bg-transparent text-white"
         }`}
       >
@@ -376,11 +374,7 @@ export function Header({
                     "--logo-scale-desktop": logoSizeDesktop / 100,
                   } as React.CSSProperties
                 }
-                className={`header-logo h-auto max-h-[72px] w-full origin-center object-contain transition-[filter,opacity] duration-300 ${
-                  headerElevated
-                    ? "brightness-0 opacity-40"
-                    : "drop-shadow-[0_1px_1px_rgba(0,0,0,.12)]"
-                }`}
+                className="header-logo h-auto max-h-[72px] w-full origin-center object-contain brightness-0 invert drop-shadow-[0_1px_1px_rgba(0,0,0,.12)]"
               />
             ) : title ? (
               <span className="font-heading text-2xl">{title}</span>
