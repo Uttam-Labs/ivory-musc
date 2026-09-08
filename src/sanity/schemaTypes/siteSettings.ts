@@ -11,7 +11,12 @@ export const siteSettings = defineType({
     defineField({ name: "title", title: "Site title", type: "string" }),
     defineField({ name: "description", title: "SEO description", type: "text", rows: 3 }),
     defineField({ name: "titleTemplate", title: "Page title template", description: "Use %s where the page title should appear. Example: %s | Ivory Muse", type: "string", initialValue: "%s | Ivory Muse", validation: (rule) => rule.custom((value) => !value || value.includes("%s") || "Title template must contain %s") }),
-    defineField({ name: "favicon", title: "Favicon", description: "Upload a square PNG, recommended size 512 × 512px.", type: "image" }),
+    defineField({
+      name: "favicon",
+      title: "Browser favicon",
+      description: "Shown in browser tabs and bookmarks. Upload a high-contrast square PNG, recommended size 512 × 512px.",
+      type: "image",
+    }),
     defineField({ name: "socialImage", title: "Default social sharing image", description: "Used when a page has no own share image. Recommended size 1200 × 630px.", type: "image", options: { hotspot: true }, fields: [defineField({ name: "alt", title: "Alt text", type: "string" })] }),
     defineField({ name: "keywords", title: "Default SEO keywords", type: "array", of: [{ type: "string" }], options: { layout: "tags" } }),
     defineField({ name: "locale", title: "Site locale", description: "Open Graph locale, for example en_AU.", type: "string", initialValue: "en_AU" }),

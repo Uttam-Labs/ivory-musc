@@ -58,24 +58,19 @@ type Settings = {
   };
 } | null;
 
-type HeaderLogoData = { logo?: SanityImageSource } | null;
-
 const getDefaultSettings = cache(async () =>
   isSanityConfigured ? sanityFetch<Settings>(SITE_SETTINGS_QUERY) : null,
 );
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [settings, header] = await Promise.all([
-    getDefaultSettings(),
-    isSanityConfigured ? sanityFetch<HeaderLogoData>(HEADER_SETTINGS_QUERY) : null,
-  ]);
+  const settings = await getDefaultSettings();
   const siteTitle = settings?.title || "Ivory Muse";
   const description =
     settings?.description || "Ivory Muse headless Shopify storefront.";
-  const faviconSource = header?.logo || settings?.favicon;
+  const faviconSource = settings?.favicon;
   const favicon = faviconSource
     ? sanityImageUrl(faviconSource, 512)
-    : "/figma/logo.jpg";
+    : "/favicon-black.png";
   const socialImage = settings?.socialImage
     ? sanityImageUrl(settings.socialImage, 1200)
     : undefined;
@@ -89,7 +84,11 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description,
     keywords: settings?.keywords,
-    icons: { apple: favicon },
+    icons: {
+      icon: [{ url: favicon, type: "image/png", sizes: "512x512" }],
+      shortcut: favicon,
+      apple: favicon,
+    },
     robots: {
       index: settings?.allowIndex !== false,
       follow: settings?.allowFollow !== false,
