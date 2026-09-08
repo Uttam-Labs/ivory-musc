@@ -2,16 +2,17 @@ import { z } from "zod";
 
 const optionalUrl = z.string().url().optional().or(z.literal(""));
 const emptyStringAsUndefined = (value: unknown) => value === "" ? undefined : value;
+const stringWithDefault = (fallback: string) => z.preprocess(emptyStringAsUndefined, z.string().default(fallback));
 
 const schema = z.object({
   NEXT_PUBLIC_SITE_URL: optionalUrl,
   SHOPIFY_STORE_DOMAIN: z.string().optional(),
   SHOPIFY_STOREFRONT_ACCESS_TOKEN: z.string().optional(),
-  SHOPIFY_STOREFRONT_API_VERSION: z.string().default("2026-07"),
+  SHOPIFY_STOREFRONT_API_VERSION: stringWithDefault("2026-07"),
   SHOPIFY_REVALIDATION_SECRET: z.string().optional(),
   SHOPIFY_ADMIN_ACCESS_TOKEN: z.string().optional(),
-  SHOPIFY_ADMIN_API_VERSION: z.string().default("2026-07"),
-  SHOPIFY_CONTACT_METAOBJECT_TYPE: z.string().default("contact_enquiry"),
+  SHOPIFY_ADMIN_API_VERSION: stringWithDefault("2026-07"),
+  SHOPIFY_CONTACT_METAOBJECT_TYPE: stringWithDefault("contact_enquiry"),
   CUSTOMER_ACCOUNT_SESSION_SECRET: z.string().min(32).optional(),
   SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.preprocess(emptyStringAsUndefined, z.coerce.number().int().positive().default(587)),
@@ -23,10 +24,10 @@ const schema = z.object({
   SMTP_CREDENTIAL_ENCRYPTION_KEY: z.string().optional(),
   WAITLIST_EMAIL_FROM: z.string().optional(),
   WAITLIST_NOTIFICATION_TO: z.string().optional(),
-  WAITLIST_WELCOME_SUBJECT: z.string().default("Welcome to the Ivory Muse waitlist"),
+  WAITLIST_WELCOME_SUBJECT: stringWithDefault("Welcome to the Ivory Muse waitlist"),
   KLAVIYO_PRIVATE_API_KEY: z.string().optional(),
   KLAVIYO_WAITLIST_LIST_ID: z.string().optional(),
-  KLAVIYO_API_REVISION: z.string().default("2026-07-15"),
+  KLAVIYO_API_REVISION: stringWithDefault("2026-07-15"),
   SANITY_API_WRITE_TOKEN: z.string().optional(),
   PREVIEW_PASSWORD_PROTECTED: z.preprocess(emptyStringAsUndefined, z.enum(["true", "false"]).default("false")).transform((value) => value === "true"),
   PREVIEW_USERNAME: z.string().optional(),
@@ -34,10 +35,10 @@ const schema = z.object({
   PREVIEW_AUTH_SECRET: z.string().optional(),
   CONTACT_EMAIL_FROM: z.string().optional(),
   CONTACT_EMAIL_TO: z.string().optional(),
-  CONTACT_EMAIL_SUBJECT_PREFIX: z.string().default("Ivory Muse website enquiry"),
+  CONTACT_EMAIL_SUBJECT_PREFIX: stringWithDefault("Ivory Muse website enquiry"),
   NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().optional(),
-  NEXT_PUBLIC_SANITY_DATASET: z.string().default("production"),
-  NEXT_PUBLIC_SANITY_API_VERSION: z.string().default("2026-08-01"),
+  NEXT_PUBLIC_SANITY_DATASET: stringWithDefault("production"),
+  NEXT_PUBLIC_SANITY_API_VERSION: stringWithDefault("2026-08-01"),
   SANITY_API_READ_TOKEN: z.string().optional(),
   SANITY_REVALIDATION_SECRET: z.string().optional(),
   FIGMA_FILE_URL: optionalUrl,
