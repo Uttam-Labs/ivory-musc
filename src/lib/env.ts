@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 const optionalUrl = z.string().url().optional().or(z.literal(""));
+const emptyStringAsUndefined = (value: unknown) => value === "" ? undefined : value;
 
 const schema = z.object({
   NEXT_PUBLIC_SITE_URL: optionalUrl,
@@ -13,8 +14,8 @@ const schema = z.object({
   SHOPIFY_CONTACT_METAOBJECT_TYPE: z.string().default("contact_enquiry"),
   CUSTOMER_ACCOUNT_SESSION_SECRET: z.string().min(32).optional(),
   SMTP_HOST: z.string().optional(),
-  SMTP_PORT: z.coerce.number().int().positive().default(587),
-  SMTP_SECURE: z.enum(["true", "false"]).default("false").transform((value) => value === "true"),
+  SMTP_PORT: z.preprocess(emptyStringAsUndefined, z.coerce.number().int().positive().default(587)),
+  SMTP_SECURE: z.preprocess(emptyStringAsUndefined, z.enum(["true", "false"]).default("false")).transform((value) => value === "true"),
   NODEMAILER_EMAIL: z.string().optional(),
   NODEMAILER_APP_PASSWORD: z.string().optional(),
   SMTP_USER: z.string().optional(),
@@ -27,7 +28,7 @@ const schema = z.object({
   KLAVIYO_WAITLIST_LIST_ID: z.string().optional(),
   KLAVIYO_API_REVISION: z.string().default("2026-07-15"),
   SANITY_API_WRITE_TOKEN: z.string().optional(),
-  PREVIEW_PASSWORD_PROTECTED: z.enum(["true", "false"]).default("false").transform((value) => value === "true"),
+  PREVIEW_PASSWORD_PROTECTED: z.preprocess(emptyStringAsUndefined, z.enum(["true", "false"]).default("false")).transform((value) => value === "true"),
   PREVIEW_USERNAME: z.string().optional(),
   PREVIEW_PASSWORD: z.string().optional(),
   PREVIEW_AUTH_SECRET: z.string().optional(),
