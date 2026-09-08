@@ -315,7 +315,7 @@ export function Header({
       <header
         className={`fixed inset-x-0 top-0 z-50 w-full transition-[background-color,color,box-shadow,backdrop-filter] duration-300 ${
           headerScrolled
-            ? "bg-[var(--accent)] text-white shadow-[0_5px_18px_rgba(45,27,24,.16)]"
+            ? "bg-[#b99a82] text-white shadow-[0_4px_16px_rgba(76,55,43,.12)]"
             : overlaysHero
               ? "bg-transparent text-white"
               : "bg-[#fff9f3]/95 text-[var(--foreground)] shadow-[0_1px_0_rgba(99,58,51,.12)] backdrop-blur-md"
