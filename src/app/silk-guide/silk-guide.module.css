@@ -641,3 +641,44 @@
     line-height:18px;
   }
 }
+
+/* Match the shared Contact/Header page container and hero title scale. */
+.page{
+  --silk-guide-gutter:24px;
+}
+.heroContent,
+.editorial{
+  width:100%;
+  max-width:1920px;
+  box-sizing:border-box;
+  padding-inline:var(--silk-guide-gutter);
+}
+.intro{
+  width:min(1345px,calc(100% - (var(--silk-guide-gutter) * 2)));
+}
+.understanding,
+.fabricSection,
+.finder,
+.deepGuide{
+  padding-inline:max(
+    var(--silk-guide-gutter),
+    calc((100vw - 1920px) / 2 + var(--silk-guide-gutter))
+  );
+}
+.heroContent h1{
+  font-family:var(--font-heading),serif;
+  font-size:34px;
+  line-height:1.25;
+}
+
+@media(min-width:640px){
+  .page{--silk-guide-gutter:48px}
+}
+
+@media(min-width:1024px){
+  .heroContent h1{font-size:40px}
+}
+
+@media(min-width:1280px){
+  .page{--silk-guide-gutter:96px}
+}
