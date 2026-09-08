@@ -682,3 +682,67 @@
 @media(min-width:1280px){
   .page{--silk-guide-gutter:96px}
 }
+
+/* Fluid guide typography and polished interactive states. */
+.guideImage{
+  overflow:hidden;
+}
+.guideImage img{
+  transition:transform .7s cubic-bezier(.22,1,.36,1);
+}
+.guideImage:hover img{
+  transform:scale(1.025);
+}
+.guideNav button,
+.guideNav button:last-child{
+  font-size:clamp(11px,1.05vw,20px);
+  transition:
+    background-color .3s ease,
+    border-color .3s ease,
+    color .3s ease,
+    box-shadow .3s ease,
+    transform .3s ease;
+}
+.guideNav button:hover{
+  border-color:rgba(155,80,74,.42);
+  background:rgba(255,255,255,.58);
+  color:var(--accent);
+  box-shadow:0 8px 18px rgba(112,72,45,.08);
+  transform:translateY(-2px);
+}
+.guideNav .guideNavActive:hover{
+  border-color:var(--accent);
+  background:var(--accent);
+  color:#fff;
+  box-shadow:0 11px 18px -8px rgba(0,0,0,.42);
+}
+.guideContent h2{
+  font-size:clamp(20px,1.56vw,30px);
+}
+.guideContent>p,
+.guideContent>.guideClosing{
+  font-size:clamp(13px,.94vw,18px);
+}
+.guideContent li{
+  font-size:clamp(12px,.84vw,16px);
+}
+.guideContent>.notes small{
+  font-size:clamp(10px,.78vw,15px);
+}
+.guideContent>.notes h3{
+  font-size:clamp(15px,1.05vw,20px);
+}
+.guideContent>.notes p{
+  font-size:clamp(12px,.84vw,16px);
+}
+
+@media(prefers-reduced-motion:reduce){
+  .guideImage img,
+  .guideNav button{
+    transition:none;
+  }
+  .guideImage:hover img,
+  .guideNav button:hover{
+    transform:none;
+  }
+}
