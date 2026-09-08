@@ -9,7 +9,7 @@ import { CollectionProductGrid } from "@/components/collection-product-grid";
 import { SiteContainer } from "@/components/site-container";
 import { formatMoney } from "@/lib/format";
 import { SHOP_HREF } from "@/lib/navigation";
-import type { Product, ProductOptionValue } from "@/lib/shopify/types";
+import type { Product, ProductOption, ProductOptionValue, ProductVariant } from "@/lib/shopify/types";
 import styles from "@/app/products/product-details.module.css";
 
 const fallbackColors: Record<string, string> = { ivory: "#f7f3e8", champagne: "#dbcaa4", "blush rose": "#d8a6a0", "soft sand": "#d4bea0", onyx: "#28282b", black: "#28282b", white: "#fff", cream: "#f4ead2", gold: "#c7a35c" };
@@ -19,6 +19,13 @@ function formatWidth(value?: string) {
   if (!value) return value;
   if (/55\s*["″]/i.test(value)) return "140 CM";
   return value.replace(/\bcm\b/gi, "CM");
+}
+function getCompatibleOptionValues(option: ProductOption, optionIndex: number, options: ProductOption[], variants: ProductVariant[], selected: Record<string, string>) {
+  const parentOptions = options.slice(0, optionIndex);
+  return option.optionValues.filter((value) => variants.some((candidate) =>
+    candidate.selectedOptions.some((selection) => selection.name === option.name && selection.value === value.name)
+    && parentOptions.every((parent) => candidate.selectedOptions.some((selection) => selection.name === parent.name && selection.value === selected[parent.name])),
+  ));
 }
 
 export type ProductDetailsSettings = {
@@ -46,6 +53,7 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
   const [sampleAction, setSampleAction] = useState<"idle" | "loading" | "error">("idle");
   const [action, setAction] = useState<"idle" | "cart" | "buy" | "added" | "error">("idle");
   const submitting = useRef(false);
+  const productOptions = (product.options || []).filter((option) => option.name !== "Title");
   const variant = useMemo(() => product.variants.nodes.find((item) => item.selectedOptions.every((option) => selected[option.name] === option.value)), [product.variants.nodes, selected]);
   const isOutOfStock = Boolean(variant && !variant.availableForSale);
   const galleryImages = useMemo(() => {
@@ -166,9 +174,9 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
             ? <div className={`${styles.description} product-description`} dangerouslySetInnerHTML={{ __html: product.descriptionHtml }} />
             : product.description && <p className={`${styles.description} product-description`}>{product.description}</p>}
           <div className={`${styles.priceRow} product-details__price-row`}>{variant?.compareAtPrice && Number(variant.compareAtPrice.amount) > Number(price.amount) && <del>{formatMoney(variant.compareAtPrice)}</del>}<p className={`${styles.price} product-details__price`}>{formatMoney(price)}</p>{settings?.perUnitLabel && <small className="label-unit">{settings.perUnitLabel}</small>}</div>
-          {(product.options || []).filter((option) => option.name !== "Title").map((option) => <fieldset key={option.id} aria-label={option.name} className={`${styles.options} product-details__options`}>
+          {productOptions.map((option, optionIndex) => <fieldset key={option.id} aria-label={option.name} className={`${styles.options} product-details__options`}>
             {!isColor(option.name) && <legend className="option-label">{option.name}</legend>}
-            <div className={isColor(option.name) ? styles.colorOptions : styles.optionList}>{option.optionValues.map((value) => isColor(option.name) ? <button key={value.id} type="button" title={value.name} aria-label={`${option.name}: ${value.name}`} aria-pressed={selected[option.name] === value.name} className={`${styles.swatch} ${selected[option.name] === value.name ? styles.selectedSwatch : ""}`} onClick={() => choose(option.name, value.name)}><span style={swatchStyle(value)} /><small>{value.name}</small></button> : <button key={value.id} type="button" aria-pressed={selected[option.name] === value.name} className={`${styles.optionButton} ${selected[option.name] === value.name ? styles.selectedOption : ""}`} onClick={() => choose(option.name, value.name)}>{value.name}</button>)}</div>
+            <div className={isColor(option.name) ? styles.colorOptions : styles.optionList}>{getCompatibleOptionValues(option, optionIndex, productOptions, product.variants.nodes, selected).map((value) => isColor(option.name) ? <button key={value.id} type="button" title={value.name} aria-label={`${option.name}: ${value.name}`} aria-pressed={selected[option.name] === value.name} className={`${styles.swatch} ${selected[option.name] === value.name ? styles.selectedSwatch : ""}`} onClick={() => choose(option.name, value.name)}><span style={swatchStyle(value)} /><small>{value.name}</small></button> : <button key={value.id} type="button" aria-pressed={selected[option.name] === value.name} className={`${styles.optionButton} ${selected[option.name] === value.name ? styles.selectedOption : ""}`} onClick={() => choose(option.name, value.name)}>{value.name}</button>)}</div>
           </fieldset>)}
           <div className={`${styles.purchaseRow} product-details__purchase-row`}>
             <div className="product-details__options">{settings?.quantityLabel && <span className={`${styles.fieldLabel} option-label`}>{settings.quantityLabel}</span>}<div className={`${styles.quantityPicker} product-details__quantity`}><button onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label="Decrease quantity"><Minus size={15} /></button><output>{quantity}</output><button onClick={() => setQuantity((value) => Math.min(20, value + 1))} aria-label="Increase quantity"><Plus size={15} /></button></div></div>
