@@ -89,7 +89,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description,
     keywords: settings?.keywords,
-    icons: { icon: favicon, shortcut: favicon, apple: favicon },
+    icons: { apple: favicon },
     robots: {
       index: settings?.allowIndex !== false,
       follow: settings?.allowFollow !== false,

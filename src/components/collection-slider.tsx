@@ -30,6 +30,10 @@ export function CollectionSlider({
   autoSlide?: boolean;
   slideInterval?: number;
 }) {
+  const canLoop = products.length > 1;
+  const loopProducts = canLoop && products.length <= 3
+    ? Array.from({ length: Math.ceil(6 / products.length) }, () => products).flat()
+    : products;
   const plugins = autoSlide
     ? [
       Autoplay({
@@ -40,16 +44,16 @@ export function CollectionSlider({
     ]
     : [];
   const [ref, api] = useEmblaCarousel(
-    { loop: products.length > 3, align: "start" },
+    { loop: canLoop, align: "start", slidesToScroll: 1 },
     plugins,
   );
   return (
     <div className="relative">
       <div ref={ref} className="overflow-hidden">
         <div className="bestseller-track -ml-3 flex sm:-ml-8">
-          {products.map((p) => (
+          {loopProducts.map((p, index) => (
             <article
-              key={p.id}
+              key={`${p.id}-${index}`}
               className="bestseller-card min-w-0 flex-[0_0_50%] pl-3 sm:pl-8 lg:flex-[0_0_33.333%]"
             >
               <Link
