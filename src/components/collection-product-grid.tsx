@@ -212,7 +212,7 @@ function ProductQuickView({
               {product.description && <p className={styles.description}>{product.description}</p>}
               <div className={styles.priceRow}>
                 <strong>{variant ? formatMoney(variant.price) : formatMoney(product.priceRange.minVariantPrice)}</strong>
-                <span>per meter</span>
+                <span>per metre</span>
               </div>
               {(product.options || []).filter((option) => option.name !== "Title").map((option) => (
                 <fieldset className={styles.optionGroup} key={option.id} aria-label={option.name}>
@@ -312,7 +312,7 @@ export function CollectionProductGrid({ products }: { products: Product[] }) {
               </div>
               <div className={styles.cardContent}>
                 <h2><Link href={`/products/${product.handle}`}>{product.title}</Link></h2>
-                <strong>{formatMoney(product.priceRange.minVariantPrice)} <small>/ meter</small></strong>
+                <strong>{formatMoney(product.priceRange.minVariantPrice)} <small>per metre</small></strong>
               </div>
           </article>
         ))}
