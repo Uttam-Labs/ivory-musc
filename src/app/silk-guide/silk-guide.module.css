@@ -644,7 +644,7 @@
 
 /* Match the shared Contact/Header page container and hero title scale. */
 .page{
-  --silk-guide-gutter:24px;
+  --silk-guide-gutter:1.5rem;
 }
 .heroContent,
 .editorial{
@@ -672,7 +672,7 @@
 }
 
 @media(min-width:640px){
-  .page{--silk-guide-gutter:48px}
+  .page{--silk-guide-gutter:3rem}
 }
 
 @media(min-width:1024px){
@@ -680,7 +680,7 @@
 }
 
 @media(min-width:1280px){
-  .page{--silk-guide-gutter:96px}
+  .page{--silk-guide-gutter:6rem}
 }
 
 /* Fluid guide typography and polished interactive states. */
