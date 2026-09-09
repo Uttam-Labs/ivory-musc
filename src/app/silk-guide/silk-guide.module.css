@@ -437,6 +437,103 @@
   }
 }
 
+/* Match the compact Figma type scale across every desktop width. */
+@media(min-width:901px){
+  .guideContent h2{
+    font-size:clamp(22px,1.55vw,30px);
+    line-height:1.15;
+  }
+  .guideContent>p,
+  .guideContent>.guideClosing{
+    font-size:clamp(13px,.82vw,16px);
+    line-height:1.5;
+  }
+  .guideContent li{
+    margin:clamp(6px,.45vw,9px) 0;
+    font-size:clamp(13px,.78vw,15px);
+    line-height:1.45;
+  }
+  .guideContent>.notes small{
+    font-size:clamp(11px,.68vw,13px);
+  }
+  .guideContent>.notes h3{
+    margin:6px 0 10px;
+    font-size:clamp(15px,.95vw,18px);
+    line-height:1.3;
+  }
+  .guideContent>.notes p{
+    font-size:clamp(13px,.78vw,15px);
+    line-height:1.45;
+  }
+  .guideNav button,
+  .guideNav button:last-child{
+    font-size:clamp(13px,.82vw,16px);
+    line-height:1.35;
+  }
+}
+
+@media(min-width:901px){
+  .finderGrid article>div{
+    flex-wrap:nowrap;
+    gap:clamp(4px,.35vw,7px);
+  }
+  .finderGrid span{
+    flex:0 1 auto;
+    min-width:0;
+    padding:4px clamp(5px,.45vw,8px);
+    font-size:clamp(8px,.58vw,11px);
+    line-height:1.35;
+    white-space:nowrap;
+  }
+}
+
+/* Slightly smaller, consistently responsive banner title. */
+.heroContent h1{
+  font-size:clamp(2.2rem,1.65vw,3rem);
+}
+@media(max-width:640px){
+  .heroContent h1{
+    font-size:clamp(1.3rem,3.8vw,1.5rem);
+  }
+}
+
+@media(max-width:600px){
+  .guideNav{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+    overflow:visible;
+  }
+  .guideNav button,
+  .guideNav button:last-child{
+    min-width:0;
+    min-height:62px;
+    padding:10px 8px;
+    font-size:12px;
+    line-height:1.3;
+    white-space:normal;
+    overflow-wrap:normal;
+    word-break:normal;
+    hyphens:none;
+  }
+  .guideNav button:last-child{
+    grid-column:1/-1;
+  }
+}
+
+/* Tabs without step cards should use the complete available reading width. */
+.guideContent.guideContentFull{
+  display:block;
+  width:100%;
+}
+.guideContent.guideContentFull>h2,
+.guideContent.guideContentFull>p,
+.guideContent.guideContentFull>ol,
+.guideContent.guideContentFull>.guideClosing{
+  width:100%;
+  max-width:none;
+}
+
 @media(max-width:600px){
   .hero{
     min-height:400px;
@@ -744,5 +841,377 @@
   .guideImage:hover img,
   .guideNav button:hover{
     transform:none;
+  }
+}
+
+/* Keep the Silk Guide hero typography identical to the homepage hero. */
+.heroContent h1{
+  font-size:clamp(2.4rem,1.9vw,3.4rem);
+  font-weight:400;
+  line-height:1.05;
+}
+.heroContent p{
+  max-width:52rem;
+  margin-top:1.2rem;
+  font-family:var(--primary-font,Arial,Helvetica,sans-serif);
+  font-size:var(--body-font-size);
+  font-weight:400;
+  line-height:1.5;
+}
+
+@media(max-width:640px){
+  .heroContent h1{
+    font-size:clamp(1.35rem,4.2vw,1.65rem);
+    font-weight:600;
+    line-height:1.1;
+    letter-spacing:-.015em;
+  }
+  .heroContent p{
+    max-width:32rem;
+    margin-top:1.2rem;
+    font-size:1.3rem;
+    line-height:1.5;
+  }
+}
+
+/* Use the same responsive type system as the homepage throughout the guide. */
+.page{
+  font-family:var(--primary-font,Arial,Helvetica,sans-serif);
+  font-size:var(--body-font-size);
+}
+.intro p,
+.editorialCopy h2,
+.editorialCopy p,
+.understandingCopy>p,
+.accordionBody p,
+.fabricSection header p,
+.fabricGrid strong,
+.fabricGrid p,
+.finder header p,
+.finderGrid p,
+.guideContent>p,
+.guideContent>.guideClosing,
+.guideContent li,
+.guideContent>.notes p{
+  font-size:var(--body-font-size);
+}
+.editorialCopy>span,
+.understanding h2,
+.fabricSection h2,
+.finder h2,
+.guideContent h2{
+  font-family:var(--secondary-font,"Times New Roman",Times,serif);
+  font-size:var(--common-heading);
+  font-weight:400;
+  line-height:1.05;
+}
+.fabricGrid h3,
+.finderGrid h3,
+.guideContent>.notes h3{
+  font-size:var(--font-size-20);
+}
+.accordionItem button,
+.guideNav button,
+.guideNav button:last-child{
+  font-family:var(--primary-font,Arial,Helvetica,sans-serif);
+  font-size:var(--button-font-size);
+}
+.fabricGrid small,
+.finderGrid span,
+.guideContent>.notes small{
+  font-size:clamp(1.1rem,.8vw,1.4rem);
+}
+
+/* Compact, Figma-aligned section rhythm for laptop and desktop screens. */
+@media(min-width:901px){
+  .hero{
+    min-height:clamp(32rem,32vw,52rem);
+  }
+  .heroContent{
+    padding-bottom:clamp(3.2rem,4vw,6.4rem);
+  }
+  .intro{
+    padding:clamp(3.6rem,3.5vw,5.2rem) 0;
+  }
+  .editorial{
+    gap:clamp(3.2rem,3.5vw,5.6rem);
+    padding-bottom:clamp(4.8rem,4.2vw,6.8rem);
+  }
+  .understanding{
+    gap:clamp(3.2rem,3.8vw,5.6rem);
+    padding-block:clamp(4.8rem,4.2vw,6.8rem);
+  }
+  .understandingImage{
+    height:100%;
+    min-height:100%;
+    aspect-ratio:auto;
+  }
+  .finder{
+    padding-block:clamp(4.8rem,4.2vw,6.8rem);
+  }
+  .finder>header{
+    margin-bottom:clamp(2.2rem,2.2vw,3.2rem);
+  }
+  .finderGrid article{
+    min-height:clamp(12rem,10vw,16rem);
+    padding:clamp(1.8rem,1.7vw,2.6rem);
+  }
+  .deepGuide{
+    gap:clamp(2.4rem,2.8vw,4.2rem);
+    padding-block:clamp(4.8rem,4.2vw,6.8rem);
+  }
+  .guideContent>.notes>div{
+    padding:clamp(1.6rem,1.5vw,2.4rem);
+  }
+}
+
+@media(min-width:901px){
+  .understanding{
+    align-items:stretch;
+  }
+  .understandingImage img{
+    object-fit:cover;
+  }
+}
+
+@media(min-width:901px) and (max-width:1200px){
+  .editorial{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  }
+  .understanding{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  }
+  .deepGuide{
+    grid-template-columns:23rem minmax(0,1fr);
+    column-gap:3rem;
+  }
+  .guideContent{
+    grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
+    column-gap:3rem;
+  }
+}
+
+@media(max-width:900px){
+  .hero{
+    min-height:clamp(36rem,58vw,45rem);
+  }
+  .intro{
+    padding:3.6rem 0;
+  }
+  .editorial{
+    gap:2.4rem;
+    padding-bottom:4.4rem;
+  }
+  .understanding,
+  .finder,
+  .deepGuide{
+    padding-block:4.4rem;
+  }
+  .understanding{
+    gap:2.6rem;
+  }
+  .understandingCopy{
+    padding-bottom:0;
+  }
+  .finderGrid{
+    gap:1.6rem;
+  }
+}
+
+@media(max-width:600px){
+  .hero{
+    min-height:36rem;
+  }
+  .intro{
+    padding:3.2rem 0;
+  }
+  .editorial{
+    gap:2rem;
+    padding-bottom:3.8rem;
+  }
+  .understanding,
+  .finder,
+  .deepGuide{
+    padding-block:3.8rem;
+  }
+  .understanding{
+    gap:2.2rem;
+  }
+  .finder>header{
+    margin-bottom:2rem;
+  }
+  .deepGuide{
+    gap:2rem;
+  }
+}
+
+/* Laptop scaling: preserve the Figma composition without oversized copy or empty bands. */
+@media(min-width:901px) and (max-width:1200px){
+  .page{font-size:clamp(13px,1.3vw,15px)}
+  .intro p,.editorialCopy h2,.editorialCopy p,.understandingCopy>p,
+  .accordionBody p,.finder header p,.finderGrid p,.guideContent>p,
+  .guideContent>.guideClosing,.guideContent li,.guideContent>.notes p{
+    font-size:clamp(13px,1.3vw,15px);
+    line-height:1.5;
+  }
+  .editorialCopy>span,.understanding h2,.finder h2,.guideContent h2{
+    font-size:clamp(22px,2.35vw,28px);
+    line-height:1.15;
+  }
+  .understanding{gap:32px;padding-block:44px}
+  .understandingCopy>p{margin-bottom:18px}
+  .accordion{gap:10px}
+  .accordionItem button{
+    min-height:48px;
+    padding:13px 18px;
+    font-size:clamp(14px,1.4vw,16px);
+    line-height:1.35;
+  }
+  .accordionBody{padding:0 18px 16px}
+  .accordionBody p{margin:6px 0}
+  .finderGrid{gap:18px}
+  .finderGrid article{min-height:0;padding:18px}
+  .finderGrid h3,.guideContent>.notes h3{font-size:clamp(15px,1.55vw,18px)}
+  .finderGrid p{min-height:0;margin-bottom:10px}
+  .guideNav{gap:10px}
+  .guideNav button,.guideNav button:last-child{
+    min-height:48px;
+    padding:13px 16px;
+    font-size:clamp(12px,1.2vw,14px);
+    line-height:1.3;
+  }
+  .guideContent{column-gap:28px}
+  .guideContent>.notes>div{padding:16px}
+}
+
+@media(max-width:900px){
+  .page{font-size:var(--body-font-size)}
+  .intro p,.editorialCopy h2,.editorialCopy p,.understandingCopy>p,
+  .accordionBody p,.finder header p,.finderGrid p,.guideContent>p,
+  .guideContent>.guideClosing,.guideContent li,.guideContent>.notes p{
+    font-size:var(--body-font-size);
+    line-height:1.5;
+  }
+  .accordionItem button{min-height:50px;padding:14px 18px;font-size:15px}
+  .accordionBody{padding:0 18px 16px}
+  .accordionBody p{margin:6px 0}
+  .finderGrid article{padding:20px}
+  .guideNav button,.guideNav button:last-child{
+    min-height:50px;
+    padding:14px 18px;
+    font-size:14px;
+  }
+}
+
+@media(min-width:901px){
+  .guideContent h2{font-size:clamp(22px,1.55vw,30px);line-height:1.15}
+  .guideContent>p,.guideContent>.guideClosing{
+    font-size:clamp(13px,.82vw,16px);
+    line-height:1.5;
+  }
+  .guideContent li{
+    margin:clamp(6px,.45vw,9px) 0;
+    font-size:clamp(13px,.78vw,15px);
+    line-height:1.45;
+  }
+  .guideContent>.notes small{font-size:clamp(11px,.68vw,13px)}
+  .guideContent>.notes h3{
+    margin:6px 0 10px;
+    font-size:clamp(15px,.95vw,18px);
+    line-height:1.3;
+  }
+  .guideContent>.notes p{font-size:clamp(13px,.78vw,15px);line-height:1.45}
+  .guideNav button,.guideNav button:last-child{
+    font-size:clamp(13px,.82vw,16px);
+    line-height:1.35;
+  }
+}
+
+/* Compact guide navigation and give the reading/step panel visual priority. */
+@media(min-width:1201px){
+  .deepGuide{
+    grid-template-columns:clamp(240px,16vw,300px) minmax(0,1fr);
+    column-gap:clamp(30px,2.5vw,48px);
+  }
+  .guideContent{
+    grid-template-columns:minmax(360px,1fr) minmax(480px,1.4fr);
+    column-gap:clamp(18px,1.4vw,26px);
+  }
+  .guideContent>.notes{
+    width:100%;
+    max-width:820px;
+    justify-self:start;
+  }
+  .guideNav{gap:clamp(10px,.8vw,14px)}
+  .guideNav button,.guideNav button:last-child{
+    min-height:clamp(52px,3.4vw,60px);
+    padding:clamp(14px,1vw,18px);
+    font-size:clamp(12px,.72vw,14px);
+  }
+  .guideContent h2{font-size:clamp(22px,1.4vw,27px)}
+  .guideContent>p,.guideContent>.guideClosing{
+    font-size:clamp(13px,.74vw,14px);
+  }
+  .guideContent li,.guideContent>.notes p{
+    font-size:clamp(12px,.72vw,14px);
+  }
+  .guideContent>.notes h3{font-size:clamp(15px,.88vw,17px)}
+}
+
+/* One consistent body-copy scale across the complete Silk Guide. */
+@media(min-width:901px){
+  .intro p,
+  .editorialCopy h2,
+  .editorialCopy p,
+  .understandingCopy>p,
+  .accordionBody p,
+  .fabricSection header p,
+  .fabricGrid strong,
+  .fabricGrid p,
+  .finder header p,
+  .finderGrid p,
+  .guideContent>p,
+  .guideContent>.guideClosing,
+  .guideContent li,
+  .guideContent>.notes p{
+    font-size:var(--body-font-size);
+    line-height:1.55;
+  }
+}
+
+@media(max-width:600px){
+  .guideNav{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+    overflow:visible;
+  }
+  .guideNav button,
+  .guideNav button:last-child{
+    min-width:0;
+    min-height:62px;
+    padding:10px 8px;
+    font-size:12px;
+    line-height:1.3;
+    white-space:normal;
+    overflow-wrap:normal;
+    word-break:normal;
+    hyphens:none;
+  }
+  .guideNav button:last-child{grid-column:1/-1}
+}
+
+@media(min-width:901px){
+  .finderGrid article>div{
+    flex-wrap:nowrap;
+    gap:clamp(4px,.35vw,7px);
+  }
+  .finderGrid span{
+    flex:0 1 auto;
+    min-width:0;
+    padding:5px clamp(6px,.5vw,9px);
+    font-size:clamp(9px,.66vw,12px);
+    line-height:1.35;
+    white-space:nowrap;
   }
 }
