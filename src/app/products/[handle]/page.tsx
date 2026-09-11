@@ -25,5 +25,12 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
   const sampleProduct = handle === sampleProductHandle ? null : await getProduct(sampleProductHandle).catch(() => null);
   const raw = await searchParams;
   const initialSelection = Object.fromEntries(Object.entries(raw).flatMap(([key, value]) => typeof value === "string" ? [[key, value]] : []));
-  return <ProductDetails product={product} sampleProduct={sampleProduct} initialSelection={initialSelection} settings={detailSettings} relatedHeading={relatedSettings?.heading} relatedProducts={recommendations.slice(0, relatedSettings?.productLimit || 4)} />;
+  const relatedProducts = [...recommendations]
+    .sort(
+      (left, right) =>
+        Number(left.priceRange.minVariantPrice.amount) -
+        Number(right.priceRange.minVariantPrice.amount),
+    )
+    .slice(0, relatedSettings?.productLimit || 4);
+  return <ProductDetails product={product} sampleProduct={sampleProduct} initialSelection={initialSelection} settings={detailSettings} relatedHeading={relatedSettings?.heading} relatedProducts={relatedProducts} />;
 }
