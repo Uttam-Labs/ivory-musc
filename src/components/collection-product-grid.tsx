@@ -32,6 +32,27 @@ const colorFallbacks: Record<string, string> = {
   pink: "#dcaeae",
 };
 
+function metafieldText(metafield?: Product["specialTag"]) {
+  if (!metafield?.value) return "";
+  if (metafield.type !== "rich_text_field") return metafield.value;
+  try {
+    const root = JSON.parse(metafield.value) as {
+      children?: Array<{ children?: Array<{ value?: string }> }>;
+    };
+    return (
+      root.children
+        ?.flatMap(
+          (paragraph) =>
+            paragraph.children?.map((child) => child.value || "") || [],
+        )
+        .join(" ")
+        .trim() || ""
+    );
+  } catch {
+    return "";
+  }
+}
+
 function QuickCartIcon() {
   return (
     <svg width="15" height="18" viewBox="0 0 15 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -291,8 +312,10 @@ export function CollectionProductGrid({ products }: { products: Product[] }) {
   return (
     <>
       <div className={styles.grid}>
-        {products.map((product) => (
-          <article className={styles.card} key={product.id}>
+        {products.map((product) => {
+          const specialTag = metafieldText(product.specialTag);
+          return (
+            <article className={styles.card} key={product.id}>
               <div className={styles.imageWrap}>
                 <Link href={`/products/${product.handle}`} aria-label={product.title}>
                   {product.featuredImage ? (
@@ -312,10 +335,12 @@ export function CollectionProductGrid({ products }: { products: Product[] }) {
               </div>
               <div className={styles.cardContent}>
                 <h2><Link href={`/products/${product.handle}`}>{product.title}</Link></h2>
+                {specialTag && <p>{specialTag}</p>}
                 <strong>{formatMoney(product.priceRange.minVariantPrice)} <small>per metre</small></strong>
               </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
       </div>
       {quickView && <ProductQuickView handle={quickView} onClose={() => setQuickView(null)} />}
     </>
