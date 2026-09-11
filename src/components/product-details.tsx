@@ -47,7 +47,7 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
     const requestedVariant = product.variants.nodes.find((variant) => Object.entries(initialSelection).every(([name, value]) => variant.selectedOptions.some((option) => option.name === name && option.value === value)));
     return requestedVariant ? Object.fromEntries(requestedVariant.selectedOptions.map((option) => [option.name, option.value])) : base;
   });
-  const [manualImage, setManualImage] = useState<string | null>(() => product.featuredImage?.url || null);
+  const [manualImage, setManualImage] = useState<string | null>(null);
   const [zoomOpen, setZoomOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [sampleAction, setSampleAction] = useState<"idle" | "loading" | "error">("idle");
