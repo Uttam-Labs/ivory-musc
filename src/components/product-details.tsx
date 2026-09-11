@@ -56,6 +56,16 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
   const productOptions = (product.options || []).filter((option) => option.name !== "Title");
   const variant = useMemo(() => product.variants.nodes.find((item) => item.selectedOptions.every((option) => selected[option.name] === option.value)), [product.variants.nodes, selected]);
   const selectedColor = variant?.selectedOptions.find((option) => isColor(option.name));
+  const selectedVariantLabel = variant
+    ? [
+        ...variant.selectedOptions.filter((option) => isColor(option.name)),
+        ...variant.selectedOptions.filter(
+          (option) => option.name !== "Title" && !isColor(option.name),
+        ),
+      ]
+        .map((option) => option.value)
+        .join(" and ")
+    : "";
   const isOutOfStock = Boolean(variant && !variant.availableForSale);
   const galleryImages = useMemo(() => {
     const images = [product.featuredImage, ...product.images.nodes, ...product.variants.nodes.map((item) => item.image)];
@@ -184,14 +194,13 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
             ? <div className={`${styles.description} product-description`} dangerouslySetInnerHTML={{ __html: product.descriptionHtml }} />
             : product.description && <p className={`${styles.description} product-description`}>{product.description}</p>}
           <div className={`${styles.priceRow} product-details__price-row`}>{variant?.compareAtPrice && Number(variant.compareAtPrice.amount) > Number(price.amount) && <del>{formatMoney(variant.compareAtPrice)}</del>}<p className={`${styles.price} product-details__price`}>{formatMoney(price)}</p>{settings?.perUnitLabel && <small className="label-unit">{settings.perUnitLabel}</small>}</div>
+          {selectedVariantLabel && <div className={styles.selectionSummary} aria-live="polite">
+            <p><span>Selected:</span><strong>{selectedVariantLabel}</strong></p>
+          </div>}
           {productOptions.map((option, optionIndex) => <fieldset key={option.id} aria-label={option.name} className={`${styles.options} product-details__options`}>
             {!isColor(option.name) && <legend className="option-label">{option.name}</legend>}
             <div className={isColor(option.name) ? styles.colorOptions : styles.optionList}>{getCompatibleOptionValues(option, optionIndex, productOptions, product.variants.nodes, selected).map((value) => isColor(option.name) ? <button key={value.id} type="button" title={value.name} aria-label={`${option.name}: ${value.name}`} aria-pressed={selected[option.name] === value.name} className={`${styles.swatch} ${selected[option.name] === value.name ? styles.selectedSwatch : ""}`} onClick={() => choose(option.name, value.name)}><span style={swatchStyle(value)} /><small>{value.name}</small></button> : <button key={value.id} type="button" aria-pressed={selected[option.name] === value.name} className={`${styles.optionButton} ${selected[option.name] === value.name ? styles.selectedOption : ""}`} onClick={() => choose(option.name, value.name)}>{value.name}</button>)}</div>
           </fieldset>)}
-          {variant && <div className={styles.selectionSummary} aria-live="polite">
-            {variant.title !== "Default Title" && <p><span>Selected variant</span><strong>{variant.title}</strong></p>}
-            {selectedColor && <p><span>Selected colour</span><strong>{selectedColor.value}</strong></p>}
-          </div>}
           <div className={`${styles.purchaseRow} product-details__purchase-row`}>
             <div className="product-details__options">{settings?.quantityLabel && <span className={`${styles.fieldLabel} option-label`}>{settings.quantityLabel}</span>}<div className={`${styles.quantityPicker} product-details__quantity`}><button onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label="Decrease quantity"><Minus size={15} /></button><output>{quantity}</output><button onClick={() => setQuantity((value) => Math.min(20, value + 1))} aria-label="Increase quantity"><Plus size={15} /></button></div></div>
             <div className={`${styles.total} product-details__total`}>{settings?.totalLabel && <span>{settings.totalLabel}</span>}<strong>{formatMoney(total)}</strong></div>
