@@ -30,7 +30,7 @@ export type Product = {
   description: string;
   descriptionHtml?: string;
   featuredTitle?: { value: string } | null;
-  featuredDescription?: { value: string; type: string } | null;
+  specialTag?: { value: string; type: string } | null;
   composition?: { value: string } | null;
   fabricWeight?: { value: string } | null;
   fabricWidth?: { value: string } | null;

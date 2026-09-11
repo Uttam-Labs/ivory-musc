@@ -6,7 +6,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import type { Product } from "@/lib/shopify/types";
 
-function metafieldText(metafield?: Product["featuredDescription"]) {
+function metafieldText(metafield?: Product["specialTag"]) {
   if (!metafield?.value) return "";
   if (metafield.type !== "rich_text_field") return metafield.value;
   try {
@@ -76,15 +76,15 @@ export function CollectionSlider({
                 </div>
                 <div className="bestseller-card-content pt-4 sm:pt-8">
                   <h3 className="mt-5 font-heading text-[var(--accent)]">
-                    {p.title}
+                    {p.title.toUpperCase()}
                   </h3>
-                  {metafieldText(p.featuredDescription) && (
+                  {metafieldText(p.specialTag) && (
                     <p className="mx-auto mt-2 line-clamp-2 max-w-[374px] leading-4">
-                      {metafieldText(p.featuredDescription)}
+                      {metafieldText(p.specialTag)}
                     </p>
                   )}
                   <span className="explore--link inline-block text-[var(--accent)] underline decoration-[var(--accent)] decoration-[1px] underline-offset-[3px] transition-opacity duration-300 group-hover:opacity-65">
-                    Explore {p.title}
+                    Explore {p.title.toUpperCase()}
                   </span>
                 </div>
               </Link>

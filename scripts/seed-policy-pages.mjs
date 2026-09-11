@@ -97,11 +97,19 @@ We take care when preparing and packaging each order.
 
 ## Delivery Timeframes
 
+### Products
+
 Once your order has been dispatched, delivery is estimated to take approximately **2–6 business days for standard shipping** and approximately **1-3 business days for express shipping**.
 
 This depends on your location.
 
 Delivery timeframes are estimates and may vary during peak periods, public holidays or due to delays experienced by Australia Post.
+
+### Samples
+
+Standard sample shipping takes approximately **2–6 business days**.
+
+Express sample shipping takes approximately **1–3 business days**.
 
 ## Order Processing
 
@@ -115,17 +123,15 @@ Shipping costs will be displayed at checkout before you complete your purchase.
 
 ### Products
 
-- Standard shipping: **A$16 including GST**
-- Express shipping: **A$25 including GST**
+Standard shipping - **$16 AUD (including GST)**
+
+Express shipping - **$25 AUD (including GST)**
 
 ### Samples
 
-Product sample details:
+Standard shipping - **$6 AUD (including GST)**
 
-- Each sample costs **A$3**, excluding sample shipping.
-- Each sample measures **10 cm × 15 cm**.
-- Standard sample shipping is **A$6 including GST** and takes approximately **2–6 business days**.
-- Express sample shipping is **A$12 including GST** and takes approximately **1–3 business days**.
+Express shipping - **$12 AUD (including GST)**
 
 ## Tracking Your Order
 

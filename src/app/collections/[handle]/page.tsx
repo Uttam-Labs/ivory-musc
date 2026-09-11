@@ -8,7 +8,17 @@ import { sanityFetch } from "@/sanity/lib/client";
 import { COLLECTION_PAGE_QUERY } from "@/sanity/lib/queries";
 import styles from "../collection.module.css";
 const PAGE_SIZE = 12;
-type CollectionPageSettings = { heading?: string };
+type ProductSort = "price-ascending" | "price-descending" | "collection-default";
+type CollectionPageSettings = { heading?: string; productSort?: ProductSort };
+
+function sortProducts<T extends { priceRange: { minVariantPrice: { amount: string } } }>(products: T[], sort: ProductSort = "price-ascending") {
+  if (sort === "collection-default") return products;
+  const direction = sort === "price-descending" ? -1 : 1;
+  return [...products].sort((left, right) =>
+    (Number(left.priceRange.minVariantPrice.amount) - Number(right.priceRange.minVariantPrice.amount)) * direction,
+  );
+}
+
 export default async function CollectionPage({ params, searchParams }: PageProps<"/collections/[handle]">) {
   const { handle } = await params;
   const { page: requestedPage } = await searchParams;
@@ -17,11 +27,12 @@ export default async function CollectionPage({ params, searchParams }: PageProps
     isSanityConfigured ? sanityFetch<CollectionPageSettings>(COLLECTION_PAGE_QUERY) : null,
   ]);
   if (!collection) notFound();
-  const totalPages = Math.max(1, Math.ceil(collection.products.nodes.length / PAGE_SIZE));
+  const sortedProducts = sortProducts(collection.products.nodes, pageSettings?.productSort);
+  const totalPages = Math.max(1, Math.ceil(sortedProducts.length / PAGE_SIZE));
   const parsed = Number.parseInt(typeof requestedPage === "string" ? requestedPage : "1", 10) || 1;
   const page = Math.min(Math.max(parsed, 1), totalPages);
   const base = `/collections/${handle}`;
-  const products = collection.products.nodes.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const products = sortedProducts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   return <main className={styles.page}><SiteContainer className={styles.inner}>
     {pageSettings?.heading && <h1 className={styles.heading}>{pageSettings.heading}</h1>}
     {collection.description && <p className={styles.intro}>{collection.description}</p>}

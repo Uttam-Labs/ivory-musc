@@ -55,6 +55,7 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
   const submitting = useRef(false);
   const productOptions = (product.options || []).filter((option) => option.name !== "Title");
   const variant = useMemo(() => product.variants.nodes.find((item) => item.selectedOptions.every((option) => selected[option.name] === option.value)), [product.variants.nodes, selected]);
+  const selectedColor = variant?.selectedOptions.find((option) => isColor(option.name));
   const isOutOfStock = Boolean(variant && !variant.availableForSale);
   const galleryImages = useMemo(() => {
     const images = [product.featuredImage, ...product.images.nodes, ...product.variants.nodes.map((item) => item.image)];
@@ -105,7 +106,16 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
     submitting.current = true;
     setAction(mode);
     try {
-      const response = await fetch("/api/cart", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ cartId: localStorage.getItem("shopify-cart-id"), merchandiseId: variant.id, quantity }) });
+      const response = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          cartId: localStorage.getItem("shopify-cart-id"),
+          merchandiseId: variant.id,
+          quantity,
+          attributes: selectedColor ? [{ key: "Selected Colour", value: selectedColor.value }] : undefined,
+        }),
+      });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Cart could not be updated");
       localStorage.setItem("shopify-cart-id", payload.cart.id);
@@ -178,6 +188,10 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
             {!isColor(option.name) && <legend className="option-label">{option.name}</legend>}
             <div className={isColor(option.name) ? styles.colorOptions : styles.optionList}>{getCompatibleOptionValues(option, optionIndex, productOptions, product.variants.nodes, selected).map((value) => isColor(option.name) ? <button key={value.id} type="button" title={value.name} aria-label={`${option.name}: ${value.name}`} aria-pressed={selected[option.name] === value.name} className={`${styles.swatch} ${selected[option.name] === value.name ? styles.selectedSwatch : ""}`} onClick={() => choose(option.name, value.name)}><span style={swatchStyle(value)} /><small>{value.name}</small></button> : <button key={value.id} type="button" aria-pressed={selected[option.name] === value.name} className={`${styles.optionButton} ${selected[option.name] === value.name ? styles.selectedOption : ""}`} onClick={() => choose(option.name, value.name)}>{value.name}</button>)}</div>
           </fieldset>)}
+          {variant && <div className={styles.selectionSummary} aria-live="polite">
+            {variant.title !== "Default Title" && <p><span>Selected variant</span><strong>{variant.title}</strong></p>}
+            {selectedColor && <p><span>Selected colour</span><strong>{selectedColor.value}</strong></p>}
+          </div>}
           <div className={`${styles.purchaseRow} product-details__purchase-row`}>
             <div className="product-details__options">{settings?.quantityLabel && <span className={`${styles.fieldLabel} option-label`}>{settings.quantityLabel}</span>}<div className={`${styles.quantityPicker} product-details__quantity`}><button onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label="Decrease quantity"><Minus size={15} /></button><output>{quantity}</output><button onClick={() => setQuantity((value) => Math.min(20, value + 1))} aria-label="Increase quantity"><Plus size={15} /></button></div></div>
             <div className={`${styles.total} product-details__total`}>{settings?.totalLabel && <span>{settings.totalLabel}</span>}<strong>{formatMoney(total)}</strong></div>

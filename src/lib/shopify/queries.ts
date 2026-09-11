@@ -1,7 +1,7 @@
 export const PRODUCT_CARD_FRAGMENT = `#graphql
   fragment ProductCard on Product {
     id handle title description
-    featuredDescription: metafield(namespace: "custom", key: "featured_description") { value type }
+    specialTag: metafield(namespace: "custom", key: "special_tag") { value type }
     featuredImage { url altText width height }
     priceRange { minVariantPrice { amount currencyCode } }
     options {

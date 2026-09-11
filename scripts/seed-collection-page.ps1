@@ -8,6 +8,7 @@ $document = @{
   _id = "collectionPage"
   _type = "collectionPage"
   heading = "Collection"
+  productSort = "price-ascending"
 }
 $payload = @{ mutations = @(@{ createOrReplace = $document }) } | ConvertTo-Json -Depth 10 -Compress
 $url = "https://$($config.NEXT_PUBLIC_SANITY_PROJECT_ID).api.sanity.io/v2025-02-19/data/mutate/$($config.NEXT_PUBLIC_SANITY_DATASET)"

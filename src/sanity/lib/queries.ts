@@ -9,7 +9,7 @@ export const ABOUT_PAGE_QUERY = defineQuery(`*[_id == "aboutPage"][0]{_updatedAt
 export const PAGE_QUERY = defineQuery(`*[_type == "page" && slug.current == $slug][0]{title, seoDescription, body}`);
 export const POLICY_PAGE_QUERY = defineQuery(`*[_type == "policyPage" && slug.current == $slug][0]{_type,title,navigationLabel,seoDescription,body}`);
 export const PRODUCT_PAGE_QUERY = defineQuery(`*[_id == "productPage" && _type == "productPage"][0]{_updatedAt,title,sections[]{...}}`);
-export const COLLECTION_PAGE_QUERY = defineQuery(`*[_id == "collectionPage" && _type == "collectionPage"][0]{_updatedAt,heading}`);
+export const COLLECTION_PAGE_QUERY = defineQuery(`*[_id == "collectionPage" && _type == "collectionPage"][0]{_updatedAt,heading,productSort}`);
 export const FAQ_PAGE_QUERY = defineQuery(`*[_id == "faqPage" && _type == "faqPage"][0]{_updatedAt,title,seoDescription,sections[]{...,image{...,alt},items[]{...}}}`);
 export const CONTACT_PAGE_QUERY = defineQuery(`*[_id == "contactPage" && _type == "contactPage"][0]{_updatedAt,title,seoDescription,sections[]{...,image{...,alt}}}`);
 export const SILK_GUIDE_PAGE_QUERY = defineQuery(`*[_id == "silkGuidePage" && _type == "silkGuidePage"][0]{_updatedAt,title,seoTitle,seoDescription,sectionVisibility,hero{...,image{...,alt}},introduction,art{...,image{...,alt}},understanding{...,image{...,alt},characteristics[]{...}},fabricsHeading,fabricsIntroduction,considerForLabel,fabrics[]{...},finder{...,cards[]{...}},guideImage{...,alt},guideSections[]{...,notes[]{...}},cta}`);
