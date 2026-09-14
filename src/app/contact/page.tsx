@@ -29,7 +29,7 @@ export default async function ContactPage() {
   const hero = page.sections?.find((section) => section._type === "contactHero") as HeroSection | undefined;
   const formSection = page.sections?.find((section) => section._type === "contactFormSection") as FormSection | undefined;
   return (
-    <main className={styles.page}>
+    <main className={`${styles.page} contact-page`}>
       {hero && <section className={`standard-page-hero contact--hero about-hero relative flex min-h-[600px] items-end text-white md:min-h-[450px] xl:min-h-[652px]`}>
         {hero.image && <Image fill priority src={sanityImageUrl(hero.image, 3840)} alt={hero.image.alt || hero.heading || ""} className={styles.heroImage} sizes="100vw" quality={95} />}
         <div className={styles.heroShade} style={{ backgroundColor: `rgba(0,0,0,${Math.min(Math.max(hero.overlayOpacity || 0, 0), 100) / 100})` }} />

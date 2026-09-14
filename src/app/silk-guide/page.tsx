@@ -23,7 +23,7 @@ export async function generateMetadata():Promise<Metadata>{const page=await getC
 
 export default async function SilkGuidePage(){
   const page=await getContent();
-  if(!page)return <main className={styles.page}/>;
+  if(!page)return <main className={`${styles.page} silk-guide-page`}/>;
   const visible=page.sectionVisibility||{};
   const hero=imageUrl(page.hero?.image,3840),art=imageUrl(page.art?.image),understanding=imageUrl(page.understanding?.image),guide=imageUrl(page.guideImage,3000);
   const hasHero=Boolean(hero||page.hero?.heading||page.hero?.tagline);
@@ -32,8 +32,8 @@ export default async function SilkGuidePage(){
   const hasFabrics=Boolean(page.fabricsHeading||page.fabricsIntroduction||page.fabrics?.length);
   const hasFinder=Boolean(page.finder?.heading||page.finder?.introduction||page.finder?.cards?.length);
   const hasGuide=Boolean(guide||page.guideSections?.length);
-  return <main className={styles.page}>
-    {visible.hero!==false&&hasHero&&<section className={styles.hero}>{hero&&<Image src={hero} alt={imageAlt(page.hero?.image,page.hero?.heading)} fill priority quality={95} sizes="100vw"/>}<div className={styles.heroShade}/><div className={styles.heroContent}><h1>{page.hero?.heading}</h1><p>{page.hero?.tagline}</p></div></section>}
+  return <main className={`${styles.page} silk-guide-page`}>
+    {visible.hero!==false&&hasHero&&<section className={`${styles.hero} standard-page-hero`}>{hero&&<Image src={hero} alt={imageAlt(page.hero?.image,page.hero?.heading)} fill priority quality={95} sizes="100vw"/>}<div className={styles.heroShade}/><div className={styles.heroContent}><h1>{page.hero?.heading}</h1><p>{page.hero?.tagline}</p></div></section>}
     {visible.introduction!==false&&Boolean(page.introduction?.trim())&&<section className={styles.intro}><Paragraphs text={page.introduction}/></section>}
     {visible.art!==false&&hasArt&&<section className={styles.editorial}>{art&&<div className={styles.editorialImage}><Image src={art} alt={imageAlt(page.art?.image,page.art?.heading)} fill quality={95} sizes="(max-width:800px) 100vw,50vw"/></div>}<div className={styles.editorialCopy}><span>{page.art?.eyebrow}</span><h2>{page.art?.heading}</h2><Paragraphs text={page.art?.body}/></div></section>}
     {visible.understanding!==false&&hasUnderstanding&&<section className={styles.understanding}><div className={styles.understandingCopy}><h2>{page.understanding?.heading}</h2><p>{page.understanding?.introduction}</p><Characteristics items={page.understanding?.characteristics||[]}/></div>{understanding&&<div className={styles.understandingImage}><Image src={understanding} alt={imageAlt(page.understanding?.image,page.understanding?.heading)} fill quality={95} sizes="(max-width:800px) 100vw,50vw"/></div>}</section>}

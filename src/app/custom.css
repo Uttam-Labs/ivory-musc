@@ -932,6 +932,171 @@ a {
 }
 /* End shared page banner sizing */
 
+/* Match About, Contact, FAQ and Silk Guide banners to the homepage. */
+.standard-page-hero {
+    position: relative;
+    width: 100%;
+    min-height: 600px !important;
+    align-items: flex-end !important;
+}
+
+.standard-page-hero .home-hero-content,
+.silk-guide-page .standard-page-hero > div:last-child {
+    padding-bottom: 4rem;
+    text-align: left;
+}
+
+.standard-page-hero .hero-title,
+.silk-guide-page .standard-page-hero h1 {
+    max-width: 40ch;
+    color: #fff;
+    font-family: var(--secondary-font);
+    font-size: clamp(2.4rem, 1.9vw, 3.4rem);
+    font-weight: 400;
+    line-height: 1.05;
+    text-transform: uppercase;
+}
+
+.standard-page-hero .home-hero-content p,
+.silk-guide-page .standard-page-hero p {
+    max-width: 52rem;
+    margin-top: 1.2rem;
+    margin-right: 0;
+    margin-left: 0;
+    color: #fff;
+    font-family: var(--primary-font);
+    font-size: var(--body-font-size);
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+@media (min-width: 768px) {
+    .standard-page-hero {
+        height: auto;
+        min-height: 0 !important;
+        max-height: 820px;
+        aspect-ratio: 2 / 1;
+    }
+
+    .standard-page-hero .home-hero-content,
+    .silk-guide-page .standard-page-hero > div:last-child {
+        padding-bottom: clamp(5rem, 7.1vw, 13.6rem);
+    }
+}
+
+@media (max-width: 640px) {
+    .standard-page-hero {
+        height: auto !important;
+        min-height: 58svh !important;
+        max-height: none;
+    }
+
+    .standard-page-hero .home-hero-content,
+    .silk-guide-page .standard-page-hero > div:last-child {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        padding-right: 1.5rem;
+        padding-bottom: 2.4rem !important;
+        padding-left: 1.5rem;
+        text-align: center;
+    }
+
+    .standard-page-hero .hero-title,
+    .silk-guide-page .standard-page-hero h1 {
+        max-width: 26ch;
+        margin-right: auto;
+        margin-left: auto;
+        font-size: clamp(1.35rem, 4.2vw, 1.65rem);
+        font-weight: 600;
+        line-height: 1.1;
+        letter-spacing: -.015em;
+    }
+
+    .standard-page-hero .home-hero-content p,
+    .silk-guide-page .standard-page-hero p {
+        max-width: 32rem;
+        margin: 1.2rem auto 0;
+        font-size: 1.3rem;
+        line-height: 1.5;
+    }
+
+    /* Homepage remains untouched; these four internal pages centre their mobile content. */
+    .about-page section:not(.standard-page-hero),
+    .contact-page section:not(.standard-page-hero),
+    .faq-page section:not(.standard-page-hero),
+    .silk-guide-page section:not(.standard-page-hero) {
+        text-align: center;
+    }
+
+    .about-page section:not(.standard-page-hero) p,
+    .contact-page section:not(.standard-page-hero) p,
+    .faq-page section:not(.standard-page-hero) p,
+    .silk-guide-page section:not(.standard-page-hero) p {
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .about-page .vision-card__item {
+        text-align: center;
+    }
+
+    .about-page .vision-card__item .explore--link {
+        align-self: center;
+    }
+
+    .contact-page .contact-form__card > h2,
+    .contact-page .contact-form__card > p {
+        text-align: center;
+    }
+
+    .contact-page form {
+        text-align: left;
+    }
+
+    .contact-page form button {
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .faq-page .faq-mod__item button {
+        display: grid;
+        grid-template-columns: 2.4rem minmax(0, 1fr) 2.4rem;
+        text-align: center;
+    }
+
+    .faq-page .faq-mod__item button > span:first-child {
+        grid-column: 2;
+    }
+
+    .faq-page .faq-mod__item button > span:last-child {
+        grid-column: 3;
+    }
+
+    .faq-page .faq-mod__item p {
+        text-align: center;
+    }
+
+    .silk-guide-page button,
+    .silk-guide-page ol,
+    .silk-guide-page li {
+        text-align: center;
+    }
+
+    .silk-guide-page ol {
+        padding-left: 0;
+        list-style-position: inside;
+    }
+
+    .silk-guide-page [class*="editorialCopy"],
+    .silk-guide-page [class*="understandingCopy"],
+    .silk-guide-page [class*="guideContent"] {
+        text-align: center;
+    }
+}
+/* End shared internal-page presentation */
+
 /* Start Footer */
 .footer {
     font-size: var(--button-font-size);
