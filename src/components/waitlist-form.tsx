@@ -25,6 +25,7 @@ export function WaitlistForm({
   submittingLabel = "JOINING…",
   consentText = "I agree to receive emails from Ivory Muse about new collections, restocks, exclusive offers and brand updates. I can unsubscribe at any time.",
   successHeading = "Welcome to Ivory Muse",
+  successMessage,
   alreadySubscribedMessage = "You are already on the Ivory Muse waitlist.",
   fallbackErrorMessage = "We could not join you to the list. Please try again.",
   onSuccess,
@@ -52,7 +53,7 @@ export function WaitlistForm({
       setStatus("success");
       setMessage(payload.alreadySubscribed
         ? alreadySubscribedMessage
-        : `${successHeading}. Your place on our waitlist is confirmed.`);
+        : successMessage || `${successHeading}. Your subscription is confirmed.`);
       try {
         window.localStorage.setItem(NEWSLETTER_SUBSCRIBED_KEY, "true");
       } catch {

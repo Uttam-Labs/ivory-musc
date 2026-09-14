@@ -22,20 +22,22 @@ type MobileNewsletterPopupProps = {
   submittingLabel?: string;
   consentText?: string;
   alreadySubscribedMessage?: string;
+  successMessage?: string;
   fallbackErrorMessage?: string;
 };
 
 export function MobileNewsletterPopup({
-  heading = "Get on the list",
-  body = "Be the first to know about new collections and exclusive updates.",
+  heading = "Private offers await",
+  body = "Subscribe for exclusive offers, early access to new arrivals and private Ivory Muse promotions.",
   imageUrl = "/figma/hero.jpg",
   imageAlt = "Ivory silk in the Ivory Muse studio",
   emailLabel = "Email address",
   emailPlaceholder = "EMAIL ADDRESS",
-  submitLabel = "JOIN THE LIST",
-  submittingLabel = "JOINING…",
+  submitLabel = "UNLOCK EXCLUSIVE ACCESS",
+  submittingLabel = "SUBSCRIBING…",
   consentText,
-  alreadySubscribedMessage,
+  alreadySubscribedMessage = "You are already subscribed to Ivory Muse offers.",
+  successMessage = "You're in. Watch your inbox for exclusive Ivory Muse offers.",
   fallbackErrorMessage,
 }: MobileNewsletterPopupProps) {
   const [open, setOpen] = useState(false);
@@ -106,7 +108,7 @@ export function MobileNewsletterPopup({
           <Image src={imageUrl} alt={imageAlt} fill sizes="410px" quality={95} />
         </div>
         <div className="mobile-newsletter-popup__content">
-          <p className="mobile-newsletter-popup__eyebrow">Ivory Muse Waitlist</p>
+          <p className="mobile-newsletter-popup__eyebrow">Ivory Muse Privileges</p>
           <h2 id="mobile-newsletter-heading">{heading}</h2>
           <p className="mobile-newsletter-popup__body">{body}</p>
           <WaitlistForm
@@ -116,6 +118,7 @@ export function MobileNewsletterPopup({
             submittingLabel={submittingLabel}
             consentText={consentText}
             alreadySubscribedMessage={alreadySubscribedMessage}
+            successMessage={successMessage}
             fallbackErrorMessage={fallbackErrorMessage}
             onSuccess={() => window.setTimeout(() => setOpen(false), 1400)}
           />

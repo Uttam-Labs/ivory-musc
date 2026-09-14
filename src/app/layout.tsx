@@ -149,14 +149,9 @@ type FooterData = {
 } | null;
 type NewsletterPopupData = {
   backgroundImage?: SanityImageSource & { alt?: string; assetUrl?: string };
-  formHeading?: string;
-  confirmationText?: string;
   emailLabel?: string;
   emailPlaceholder?: string;
-  submitLabel?: string;
-  submittingLabel?: string;
   consentText?: string;
-  alreadySubscribedMessage?: string;
   fallbackErrorMessage?: string;
 } | null;
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -291,16 +286,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         />
         {children}
         <MobileNewsletterPopup
-          heading={newsletterPopup?.formHeading}
-          body={newsletterPopup?.confirmationText}
           imageUrl={newsletterPopup?.backgroundImage?.assetUrl || (newsletterPopup?.backgroundImage ? sanityImageUrl(newsletterPopup.backgroundImage, 1200) : undefined)}
           imageAlt={newsletterPopup?.backgroundImage?.alt}
           emailLabel={newsletterPopup?.emailLabel}
           emailPlaceholder={newsletterPopup?.emailPlaceholder}
-          submitLabel={newsletterPopup?.submitLabel}
-          submittingLabel={newsletterPopup?.submittingLabel}
           consentText={newsletterPopup?.consentText}
-          alreadySubscribedMessage={newsletterPopup?.alreadySubscribedMessage}
           fallbackErrorMessage={newsletterPopup?.fallbackErrorMessage}
         />
         <Footer
