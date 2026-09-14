@@ -61,7 +61,7 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
     ? [
         ...variant.selectedOptions.filter((option) => isColor(option.name)),
         ...variant.selectedOptions.filter(
-          (option) => option.name !== "Title" && !isColor(option.name),
+          (option) => option.name !== "Title" && !isColor(option.name) && !isWidthOption(option.name),
         ),
       ]
         .map((option) => option.value)
