@@ -487,6 +487,42 @@
   }
 }
 
+/* Keep the Silk Guide banner aligned with the homepage hero at every breakpoint. */
+.hero{
+  min-height:600px;
+  align-items:flex-end;
+}
+.heroContent{
+  display:block;
+  padding-bottom:clamp(4rem,5.73vw,11rem);
+  text-align:left;
+}
+
+@media(min-width:768px){
+  .hero{
+    height:min(50vw,820px);
+    min-height:450px;
+    max-height:820px;
+  }
+}
+
+@media(max-width:640px){
+  .hero{
+    min-height:58svh;
+  }
+  .heroContent{
+    width:100%;
+    padding-right:1.5rem;
+    padding-bottom:2.4rem;
+    padding-left:1.5rem;
+    text-align:center;
+  }
+  .heroContent p{
+    margin-right:auto;
+    margin-left:auto;
+  }
+}
+
 /* Slightly smaller, consistently responsive banner title. */
 .heroContent h1{
   font-size:clamp(2.2rem,1.65vw,3rem);
