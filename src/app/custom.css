@@ -791,7 +791,7 @@ a {
 .mobile-newsletter-popup__image::after {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgb(33 22 17 / 5%) 20%, rgb(33 22 17 / 22%) 58%, rgb(33 22 17 / 38%) 100%);
+  background: linear-gradient(180deg, rgb(25 17 13 / 10%) 5%, rgb(25 17 13 / 28%) 40%, rgb(25 17 13 / 68%) 100%);
   content: "";
 }
 
@@ -804,16 +804,14 @@ a {
   position: relative;
   z-index: 1;
   width: 100%;
-  margin-top: 190px;
-  padding: 30px 26px 26px;
-  border-top: 1px solid rgb(255 255 255 / 48%);
-  background: rgb(255 249 243 / 93%);
-  backdrop-filter: blur(12px);
+  margin-top: 210px;
+  padding: 36px 26px 28px;
+  color: #fff;
 }
 
 .mobile-newsletter-popup__eyebrow {
   margin: 0 0 12px;
-  color: var(--accent);
+  color: rgb(255 255 255 / 84%);
   font-size: 10px;
   letter-spacing: .2em;
   text-transform: uppercase;
@@ -821,7 +819,7 @@ a {
 
 .mobile-newsletter-popup__dialog h2 {
   margin: 0;
-  color: var(--accent);
+  color: #fff;
   font-family: var(--secondary-font, serif);
   font-size: 34px;
   font-weight: 400;
@@ -831,7 +829,7 @@ a {
 
 .mobile-newsletter-popup__body {
   margin: 18px auto 0;
-  color: #6f6762;
+  color: rgb(255 255 255 / 88%);
   font-size: 12px;
   line-height: 1.7;
 }
@@ -858,8 +856,8 @@ a {
   width: 100%;
   height: 48px;
   min-width: 0;
-  border: 1px solid rgb(155 80 74 / 45%);
-  background: #fffdf9;
+  border: 1px solid rgb(255 255 255 / 72%);
+  background: rgb(255 253 249 / 94%);
   padding: 0 14px;
   color: #332d29;
   outline: 0;
@@ -894,7 +892,7 @@ a {
   margin-top: 12px;
   align-items: flex-start;
   gap: 8px;
-  color: #6f6762;
+  color: rgb(255 255 255 / 90%);
   font-size: 10px;
   line-height: 1.5;
   text-align: left;
@@ -909,7 +907,7 @@ a {
 .mobile-newsletter-popup .waitlist-form__message,
 .mobile-newsletter-popup .waitlist-success {
   margin-top: 12px;
-  color: var(--accent);
+  color: #fff;
   font-size: 10px;
   line-height: 1.5;
   text-align: center;
@@ -946,8 +944,8 @@ a {
     max-height: calc(100dvh - 28px);
   }
   .mobile-newsletter-popup__content {
-    margin-top: 165px;
-    padding: 26px 22px 22px;
+    margin-top: 180px;
+    padding: 30px 22px 24px;
   }
   .mobile-newsletter-popup__dialog h2 {
     font-size: 30px;
