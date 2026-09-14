@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { flushSync } from "react-dom";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export function GlobalLoader({
   logoUrl,
@@ -13,10 +12,11 @@ export function GlobalLoader({
   title?: string;
 }) {
   const pathname = usePathname();
-  const router = useRouter();
+  const searchParams = useSearchParams();
+  const routeKey = `${pathname}?${searchParams.toString()}`;
   const [initialLoading, setInitialLoading] = useState(true);
   const [navigating, setNavigating] = useState(false);
-  const previousPathname = useRef(pathname);
+  const previousRoute = useRef(routeKey);
   const navigationStartedAt = useRef(0);
   const navigationMaximumTimer = useRef<number | null>(null);
 
@@ -51,8 +51,8 @@ export function GlobalLoader({
   }, [initialLoading]);
 
   useEffect(() => {
-    if (previousPathname.current === pathname) return;
-    previousPathname.current = pathname;
+    if (previousRoute.current === routeKey) return;
+    previousRoute.current = routeKey;
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     const elapsed = performance.now() - navigationStartedAt.current;
     const timer = window.setTimeout(
@@ -66,7 +66,7 @@ export function GlobalLoader({
       Math.max(0, 1000 - elapsed),
     );
     return () => window.clearTimeout(timer);
-  }, [pathname]);
+  }, [routeKey]);
 
   useEffect(() => {
     const showBeforeNavigation = (event: MouseEvent) => {
@@ -92,9 +92,8 @@ export function GlobalLoader({
         destination.protocol === "tel:"
       ) return;
 
-      event.preventDefault();
       navigationStartedAt.current = performance.now();
-      flushSync(() => setNavigating(true));
+      setNavigating(true);
       if (navigationMaximumTimer.current) {
         window.clearTimeout(navigationMaximumTimer.current);
       }
@@ -103,10 +102,6 @@ export function GlobalLoader({
         3000,
       );
 
-      const href = `${destination.pathname}${destination.search}${destination.hash}`;
-      window.requestAnimationFrame(() => {
-        window.requestAnimationFrame(() => router.push(href));
-      });
     };
 
     document.addEventListener("click", showBeforeNavigation, true);
@@ -116,7 +111,7 @@ export function GlobalLoader({
         window.clearTimeout(navigationMaximumTimer.current);
       }
     };
-  }, [router]);
+  }, []);
 
   return (
       <div
