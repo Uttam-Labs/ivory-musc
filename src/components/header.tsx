@@ -7,13 +7,15 @@ import { usePathname, useRouter } from "next/navigation";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { formatMoney } from "@/lib/format";
 import { normalizeShopHref } from "@/lib/navigation";
-import { cartAttribute, formatCartVariantTitle, isSampleAttributes, sampleDisplayTitle, sampleVariantTitle } from "@/lib/shopify/cart-display";
+import { formatCartAttributeValue, formatCartVariantTitle } from "@/lib/shopify/cart-display";
 import type { Cart, Product } from "@/lib/shopify/types";
 import { AccountIcon, CartIcon, SearchIcon } from "./header-icons";
 
 type NavItem = { label?: string; href?: string; isVisible?: boolean };
 type CartLine = Cart["lines"]["nodes"][number];
-const isSampleLine = (line: CartLine) => isSampleAttributes(line.attributes);
+const isSampleLine = (line: CartLine) => line.attributes.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample");
+const sampleOptionAttributes = (line: CartLine) => line.attributes.filter((attribute) => Boolean(attribute.value.trim()));
+const sampleAttributeLabel = (key: string) => key.charAt(0).toUpperCase() + key.slice(1);
 type Props = {
   title?: string;
   logoUrl?: string;
@@ -618,38 +620,48 @@ export function Header({
               <X size={22} />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto px-7 py-5">
+          <div className="flex-1 overflow-y-auto px-7 py-7">
             {cartLoading ? (
               <div className="flex h-full items-center justify-center">
                 <LoaderCircle className="animate-spin" />
               </div>
             ) : cart?.lines.nodes.length ? (
-              <div className="space-y-5">
-                {cart.lines.nodes.map((line) => {
-                  const sample = isSampleLine(line);
-                  const sampleImage = sample ? cartAttribute(line.attributes, "_Product Image") : "";
-                  const image = line.merchandise.image?.url || sampleImage;
-                  const imageAlt = line.merchandise.image?.altText || sampleDisplayTitle(line.attributes);
-                  return (
+              <div className="space-y-7">
+                {cart.lines.nodes.map((line) => (
                   <div
                     key={line.id}
-                    className={`grid border-b border-stone-200 pb-5 last:border-0 ${image ? "grid-cols-[88px_1fr] gap-4" : "grid-cols-1"}`}
+                    className={`grid border-b border-stone-200 pb-7 last:border-0 ${line.merchandise.image ? "grid-cols-[104px_1fr] gap-5" : "grid-cols-1"}`}
                   >
-                    {image && (
+                    {line.merchandise.image && (
                       <Image
-                        src={image}
-                        alt={imageAlt}
+                        src={line.merchandise.image.url}
+                        alt={
+                          line.merchandise.image.altText ||
+                          line.merchandise.product.title
+                        }
                         width={176}
                         height={220}
                         quality={95}
-                        sizes="88px"
+                        sizes="104px"
                         className="aspect-[4/5] w-full bg-stone-100 object-cover"
                       />
                     )}
                     <div className="min-w-0">
                       <div className="flex items-start justify-between gap-2">
-                        {sample ? (
-                          <p className="font-heading text-[17px] leading-tight text-[var(--accent)]">{sampleDisplayTitle(line.attributes)}</p>
+                        {isSampleLine(line) ? (
+                          <div className="min-w-0">
+                            <p className="text-[14px] font-semibold leading-snug text-stone-900">{line.merchandise.product.title}</p>
+                            {sampleOptionAttributes(line).length > 0 && (
+                              <dl className="mt-2 grid gap-1">
+                                {sampleOptionAttributes(line).map((attribute) => (
+                                  <div key={attribute.key} className="grid grid-cols-[auto_1fr] items-baseline gap-1 text-[12px] leading-relaxed">
+                                    <dt className="text-stone-500">{sampleAttributeLabel(attribute.key)}:</dt>
+                                    <dd className="m-0 text-stone-600">{formatCartAttributeValue(attribute.key, attribute.value)}</dd>
+                                  </div>
+                                ))}
+                              </dl>
+                            )}
+                          </div>
                         ) : (
                           <Link
                             onClick={() => setCartOpen(false)}
@@ -674,14 +686,12 @@ export function Header({
                           )}
                         </button>
                       </div>
-                      {sample ? (
-                        <p className="mt-2 text-[14px] leading-snug text-stone-500">{sampleVariantTitle(line.attributes)}</p>
-                      ) : line.merchandise.title !== "Default Title" && (
+                      {!isSampleLine(line) && line.merchandise.title !== "Default Title" && (
                         <p className="mt-2 text-[14px] leading-snug text-stone-500">
                           {formatCartVariantTitle(line.merchandise.selectedOptions, line.merchandise.title)}
                         </p>
                       )}
-                      {sample ? <p className="mt-3 text-[12px] uppercase tracking-[.08em] text-stone-500">Quantity {line.quantity}</p> : <div className="mt-4 flex h-[38px] w-[126px] items-center border border-stone-300 bg-white/50">
+                      {isSampleLine(line) ? <p className="mt-4 text-[12px] leading-relaxed text-stone-600">Quantity: 1</p> : <div className="mt-4 flex h-[38px] w-[126px] items-center border border-stone-300 bg-white/50">
                         <button
                           type="button"
                           aria-label={`Decrease ${line.merchandise.product.title} quantity`}
@@ -766,8 +776,7 @@ export function Header({
                       </p>
                     </div>
                   </div>
-                  );
-                })}
+                ))}
               </div>
             ) : (
               <div className="flex h-full flex-col items-center justify-center text-center">

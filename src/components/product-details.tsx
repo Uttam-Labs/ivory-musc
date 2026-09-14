@@ -167,8 +167,6 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
           attributes: [
             { key: "type", value: "sample" },
             { key: "Main Product", value: product.title },
-            { key: "_Product Handle", value: product.handle },
-            ...(activeImage?.url ? [{ key: "_Product Image", value: activeImage.url }] : []),
             ...selectedVariantAttributes,
             ...(sampleWidth ? [{ key: "Width", value: sampleWidth }] : []),
           ],
