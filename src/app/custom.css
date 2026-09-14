@@ -817,6 +817,27 @@ a {
 }
 /* End mobile mailing list pop-up */
 
+/* Shared About, Contact and FAQ banner sizing matches the homepage hero. */
+.standard-page-hero {
+    width: 100%;
+}
+
+@media (max-width: 767px) {
+    .standard-page-hero {
+        min-height: 58svh !important;
+        max-height: 58svh;
+    }
+}
+
+@media (min-width: 768px) {
+    .standard-page-hero {
+        height: min(50vw, 820px);
+        min-height: 450px !important;
+        max-height: 820px;
+    }
+}
+/* End shared page banner sizing */
+
 /* Start Footer */
 .footer {
     font-size: var(--button-font-size);
