@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useId, useState } from "react";
+import { NEWSLETTER_SUBSCRIBED_KEY } from "@/lib/newsletter-preferences";
 
 type WaitlistFormProps = {
   emailLabel?: string;
@@ -14,6 +15,7 @@ type WaitlistFormProps = {
   alreadySubscribedMessage?: string;
   successClosing?: string;
   fallbackErrorMessage?: string;
+  onSuccess?: () => void;
 };
 
 export function WaitlistForm({
@@ -22,17 +24,17 @@ export function WaitlistForm({
   submitLabel = "JOIN THE LIST",
   submittingLabel = "JOINING…",
   consentText = "I agree to receive emails from Ivory Muse about new collections, restocks, exclusive offers and brand updates. I can unsubscribe at any time.",
-  successEyebrow = "Registration confirmed",
   successHeading = "Welcome to Ivory Muse",
-  successMessage = "Welcome to Ivory Muse. Please check your inbox for our confirmation email.",
   alreadySubscribedMessage = "You are already on the Ivory Muse waitlist.",
-  successClosing = "We look forward to sharing our world of fine silk with you.",
   fallbackErrorMessage = "We could not join you to the list. Please try again.",
+  onSuccess,
 }: WaitlistFormProps) {
   const [email, setEmail] = useState("");
   const [marketingConsent, setMarketingConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
+  const emailId = useId();
+  const websiteId = useId();
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -51,6 +53,12 @@ export function WaitlistForm({
       setMessage(payload.alreadySubscribed
         ? alreadySubscribedMessage
         : `${successHeading}. Your place on our waitlist is confirmed.`);
+      try {
+        window.localStorage.setItem(NEWSLETTER_SUBSCRIBED_KEY, "true");
+      } catch {
+        // The waitlist registration still succeeded if browser storage is unavailable.
+      }
+      onSuccess?.();
       setEmail("");
       setMarketingConsent(false);
     } catch (error) {
@@ -77,10 +85,10 @@ export function WaitlistForm({
   return (
     <form onSubmit={submit} className="waitlist-form">
       <div className="waitlist-form__field">
-        <label htmlFor="waitlist-email">{emailLabel}</label>
+        <label htmlFor={emailId}>{emailLabel}</label>
         <div className="waitlist-form__row">
           <input
-            id="waitlist-email"
+            id={emailId}
             name="email"
             type="email"
             inputMode="email"
@@ -105,8 +113,8 @@ export function WaitlistForm({
         </div>
       </div>
       <div className="waitlist-form__honeypot" aria-hidden="true">
-        <label htmlFor="waitlist-website">Website</label>
-        <input id="waitlist-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+        <label htmlFor={websiteId}>Website</label>
+        <input id={websiteId} name="website" type="text" tabIndex={-1} autoComplete="off" />
       </div>
       <label className="waitlist-form__consent">
         <input

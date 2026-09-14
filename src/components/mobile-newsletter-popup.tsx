@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { NewsletterForm, NEWSLETTER_SUBSCRIBED_KEY } from "@/components/newsletter-form";
+import { WaitlistForm } from "@/components/waitlist-form";
+import { NEWSLETTER_SUBSCRIBED_KEY } from "@/lib/newsletter-preferences";
 
 const DISMISSED_THIS_VISIT_KEY = "ivory-muse-newsletter-dismissed-this-visit";
 const MOBILE_QUERY = "(max-width: 767px)";
@@ -12,15 +14,29 @@ const SHOW_AFTER_SCROLL = 0.35;
 type MobileNewsletterPopupProps = {
   heading?: string;
   body?: string;
+  imageUrl?: string;
+  imageAlt?: string;
+  emailLabel?: string;
   emailPlaceholder?: string;
   submitLabel?: string;
+  submittingLabel?: string;
+  consentText?: string;
+  alreadySubscribedMessage?: string;
+  fallbackErrorMessage?: string;
 };
 
 export function MobileNewsletterPopup({
-  heading = "Join Our World of Silk",
-  body = "Receive exclusive access to new collections, design inspiration and stories celebrating the artistry of fine silk.",
-  emailPlaceholder = "Enter your email address",
-  submitLabel = "Subscribe Now",
+  heading = "Get on the list",
+  body = "Be the first to know about new collections and exclusive updates.",
+  imageUrl = "/figma/hero.jpg",
+  imageAlt = "Ivory silk in the Ivory Muse studio",
+  emailLabel = "Email address",
+  emailPlaceholder = "EMAIL ADDRESS",
+  submitLabel = "JOIN THE LIST",
+  submittingLabel = "JOINING…",
+  consentText,
+  alreadySubscribedMessage,
+  fallbackErrorMessage,
 }: MobileNewsletterPopupProps) {
   const [open, setOpen] = useState(false);
 
@@ -86,10 +102,24 @@ export function MobileNewsletterPopup({
         <button type="button" onClick={dismiss} className="mobile-newsletter-popup__close" aria-label="Close mailing list pop-up">
           <X size={21} strokeWidth={1.5} />
         </button>
-        <p className="mobile-newsletter-popup__eyebrow">Ivory Muse</p>
-        <h2 id="mobile-newsletter-heading">{heading}</h2>
-        <p className="mobile-newsletter-popup__body">{body}</p>
-        <NewsletterForm placeholder={emailPlaceholder} submitLabel={submitLabel} onSuccess={() => window.setTimeout(() => setOpen(false), 1200)} />
+        <div className="mobile-newsletter-popup__image">
+          <Image src={imageUrl} alt={imageAlt} fill sizes="410px" quality={95} />
+        </div>
+        <div className="mobile-newsletter-popup__content">
+          <p className="mobile-newsletter-popup__eyebrow">Ivory Muse Waitlist</p>
+          <h2 id="mobile-newsletter-heading">{heading}</h2>
+          <p className="mobile-newsletter-popup__body">{body}</p>
+          <WaitlistForm
+            emailLabel={emailLabel}
+            emailPlaceholder={emailPlaceholder}
+            submitLabel={submitLabel}
+            submittingLabel={submittingLabel}
+            consentText={consentText}
+            alreadySubscribedMessage={alreadySubscribedMessage}
+            fallbackErrorMessage={fallbackErrorMessage}
+            onSuccess={() => window.setTimeout(() => setOpen(false), 1400)}
+          />
+        </div>
       </section>
     </div>
   );

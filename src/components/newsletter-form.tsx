@@ -1,8 +1,7 @@
 "use client";
 
 import { FormEvent, useId, useState } from "react";
-
-export const NEWSLETTER_SUBSCRIBED_KEY = "ivory-muse-newsletter-subscribed";
+import { NEWSLETTER_SUBSCRIBED_KEY } from "@/lib/newsletter-preferences";
 
 export function NewsletterForm({ placeholder, submitLabel, onSuccess }: { placeholder?: string; submitLabel?: string; onSuccess?: () => void }) {
   const [email, setEmail] = useState("");
