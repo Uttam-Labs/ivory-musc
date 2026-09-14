@@ -5,16 +5,14 @@ import Link from "next/link";
 import { LoaderCircle, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { formatMoney } from "@/lib/format";
-import { formatCartAttributeValue, formatCartVariantTitle } from "@/lib/shopify/cart-display";
+import { cartAttribute, formatCartVariantTitle, isSampleAttributes, sampleDisplayTitle, sampleVariantTitle } from "@/lib/shopify/cart-display";
 import type { Cart } from "@/lib/shopify/types";
 import styles from "./cart.module.css";
 
 const CART_KEY = "shopify-cart-id";
 const CHECKOUT_CART_KEY = "shopify-checkout-cart-id";
 type CartLine = Cart["lines"]["nodes"][number];
-const isSampleLine = (line: CartLine) => line.attributes.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample");
-const sampleOptionAttributes = (line: CartLine) => line.attributes.filter((attribute) => Boolean(attribute.value.trim()));
-const sampleAttributeLabel = (key: string) => key.charAt(0).toUpperCase() + key.slice(1);
+const isSampleLine = (line: CartLine) => isSampleAttributes(line.attributes);
 
 export function CartPage() {
   const [cart, setCart] = useState<Cart | null>(null);
@@ -151,13 +149,15 @@ export function CartPage() {
               {cart.lines.nodes.map((line) => {
                 const updating = updatingLines.includes(line.id);
                 const sample = isSampleLine(line);
+                const sampleImage = sample ? cartAttribute(line.attributes, "_Product Image") : "";
+                const image = line.merchandise.image?.url || sampleImage;
                 return (
-                  <article className={`${styles.item} ${!line.merchandise.image ? styles.itemNoImage : ""}`} key={line.id}>
-                    {line.merchandise.image && (
+                  <article className={`${styles.item} ${!image ? styles.itemNoImage : ""}`} key={line.id}>
+                    {image && (
                       <Link className={styles.image} href={`/products/${line.merchandise.product.handle}`}>
                         <Image
-                          src={line.merchandise.image.url}
-                          alt={line.merchandise.image.altText || line.merchandise.product.title}
+                          src={image}
+                          alt={line.merchandise.image?.altText || sampleDisplayTitle(line.attributes)}
                           fill
                           quality={95}
                           sizes="(max-width: 640px) 112px, 170px"
@@ -167,7 +167,7 @@ export function CartPage() {
                     <div className={styles.itemDetails}>
                       <div className={styles.itemTop}>
                         <div>
-                          {sample ? <><h3 className={styles.sampleTitle}>{line.merchandise.product.title}</h3>{sampleOptionAttributes(line).length > 0 && <dl className={styles.sampleOptions}>{sampleOptionAttributes(line).map((attribute) => <div key={attribute.key}><dt>{sampleAttributeLabel(attribute.key)}:</dt><dd>{formatCartAttributeValue(attribute.key, attribute.value)}</dd></div>)}</dl>}</> : <Link href={`/products/${line.merchandise.product.handle}`}><h3>{line.merchandise.product.title}</h3></Link>}
+                          {sample ? <><h3>{sampleDisplayTitle(line.attributes)}</h3><p>{sampleVariantTitle(line.attributes)}</p></> : <Link href={`/products/${line.merchandise.product.handle}`}><h3>{line.merchandise.product.title}</h3></Link>}
                           {!sample && line.merchandise.title !== "Default Title" && <p>{formatCartVariantTitle(line.merchandise.selectedOptions, line.merchandise.title)}</p>}
                         </div>
                         <button
