@@ -95,25 +95,13 @@ export default async function Home() {
       {sections.map((section, index) => {
         const key = section._key || index;
         if (section._type === "hero") {
-          const mobileImage = section.mobileContent?.image || section.image;
           return (
             <section
               key={key}
               className="home-hero relative flex min-h-[600px] items-end text-white md:aspect-[2/1] md:min-h-0 md:max-h-[820px]"
             >
-              {mobileImage && (
-                <Image
-                  src={sanityImageUrl(mobileImage, 2400)}
-                  alt={section.mobileContent?.heading || section.heading || "Ivory Muse silk fabric"}
-                  fill
-                  priority
-                  quality={95}
-                  className="home-hero-media object-cover md:hidden"
-                  sizes="100vw"
-                />
-              )}
               <video
-                className={`home-hero-media absolute inset-0 h-full w-full object-cover ${section.image ? "hidden md:block" : ""}`}
+                className="home-hero-media absolute inset-0 h-full w-full object-cover"
                 autoPlay
                 muted
                 loop
