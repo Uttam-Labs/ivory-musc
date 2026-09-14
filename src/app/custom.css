@@ -1144,6 +1144,14 @@ a {
         padding: .65rem .7rem;
         font-size: clamp(.75rem, 2.15vw, .88rem);
     }
+
+    .silk-guide-page .standard-page-hero {
+        align-items: flex-end !important;
+    }
+
+    .silk-guide-page .standard-page-hero > div:last-child {
+        padding-bottom: 2.4rem !important;
+    }
 }
 /* End shared internal-page presentation */
 
