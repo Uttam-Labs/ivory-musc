@@ -2,6 +2,7 @@ import type { SanityImageSource } from "@sanity/image-url";
 import Image from "next/image";
 import Link from "next/link";
 import { CollectionSlider } from "@/components/collection-slider";
+import { HeroLoopVideo } from "@/components/hero-loop-video";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { MobileRevealSection } from "@/components/mobile-reveal-section";
 import { isSanityConfigured, isShopifyConfigured } from "@/lib/env";
@@ -100,19 +101,9 @@ export default async function Home() {
               key={key}
               className="home-hero relative flex min-h-[600px] items-end text-white md:aspect-[2/1] md:min-h-0 md:max-h-[820px]"
             >
-              <video
+              <HeroLoopVideo
                 className="home-hero-media absolute inset-0 h-full w-full object-cover"
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="auto"
-                poster="/media/ivory-muse-hero-poster.webp"
-                aria-hidden="true"
-              >
-                <source src="/media/ivory-muse-hero.webm" type="video/webm" />
-                <source src="/media/ivory-muse-hero.mp4" type="video/mp4" />
-              </video>
+              />
               <div className="absolute inset-0 bg-black/15" />
               <div className="home-hero-content relative mx-auto w-full max-w-[1920] px-6 sm:px-12 xl:px-24 pb-16 md:pb-20 lg:pb-36">
                 <div className="home-hero__content-wrap w-full md:w-4/5 xl:w-1/2">
