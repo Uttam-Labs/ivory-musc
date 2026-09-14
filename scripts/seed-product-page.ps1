@@ -34,7 +34,7 @@ $document = @{
     @{
       _key = "related-products"
       _type = "relatedProductsSettings"
-      heading = "RELATED PRODUCTS"
+      heading = "CURATED SELECTION"
       productLimit = 4
     }
   )

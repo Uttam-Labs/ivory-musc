@@ -32,5 +32,5 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         Number(right.priceRange.minVariantPrice.amount),
     )
     .slice(0, relatedSettings?.productLimit || 4);
-  return <ProductDetails product={product} sampleProduct={sampleProduct} initialSelection={initialSelection} settings={detailSettings} relatedHeading={relatedSettings?.heading} relatedProducts={relatedProducts} />;
+  return <ProductDetails product={product} sampleProduct={sampleProduct} initialSelection={initialSelection} settings={detailSettings} relatedHeading={relatedSettings?.heading?.trim() || "CURATED SELECTION"} relatedProducts={relatedProducts} />;
 }

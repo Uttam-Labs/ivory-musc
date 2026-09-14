@@ -54,10 +54,10 @@ export const productPage = defineType({
           title: "Related products settings",
           type: "object",
           fields: [
-            defineField({ name: "heading", title: "Heading", type: "string" }),
+            defineField({ name: "heading", title: "Heading", type: "string", initialValue: "CURATED SELECTION" }),
             defineField({ name: "productLimit", title: "Number of products", type: "number", initialValue: 4, validation: (rule) => rule.min(1).max(8).integer() }),
           ],
-          preview: { select: { title: "heading" }, prepare: ({ title }) => ({ title: title || "Related products", subtitle: "Shopify recommendations" }) },
+          preview: { select: { title: "heading" }, prepare: ({ title }) => ({ title: title || "Curated selection", subtitle: "Shopify recommendations" }) },
         }),
       ],
     }),

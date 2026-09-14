@@ -20,6 +20,7 @@ function formatWidth(value?: string) {
   if (/55\s*["″]/i.test(value)) return "140 CM";
   return value.replace(/\bcm\b/gi, "CM");
 }
+function isWidthOption(name: string) { return /width/i.test(name); }
 function getCompatibleOptionValues(option: ProductOption, optionIndex: number, options: ProductOption[], variants: ProductVariant[], selected: Record<string, string>) {
   const parentOptions = options.slice(0, optionIndex);
   return option.optionValues.filter((value) => variants.some((candidate) =>
@@ -145,10 +146,17 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
     if (!sampleVariant || sampleAction === "loading") return;
     setSampleAction("loading");
     try {
-      const selectedVariantAttributes = (variant?.selectedOptions || [])
-        .filter((option) => option.name !== "Title")
-        .slice(0, 8)
+      const selectedOptions = variant?.selectedOptions || [];
+      const selectedVariantAttributes = selectedOptions
+        .filter((option) => option.name !== "Title" && !isWidthOption(option.name))
+        .slice(0, 7)
         .map((option) => ({ key: option.name, value: option.value }));
+      const selectedWidth = selectedOptions.find((option) => isWidthOption(option.name))?.value;
+      const sampleWidth = formatWidth(
+        selectedWidth && /\bcm\b/i.test(selectedWidth)
+          ? selectedWidth
+          : product.fabricWidth?.value,
+      );
       const response = await fetch("/api/cart", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -160,6 +168,7 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
             { key: "type", value: "sample" },
             { key: "Main Product", value: product.title },
             ...selectedVariantAttributes,
+            ...(sampleWidth ? [{ key: "Width", value: sampleWidth }] : []),
           ],
         }),
       });

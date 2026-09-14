@@ -846,6 +846,7 @@
 
 /* Keep the Silk Guide hero typography identical to the homepage hero. */
 .heroContent h1{
+  font-family:var(--secondary-font,"Times New Roman",Times,serif);
   font-size:clamp(2.4rem,1.9vw,3.4rem);
   font-weight:400;
   line-height:1.05;
