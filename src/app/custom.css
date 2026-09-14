@@ -753,10 +753,9 @@ a {
 
 .mobile-newsletter-popup__dialog {
   position: relative;
-  display: flex;
+  display: block;
   width: min(100%, 410px);
-  min-height: min(680px, calc(100dvh - 32px));
-  align-items: flex-end;
+  min-height: 0;
   max-height: calc(100dvh - 32px);
   overflow-y: auto;
   border: 1px solid rgb(155 80 74 / 24%);
@@ -804,8 +803,8 @@ a {
   position: relative;
   z-index: 1;
   width: 100%;
-  margin-top: 210px;
-  padding: 36px 26px 28px;
+  margin-top: 0;
+  padding: 72px 26px 28px;
   color: #fff;
 }
 
@@ -940,12 +939,12 @@ a {
     padding: 14px;
   }
   .mobile-newsletter-popup__dialog {
-    min-height: min(620px, calc(100dvh - 28px));
+    min-height: 0;
     max-height: calc(100dvh - 28px);
   }
   .mobile-newsletter-popup__content {
-    margin-top: 180px;
-    padding: 30px 22px 24px;
+    margin-top: 0;
+    padding: 68px 22px 24px;
   }
   .mobile-newsletter-popup__dialog h2 {
     font-size: 30px;
