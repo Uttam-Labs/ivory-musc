@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { formatMoney } from "@/lib/format";
 import { normalizeShopHref } from "@/lib/navigation";
-import { formatCartAttributeValue, formatCartVariantTitle } from "@/lib/shopify/cart-display";
+import { cartVariantDetails, formatCartAttributeValue } from "@/lib/shopify/cart-display";
 import type { Cart, Product } from "@/lib/shopify/types";
 import { AccountIcon, CartIcon, SearchIcon } from "./header-icons";
 
@@ -687,9 +687,14 @@ export function Header({
                         </button>
                       </div>
                       {!isSampleLine(line) && line.merchandise.title !== "Default Title" && (
-                        <p className="mt-2 text-[14px] leading-snug text-stone-500">
-                          {formatCartVariantTitle(line.merchandise.selectedOptions, line.merchandise.title)}
-                        </p>
+                        <dl className="mt-2 grid gap-1">
+                          {cartVariantDetails(line.merchandise.selectedOptions, line.merchandise.title).map((detail) => (
+                            <div key={detail.key} className="grid grid-cols-[auto_1fr] items-baseline gap-1 text-[12px] leading-relaxed">
+                              <dt className="text-stone-500">{detail.key}:</dt>
+                              <dd className="m-0 text-stone-600">{detail.value}</dd>
+                            </div>
+                          ))}
+                        </dl>
                       )}
                       {isSampleLine(line) ? <p className="mt-4 text-[12px] leading-relaxed text-stone-600">Quantity: 1</p> : <div className="mt-4 flex h-[38px] w-[126px] items-center border border-stone-300 bg-white/50">
                         <button
