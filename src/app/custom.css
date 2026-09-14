@@ -937,12 +937,13 @@ a {
     position: relative;
     width: 100%;
     min-height: 600px !important;
-    align-items: flex-end !important;
+    align-items: center !important;
 }
 
 .standard-page-hero .home-hero-content,
 .silk-guide-page .standard-page-hero > div:last-child {
-    padding-bottom: 4rem;
+    padding-top: 0;
+    padding-bottom: 0;
     text-align: left;
 }
 
@@ -978,10 +979,6 @@ a {
         aspect-ratio: 2 / 1;
     }
 
-    .standard-page-hero .home-hero-content,
-    .silk-guide-page .standard-page-hero > div:last-child {
-        padding-bottom: clamp(5rem, 7.1vw, 13.6rem);
-    }
 }
 
 @media (max-width: 640px) {
@@ -998,7 +995,7 @@ a {
         flex-direction: column;
         align-items: center;
         padding-right: 1.5rem;
-        padding-bottom: 2.4rem !important;
+        padding-bottom: 0 !important;
         padding-left: 1.5rem;
         text-align: center;
     }
