@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 
 export function HeroLoopVideo({ className }: { className?: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -45,21 +47,31 @@ export function HeroLoopVideo({ className }: { className?: string }) {
   }, []);
 
   return (
-    <video
-      ref={videoRef}
-      className={className}
-      autoPlay
-      muted
-      loop
-      playsInline
-      preload="auto"
-      poster="/media/ivory-muse-hero-poster.webp"
-      controls={false}
-      disablePictureInPicture
-      aria-hidden="true"
-    >
-      <source src="/media/ivory-muse-hero.webm" type="video/webm" />
-      <source src="/media/ivory-muse-hero.mp4" type="video/mp4" />
-    </video>
+    <div className={className} aria-hidden="true">
+      <Image
+        src="/media/ivory-muse-hero-poster.webp"
+        alt=""
+        fill
+        priority
+        quality={95}
+        sizes="100vw"
+        className="object-cover"
+      />
+      <video
+        ref={videoRef}
+        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${playing ? "opacity-100" : "opacity-0"}`}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        controls={false}
+        disablePictureInPicture
+        onPlaying={() => setPlaying(true)}
+      >
+        <source src="/media/ivory-muse-hero.webm" type="video/webm" />
+        <source src="/media/ivory-muse-hero.mp4" type="video/mp4" />
+      </video>
+    </div>
   );
 }
