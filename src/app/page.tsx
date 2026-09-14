@@ -112,15 +112,19 @@ export default async function Home() {
                   sizes="100vw"
                 />
               )}
-              <Image
-                src="/media/ivory-muse-hero.gif"
-                alt={section.heading || "Ivory Muse silk fabric"}
-                fill
-                priority={!section.image}
-                unoptimized
-                className={`home-hero-media object-cover ${section.image ? "hidden md:block" : ""}`}
-                sizes="100vw"
-              />
+              <video
+                className={`home-hero-media absolute inset-0 h-full w-full object-cover ${section.image ? "hidden md:block" : ""}`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+                poster="/media/ivory-muse-hero-poster.webp"
+                aria-hidden="true"
+              >
+                <source src="/media/ivory-muse-hero.webm" type="video/webm" />
+                <source src="/media/ivory-muse-hero.mp4" type="video/mp4" />
+              </video>
               <div className="absolute inset-0 bg-black/15" />
               <div className="home-hero-content relative mx-auto w-full max-w-[1920] px-6 sm:px-12 xl:px-24 pb-16 md:pb-20 lg:pb-36">
                 <div className="home-hero__content-wrap w-full md:w-4/5 xl:w-1/2">
