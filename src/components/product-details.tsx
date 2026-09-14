@@ -225,8 +225,8 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
           {sampleAction === "error" && <p className={styles.unavailable}>This sample is already in your cart, or the 10-sample limit has been reached.</p>}
           {sampleProduct && <div className={styles.sampleInformation}>
             <h2>{settings?.sampleDetailsHeading || "Sample details"}</h2>
-            <p><strong>{formatMoney(sampleVariant?.price || sampleProduct.priceRange.minVariantPrice)}</strong> {settings?.sampleShippingNote || "per sample, excluding shipping"}</p>
-            <p>{settings?.sampleSizeText || "Sample size: 10 CM × 15 CM"}</p>
+            <p>Sample size is 10cm x 15cm</p>
+            <p><strong>$3 AUD</strong> per sample, excluding shipping</p>
           </div>}
           {specifications.length > 0 && <div className={`${styles.specifications} product-details__specifications`}>{settings?.specificationsHeading && <h2>{settings.specificationsHeading}</h2>}{specifications.map(([label, value]) => <div className="spec" key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>}
         </div>

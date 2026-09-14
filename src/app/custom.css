@@ -738,6 +738,85 @@ a {
 
 /* End newsletter */
 
+/* Mobile mailing list pop-up */
+.mobile-newsletter-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 190;
+  display: none;
+  place-items: center;
+  padding: 20px;
+  background: rgb(35 27 23 / 52%);
+  backdrop-filter: blur(3px);
+  animation: newsletterBackdropIn 220ms ease both;
+}
+
+.mobile-newsletter-popup__dialog {
+  position: relative;
+  width: min(100%, 410px);
+  border: 1px solid rgb(155 80 74 / 24%);
+  background: #fff9f3;
+  padding: 46px 28px 34px;
+  box-shadow: 0 24px 70px rgb(38 26 20 / 24%);
+  text-align: center;
+  animation: newsletterDialogIn 320ms cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.mobile-newsletter-popup__close {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #6d625d;
+  cursor: pointer;
+}
+
+.mobile-newsletter-popup__eyebrow {
+  margin: 0 0 12px;
+  color: var(--accent);
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+
+.mobile-newsletter-popup__dialog h2 {
+  margin: 0;
+  color: var(--accent);
+  font-family: var(--secondary-font, serif);
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.mobile-newsletter-popup__body {
+  margin: 18px auto 0;
+  color: #6f6762;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.mobile-newsletter-popup .newsletter-form__wrapper { margin-top: 24px; }
+.mobile-newsletter-popup .newsletter-button { min-width: 118px; }
+
+@keyframes newsletterBackdropIn { from { opacity: 0; } }
+@keyframes newsletterDialogIn { from { opacity: 0; transform: translateY(16px) scale(.985); } }
+
+@media (max-width: 767px) {
+  .mobile-newsletter-popup { display: grid; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-newsletter-popup,
+  .mobile-newsletter-popup__dialog { animation: none; }
+}
+/* End mobile mailing list pop-up */
+
 /* Start Footer */
 .footer {
     font-size: var(--button-font-size);

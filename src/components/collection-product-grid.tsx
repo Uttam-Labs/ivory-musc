@@ -229,7 +229,7 @@ function ProductQuickView({
             </div>
             <div className={styles.productInfo}>
               <p className={styles.eyebrow}>IVORY MUSE · SILK COLLECTION</p>
-              <h2>{product.title}</h2>
+              <h2>{product.title.toLocaleUpperCase("en-AU")}</h2>
               {product.description && <p className={styles.description}>{product.description}</p>}
               <div className={styles.priceRow}>
                 <strong>{variant ? formatMoney(variant.price) : formatMoney(product.priceRange.minVariantPrice)}</strong>
@@ -334,7 +334,7 @@ export function CollectionProductGrid({ products }: { products: Product[] }) {
                 </button>
               </div>
               <div className={styles.cardContent}>
-                <h2><Link href={`/products/${product.handle}`}>{product.title}</Link></h2>
+                <h2><Link href={`/products/${product.handle}`}>{product.title.toLocaleUpperCase("en-AU")}</Link></h2>
                 {specialTag && <p>{specialTag}</p>}
                 <strong>{formatMoney(product.priceRange.minVariantPrice)} <small>per metre</small></strong>
               </div>

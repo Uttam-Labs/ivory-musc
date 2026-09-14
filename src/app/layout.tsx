@@ -9,12 +9,14 @@ import "./responsive.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { GlobalLoader } from "@/components/global-loader";
+import { MobileNewsletterPopup } from "@/components/mobile-newsletter-popup";
 import { env } from "@/lib/env";
 import { isSanityConfigured } from "@/lib/env";
 import { sanityFetch } from "@/sanity/lib/client";
 import {
   FOOTER_SETTINGS_QUERY,
   HEADER_SETTINGS_QUERY,
+  NEWSLETTER_POPUP_QUERY,
   SITE_SETTINGS_QUERY,
 } from "@/sanity/lib/queries";
 import { sanityImageUrl } from "@/sanity/lib/image";
@@ -145,11 +147,18 @@ type FooterData = {
   }>;
   copyright?: string;
 } | null;
+type NewsletterPopupData = {
+  heading?: string;
+  body?: string;
+  emailPlaceholder?: string;
+  submitLabel?: string;
+} | null;
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [settings, header, footer] = await Promise.all([
+  const [settings, header, footer, newsletterPopup] = await Promise.all([
     isSanityConfigured ? getDefaultSettings() : null,
     isSanityConfigured ? sanityFetch<HeaderData>(HEADER_SETTINGS_QUERY) : null,
     isSanityConfigured ? sanityFetch<FooterData>(FOOTER_SETTINGS_QUERY) : null,
+    isSanityConfigured ? sanityFetch<NewsletterPopupData>(NEWSLETTER_POPUP_QUERY) : null,
   ]);
   const headerLogoUrl = header?.logo
     ? sanityImageUrl(header.logo, 640)
@@ -275,6 +284,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           cartHref={header?.cartHref}
         />
         {children}
+        <MobileNewsletterPopup
+          heading={newsletterPopup?.heading}
+          body={newsletterPopup?.body}
+          emailPlaceholder={newsletterPopup?.emailPlaceholder}
+          submitLabel={newsletterPopup?.submitLabel}
+        />
         <Footer
           contactHeading={footer?.contactHeading}
           email={footer?.contactEmail}

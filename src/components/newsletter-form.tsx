@@ -1,11 +1,14 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useId, useState } from "react";
 
-export function NewsletterForm({ placeholder, submitLabel }: { placeholder?: string; submitLabel?: string }) {
+export const NEWSLETTER_SUBSCRIBED_KEY = "ivory-muse-newsletter-subscribed";
+
+export function NewsletterForm({ placeholder, submitLabel, onSuccess }: { placeholder?: string; submitLabel?: string; onSuccess?: () => void }) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
+  const inputId = useId();
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -22,6 +25,12 @@ export function NewsletterForm({ placeholder, submitLabel }: { placeholder?: str
       if (!response.ok) throw new Error(payload.error || "Subscription failed.");
       setStatus("success");
       setMessage(payload.alreadySubscribed ? "You are already subscribed." : "Thank you for subscribing.");
+      try {
+        window.localStorage.setItem(NEWSLETTER_SUBSCRIBED_KEY, "true");
+      } catch {
+        // The subscription still succeeded if browser storage is unavailable.
+      }
+      onSuccess?.();
       setEmail("");
     } catch (error) {
       setStatus("error");
@@ -32,9 +41,9 @@ export function NewsletterForm({ placeholder, submitLabel }: { placeholder?: str
   return (
     <div className="newsletter-form__wrapper mt-8 w-full max-w-[100%]">
       <form onSubmit={submit} className="flex items-stretch border-b border-[var(--accent)]/60 pb-3">
-        <label htmlFor="newsletter-email" className="sr-only">Email address</label>
+        <label htmlFor={inputId} className="sr-only">Email address</label>
         <input
-          id="newsletter-email"
+          id={inputId}
           name="email"
           type="email"
           autoComplete="email"
