@@ -13,7 +13,10 @@ const CART_KEY = "shopify-cart-id";
 const CHECKOUT_CART_KEY = "shopify-checkout-cart-id";
 type CartLine = Cart["lines"]["nodes"][number];
 const isSampleLine = (line: CartLine) => line.attributes.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample");
-const sampleOptionAttributes = (line: CartLine) => line.attributes.filter((attribute) => Boolean(attribute.value.trim()));
+const sampleOptionAttributes = (line: CartLine) => [
+  ...line.attributes.filter((attribute) => Boolean(attribute.value.trim()) && attribute.key.toLowerCase() !== "width" && attribute.key.toLowerCase() !== "sample size"),
+  { key: "Sample size", value: "10cm x 15cm" },
+];
 const sampleAttributeLabel = (key: string) => key.charAt(0).toUpperCase() + key.slice(1);
 
 export function CartPage() {

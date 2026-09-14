@@ -151,12 +151,6 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
         .filter((option) => option.name !== "Title" && !isWidthOption(option.name))
         .slice(0, 7)
         .map((option) => ({ key: option.name, value: option.value }));
-      const selectedWidth = selectedOptions.find((option) => isWidthOption(option.name))?.value;
-      const sampleWidth = formatWidth(
-        selectedWidth && /\bcm\b/i.test(selectedWidth)
-          ? selectedWidth
-          : product.fabricWidth?.value,
-      );
       const response = await fetch("/api/cart", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -168,7 +162,7 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
             { key: "type", value: "sample" },
             { key: "Main Product", value: product.title },
             ...selectedVariantAttributes,
-            ...(sampleWidth ? [{ key: "Width", value: sampleWidth }] : []),
+            { key: "Sample size", value: "10cm x 15cm" },
           ],
         }),
       });
