@@ -32,27 +32,27 @@ const characteristics = keyed([
 ], "characteristic");
 
 const fabricRows = [
-  ["Mulberry Silk Satin","Smooth, luminous and beautifully fluid.","An elegant sheen and graceful drape create a refined, flowing silhouette.","Smooth · Luminous · Fluid","Dresses, gowns, skirts, blouses and eveningwear."],
-  ["Crepe Satin","Fluid and elegant with a refined finish.","A lustrous face and softly textured reverse offer versatility.","Fluid · Refined · Softly lustrous","Dresses, gowns, skirts, blouses and eveningwear."],
-  ["Stretch Silk Satin","Satin lustre with added flexibility.","Suited to movement, comfort and a closer fit.","Smooth · Fluid · Flexible","Fitted dresses, bias silhouettes, skirts and blouses."],
-  ["Duchess Satin","Substantial, smooth and structured.","Its greater body creates defined silhouettes that hold shape.","Smooth · Substantial · Structured","Structured gowns, formalwear, corsetry and statement pieces."],
-  ["Dupion Silk","Distinctive, crisp and naturally textural.","Its signature surface and structured character hold shape beautifully.","Crisp · Textured · Structured","Dresses, gowns, skirts, jackets and decorative applications."],
-  ["Habotai","Light, smooth and beautifully soft.","A delicate hand and lightweight drape without unnecessary weight.","Lightweight · Smooth · Soft","Linings, lightweight garments, scarves and layering."],
-  ["Organza","Sheer, crisp and remarkably structured.","Creates volume without heaviness for layered and sculptural designs.","Sheer · Crisp · Structured","Overlays, sleeves, volume and structured gowns."],
-  ["Georgette","Lightweight, softly textured and fluid.","Graceful movement balances softness, texture and transparency.","Lightweight · Textured · Flowing","Dresses, skirts, blouses, sleeves and overlays."],
-  ["Satin Chiffon","Delicate, flowing and softly luminous.","Airy chiffon movement meets a refined surface lustre.","Lightweight · Flowing · Softly lustrous","Dresses, overlays, sleeves, scarves and layers."],
-  ["Crinkle Chiffon","Airy, textured and full of movement.","A crinkled surface adds dimension while remaining light and flowing.","Lightweight · Textured · Flowing","Dresses, skirts, sleeves, overlays and layers."],
-  ["Silk Mesh","Sheer and delicate with an open construction.","Introduces transparency and texture alone or when layered.","Sheer · Lightweight · Delicate","Panels, sleeves, overlays and design details."],
+  ["MULBERRY SATIN","Smooth, luminous and beautifully fluid.","An elegant sheen and graceful drape create a refined, flowing silhouette.","Smooth · Luminous · Fluid","Dresses, gowns, skirts, blouses and eveningwear."],
+  ["SILK CREPE","Fluid and elegant with a refined finish.","A lustrous face and softly textured reverse offer versatility.","Fluid · Refined · Softly lustrous","Dresses, gowns, skirts, blouses and eveningwear."],
+  ["LUMIERE STRETCH SATIN","Satin lustre with added flexibility.","Suited to movement, comfort and a closer fit.","Smooth · Fluid · Flexible","Fitted dresses, bias silhouettes, skirts and blouses."],
+  ["COUTURE DUCHESS","Substantial, smooth and structured.","Its greater body creates defined silhouettes that hold shape.","Smooth · Substantial · Structured","Structured gowns, formalwear, corsetry and statement pieces."],
+  ["SILK DUPIONI","Distinctive, crisp and naturally textural.","Its signature surface and structured character hold shape beautifully.","Crisp · Textured · Structured","Dresses, gowns, skirts, jackets and decorative applications."],
+  ["FINE SILK","Light, smooth and beautifully soft.","A delicate hand and lightweight drape without unnecessary weight.","Lightweight · Smooth · Soft","Linings, lightweight garments, scarves and layering."],
+  ["HAUTE ORGANZA","Sheer, crisp and remarkably structured.","Creates volume without heaviness for layered and sculptural designs.","Sheer · Crisp · Structured","Overlays, sleeves, volume and structured gowns."],
+  ["SILK GEORGETTE","Lightweight, softly textured and fluid.","Graceful movement balances softness, texture and transparency.","Lightweight · Textured · Flowing","Dresses, skirts, blouses, sleeves and overlays."],
+  ["TEXTURED CHIFFON","Delicate, flowing and softly luminous.","Airy chiffon movement meets a refined surface lustre.","Lightweight · Flowing · Softly lustrous","Dresses, overlays, sleeves, scarves and layers."],
+  ["SOI CHIFFON","Airy, textured and full of movement.","A crinkled surface adds dimension while remaining light and flowing.","Lightweight · Textured · Flowing","Dresses, skirts, sleeves, overlays and layers."],
+  ["SILK MIST","Sheer and delicate with an open construction.","Introduces transparency and texture alone or when layered.","Sheer · Lightweight · Delicate","Panels, sleeves, overlays and design details."],
   ["Silk Midako","A distinctive Ivory Muse silk.","Refer to its product page for exact composition, finish and characteristics.","Product-specific","Uses depend on the individual fabric specification."],
 ];
 const fabrics = keyed(fabricRows.map(([title, tagline, body, character, considerFor]) => ({ title, tagline, body, character, considerFor })), "fabric");
 const finderCards = keyed([
-  { title: "Fluidity & Movement", body: "These fabrics are suited to designs where graceful movement and drape are central to the silhouette.", fabrics: ["Mulberry Silk Satin", "Crepe Satin", "Stretch Silk Satin"] },
-  { title: "Structure & Shape", body: "These fabrics offer greater body and are suited to designs requiring definition, volume or structure.", fabrics: ["Duchess Satin", "Dupion Silk", "Organza"] },
-  { title: "Light & Delicate", body: "Consider these when softness and lightness are important to your design.", fabrics: ["Habotai", "Georgette"] },
-  { title: "Sheer & Flowing", body: "These fabrics can introduce softness, transparency and movement, particularly when layered.", fabrics: ["Georgette", "Satin Chiffon", "Crinkle Chiffon"] },
-  { title: "Sheer Structure", body: "Organza offers the unusual combination of transparency and structure, making it particularly suited to sculptural and layered designs.", fabrics: ["Organza"] },
-  { title: "Texture", body: "Texture can introduce depth and visual interest without relying solely on colour or print.", fabrics: ["Dupion Silk", "Georgette", "Crinkle Chiffon", "Silk Mesh"] },
+  { title: "Fluidity & Movement", body: "These fabrics are suited to designs where graceful movement and drape are central to the silhouette.", fabrics: ["MULBERRY SATIN", "SILK CREPE", "LUMIERE STRETCH SATIN"] },
+  { title: "Structure & Shape", body: "These fabrics offer greater body and are suited to designs requiring definition, volume or structure.", fabrics: ["COUTURE DUCHESS", "SILK DUPIONI", "HAUTE ORGANZA"] },
+  { title: "Light & Delicate", body: "Consider these when softness and lightness are important to your design.", fabrics: ["FINE SILK", "SILK GEORGETTE"] },
+  { title: "Sheer & Flowing", body: "These fabrics can introduce softness, transparency and movement, particularly when layered.", fabrics: ["SILK GEORGETTE", "TEXTURED CHIFFON", "SOI CHIFFON"] },
+  { title: "Sheer Structure", body: "HAUTE ORGANZA offers the unusual combination of transparency and structure, making it particularly suited to sculptural and layered designs.", fabrics: ["HAUTE ORGANZA"] },
+  { title: "Texture", body: "Texture can introduce depth and visual interest without relying solely on colour or print.", fabrics: ["SILK DUPIONI", "SILK GEORGETTE", "SOI CHIFFON", "SILK MIST"] },
 ], "finder");
 const guideSections = keyed([
   { navigationLabel:"Choosing Your Silk", heading:"Choosing Your Silk", body:"Start With Your Design\n\nThink first about how you want the finished piece to behave.", bullets:["Do you want it to fall softly against the body?","Do you want the fabric to hold volume?","Should it feel light and sheer?","Do you want a luminous surface or something understated?"], closingText:"These questions will help narrow your selection.", notes:keyed([{eyebrow:"Step 1",title:"Review the Product Details",body:"Each Ivory Muse product page should be consulted for the specific characteristics of the fabric, including its composition, width, weight or momme where applicable, finish and care information."},{eyebrow:"Step 2",title:"Consider a Swatch",body:"Fabric is tactile, and viewing silk on a screen cannot completely replicate experiencing it in person. Where available, we recommend ordering a swatch when colour, texture, weight, transparency or drape is particularly important to your project.\n\nA swatch allows you to experience the fabric before committing to a larger quantity."}],"choosing-note") },

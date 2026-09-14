@@ -99,7 +99,7 @@ We take care when preparing and packaging each order.
 
 ### Products
 
-Once your order has been dispatched, delivery is estimated to take approximately **2–6 business days for standard shipping** and approximately **1-3 business days for express shipping**.
+Once your order has been dispatched, delivery is estimated to take approximately **2 to 6 business days for standard shipping** and approximately **1-3 business days for express shipping**.
 
 This depends on your location.
 
@@ -107,9 +107,9 @@ Delivery timeframes are estimates and may vary during peak periods, public holid
 
 ### Samples
 
-Standard sample shipping takes approximately **2–6 business days**.
+Standard sample shipping takes approximately **2 to 6 business days**.
 
-Express sample shipping takes approximately **1–3 business days**.
+Express sample shipping takes approximately **1 to 3 business days**.
 
 ## Order Processing
 
@@ -246,14 +246,14 @@ Please read this Privacy Policy carefully so you understand how your personal in
 
 The personal information we collect will depend on how you interact with Ivory Muse and may include:
 
-- **Contact details** — including your name, email address, phone number, billing address and delivery address.
-- **Order and transaction information** — including products you view, add to your cart or purchase, your order history, returns, cancellations and transaction details.
-- **Payment information** — including information required to process your payment. Payments are processed through the payment services available through our website.
-- **Account information** — including account details, preferences and settings where customer accounts are available.
-- **Communications with us** — including information you provide when contacting us about an order, product or other enquiry.
-- **Marketing preferences** — including whether you have joined our mailing list or chosen to receive marketing communications.
-- **Device information** — including information about your device, browser, network connection, IP address and similar identifiers.
-- **Website usage information** — including information about how you browse, navigate and interact with our website.
+- **Contact details**: including your name, email address, phone number, billing address and delivery address.
+- **Order and transaction information**: including products you view, add to your cart or purchase, your order history, returns, cancellations and transaction details.
+- **Payment information**: including information required to process your payment. Payments are processed through the payment services available through our website.
+- **Account information**: including account details, preferences and settings where customer accounts are available.
+- **Communications with us**: including information you provide when contacting us about an order, product or other enquiry.
+- **Marketing preferences**: including whether you have joined our mailing list or chosen to receive marketing communications.
+- **Device information**: including information about your device, browser, network connection, IP address and similar identifiers.
+- **Website usage information**: including information about how you browse, navigate and interact with our website.
 
 ## How We Collect Personal Information
 

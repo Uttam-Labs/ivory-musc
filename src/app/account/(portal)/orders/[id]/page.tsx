@@ -32,7 +32,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
   ]);
   const customer = orderResult?.customer;
   if (!customer) {
-    return <AccountDataError href={`/account/orders/${id}`} title="We couldn’t load this order" message="The order details are temporarily unavailable. Your account is still signed in—please try again." />;
+    return <AccountDataError href={`/account/orders/${id}`} title="We couldn’t load this order" message="The order details are temporarily unavailable. Your account is still signed in. Please try again." />;
   }
   const order = customer.orders.nodes.find((item) => item.id === gid);
   if (!order) notFound();

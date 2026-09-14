@@ -1,4 +1,4 @@
-# Ivory Muse — Headless Shopify
+# Ivory Muse: Headless Shopify
 
 Production-oriented storefront foundation using Next.js App Router, Shopify Storefront API, Sanity and TypeScript.
 
@@ -17,13 +17,13 @@ Production-oriented storefront foundation using Next.js App Router, Shopify Stor
 
 ## Route map
 
-- `/` — Sanity-led home with Shopify products
+- `/`: Sanity-led home with Shopify products
 - `/collections` and `/collections/[handle]`
 - `/products/[handle]`
 - `/search?q=...`
-- `/[slug]` — Sanity editorial pages
-- `/studio` — embedded Sanity Studio
-- `/api/cart` — server-side Shopify cart mutation proxy
+- `/[slug]`: Sanity editorial pages
+- `/studio`: embedded Sanity Studio
+- `/api/cart`: server-side Shopify cart mutation proxy
 
 Run `npm run check` before deployment. Deploy comfortably to Vercel or any Node.js host supported by Next.js.
 

@@ -65,7 +65,7 @@ export default async function AddressesPage({
         <AccountDataError
           href="/account/addresses"
           title="We couldn’t load your addresses"
-          message="Your saved addresses are temporarily unavailable. Your account is still signed in—please try again."
+          message="Your saved addresses are temporarily unavailable. Your account is still signed in. Please try again."
         />
       </>
     );

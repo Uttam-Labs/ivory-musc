@@ -105,7 +105,7 @@ export default async function ProfilePage({
         <AccountDataError
           href="/account/profile"
           title="We couldn’t load your profile"
-          message="Your personal details are temporarily unavailable. Your account is still signed in—please try again."
+          message="Your personal details are temporarily unavailable. Your account is still signed in. Please try again."
         />
       </>
     );

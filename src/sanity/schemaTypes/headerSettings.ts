@@ -9,7 +9,7 @@ export const headerSettings = defineType({
     defineField({ name: "logo", title: "Logo", type: "image", options: { hotspot: true } }),
     defineField({
       name: "logoSizeDesktop",
-      title: "Logo size — desktop",
+      title: "Logo size (desktop)",
       description: "Figma base size 92 × 86px-এর percentage. Recommended: 100%.",
       type: "number",
       initialValue: 100,
@@ -17,7 +17,7 @@ export const headerSettings = defineType({
     }),
     defineField({
       name: "logoSizeMobile",
-      title: "Logo size — mobile",
+      title: "Logo size (mobile)",
       description: "Figma base size 92 × 86px-এর percentage. Recommended: 90%.",
       type: "number",
       initialValue: 100,

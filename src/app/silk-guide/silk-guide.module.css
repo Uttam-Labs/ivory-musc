@@ -51,7 +51,7 @@
 @media(max-width:900px){.deepGuide{grid-template-columns:1fr;gap:2.4rem;padding-inline:3rem}.guideNav{gap:.9rem}.guideContent>.notes{margin-top:2.5rem}}
 @media(max-width:600px){.deepGuide{padding:5.5rem 2rem 6rem}.guideContent h2{font-size:1.9rem}}
 
-/* Figma node 1706:2 — desktop typography, colour and spacing */
+/* Figma node 1706:2: desktop typography, colour and spacing */
 .page{
   --surface:#fff5ea;
   background:#fff9f3;

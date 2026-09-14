@@ -5,6 +5,7 @@ import Link from "next/link";
 import { LoaderCircle, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { formatMoney } from "@/lib/format";
+import { formatCartAttributeValue, formatCartVariantTitle } from "@/lib/shopify/cart-display";
 import type { Cart } from "@/lib/shopify/types";
 import styles from "./cart.module.css";
 
@@ -166,8 +167,8 @@ export function CartPage() {
                     <div className={styles.itemDetails}>
                       <div className={styles.itemTop}>
                         <div>
-                          {sample ? <><h3 className={styles.sampleTitle}>{line.merchandise.product.title}</h3>{sampleOptionAttributes(line).length > 0 && <dl className={styles.sampleOptions}>{sampleOptionAttributes(line).map((attribute) => <div key={attribute.key}><dt>{sampleAttributeLabel(attribute.key)}:</dt><dd>{attribute.value}</dd></div>)}</dl>}</> : <Link href={`/products/${line.merchandise.product.handle}`}><h3>{line.merchandise.product.title}</h3></Link>}
-                          {!sample && line.merchandise.title !== "Default Title" && <p>{line.merchandise.title}</p>}
+                          {sample ? <><h3 className={styles.sampleTitle}>{line.merchandise.product.title}</h3>{sampleOptionAttributes(line).length > 0 && <dl className={styles.sampleOptions}>{sampleOptionAttributes(line).map((attribute) => <div key={attribute.key}><dt>{sampleAttributeLabel(attribute.key)}:</dt><dd>{formatCartAttributeValue(attribute.key, attribute.value)}</dd></div>)}</dl>}</> : <Link href={`/products/${line.merchandise.product.handle}`}><h3>{line.merchandise.product.title}</h3></Link>}
+                          {!sample && line.merchandise.title !== "Default Title" && <p>{formatCartVariantTitle(line.merchandise.selectedOptions, line.merchandise.title)}</p>}
                         </div>
                         <button
                           type="button"

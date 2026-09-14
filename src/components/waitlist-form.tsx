@@ -50,7 +50,7 @@ export function WaitlistForm({
       setStatus("success");
       setMessage(payload.alreadySubscribed
         ? alreadySubscribedMessage
-        : `${successHeading} — your place on our waitlist is confirmed.`);
+        : `${successHeading}. Your place on our waitlist is confirmed.`);
       setEmail("");
       setMarketingConsent(false);
     } catch (error) {

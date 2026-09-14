@@ -39,7 +39,7 @@ await client
     'sections[_key=="nature"].sectionName': "Nature’s Most Refined Fibre",
     'sections[_key=="nature"].image.alt': "Nature’s Most Refined Fibre",
     'sections[_key=="nature"].body':
-      "For centuries, mulberry silk has been treasured by artisans, designers and couturiers for its unparalleled beauty and remarkable performance.\n\nIts luminous finish, graceful drape and enduring strength have made it the fabric of choice for creations that are intended to be remembered.\n\nMore than a textile, silk is an experience—one that transforms the way a garment moves, a space feels and a vision comes to life.",
+      "For centuries, mulberry silk has been treasured by artisans, designers and couturiers for its unparalleled beauty and remarkable performance.\n\nIts luminous finish, graceful drape and enduring strength have made it the fabric of choice for creations that are intended to be remembered.\n\nMore than a textile, silk is an experience, one that transforms the way a garment moves, a space feels and a vision comes to life.",
     'sections[_key=="nature"].items[_key=="elegant"].title':
       "Naturally Elegant",
     'sections[_key=="nature"].items[_key=="elegant"].body':
