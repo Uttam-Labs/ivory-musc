@@ -535,10 +535,10 @@ a {
     }
     .home-hero {
         min-height: 58svh !important;
-        align-items: center !important;
+        align-items: flex-end !important;
     }
     .home-hero-content {
-        padding-bottom: 0 !important;
+        padding-bottom: 2.4rem !important;
     }
     .home-bestseller {
         width: 100%;
