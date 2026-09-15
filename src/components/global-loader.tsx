@@ -17,6 +17,7 @@ export function GlobalLoader({
   const [initialLoading, setInitialLoading] = useState(true);
   const [navigating, setNavigating] = useState(false);
   const previousRoute = useRef(routeKey);
+  const previousPathname = useRef(pathname);
   const navigationStartedAt = useRef(0);
   const navigationMaximumTimer = useRef<number | null>(null);
 
@@ -53,7 +54,10 @@ export function GlobalLoader({
   useEffect(() => {
     if (previousRoute.current === routeKey) return;
     previousRoute.current = routeKey;
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    if (previousPathname.current !== pathname) {
+      previousPathname.current = pathname;
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    }
     const elapsed = performance.now() - navigationStartedAt.current;
     const timer = window.setTimeout(
       () => {
@@ -66,7 +70,7 @@ export function GlobalLoader({
       Math.max(0, 1000 - elapsed),
     );
     return () => window.clearTimeout(timer);
-  }, [routeKey]);
+  }, [pathname, routeKey]);
 
   useEffect(() => {
     const showBeforeNavigation = (event: MouseEvent) => {
