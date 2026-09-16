@@ -117,6 +117,12 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
     submitting.current = true;
     setAction(mode);
     try {
+      const selectedWidth = variant.selectedOptions.find((option) => isWidthOption(option.name))?.value;
+      const lineAttributes = [
+        ...(selectedColor ? [{ key: "Colour", value: selectedColor.value }] : []),
+        ...((selectedWidth || product.fabricWidth?.value) ? [{ key: "Width", value: formatWidth(selectedWidth || product.fabricWidth?.value) || "" }] : []),
+        ...(product.composition?.value ? [{ key: "Composition", value: product.composition.value }] : []),
+      ];
       const response = await fetch("/api/cart", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -124,7 +130,7 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
           cartId: localStorage.getItem("shopify-cart-id"),
           merchandiseId: variant.id,
           quantity,
-          attributes: selectedColor ? [{ key: "Selected Colour", value: selectedColor.value }] : undefined,
+          attributes: lineAttributes.length ? lineAttributes : undefined,
         }),
       });
       const payload = await response.json();
@@ -148,9 +154,11 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
     try {
       const selectedOptions = variant?.selectedOptions || [];
       const selectedVariantAttributes = selectedOptions
-        .filter((option) => option.name !== "Title" && !isWidthOption(option.name))
-        .slice(0, 7)
+        .filter((option) => option.name !== "Title" && !isColor(option.name) && !isWidthOption(option.name))
+        .slice(0, 4)
         .map((option) => ({ key: option.name, value: option.value }));
+      const selectedColorOption = selectedOptions.find((option) => isColor(option.name));
+      const selectedWidth = selectedOptions.find((option) => isWidthOption(option.name))?.value;
       const response = await fetch("/api/cart", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -161,6 +169,9 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
           attributes: [
             { key: "type", value: "sample" },
             { key: "Main Product", value: product.title },
+            ...(selectedColorOption ? [{ key: "Colour", value: selectedColorOption.value }] : []),
+            ...((selectedWidth || product.fabricWidth?.value) ? [{ key: "Width", value: formatWidth(selectedWidth || product.fabricWidth?.value) || "" }] : []),
+            ...(product.composition?.value ? [{ key: "Composition", value: product.composition.value }] : []),
             ...selectedVariantAttributes,
             { key: "Sample size", value: "10cm x 15cm" },
           ],

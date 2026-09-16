@@ -15,7 +15,7 @@ type NavItem = { label?: string; href?: string; isVisible?: boolean };
 type CartLine = Cart["lines"]["nodes"][number];
 const isSampleLine = (line: CartLine) => line.attributes.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample");
 const sampleOptionAttributes = (line: CartLine) => [
-  ...line.attributes.filter((attribute) => Boolean(attribute.value.trim()) && attribute.key.toLowerCase() !== "width" && attribute.key.toLowerCase() !== "sample size"),
+  ...line.attributes.filter((attribute) => Boolean(attribute.value.trim()) && attribute.key.toLowerCase() !== "sample size"),
   { key: "Sample size", value: "10cm x 15cm" },
 ];
 const sampleAttributeLabel = (key: string) => key.charAt(0).toUpperCase() + key.slice(1);
@@ -689,9 +689,9 @@ export function Header({
                           )}
                         </button>
                       </div>
-                      {!isSampleLine(line) && line.merchandise.title !== "Default Title" && (
+                      {!isSampleLine(line) && (
                         <dl className="mt-2 grid gap-1">
-                          {cartVariantDetails(line.merchandise.selectedOptions, line.merchandise.title).map((detail) => (
+                          {cartVariantDetails(line.merchandise.selectedOptions, line.merchandise.title, line.attributes).map((detail) => (
                             <div key={detail.key} className="grid grid-cols-[auto_1fr] items-baseline gap-1 text-[12px] leading-relaxed">
                               <dt className="text-stone-500">{detail.key}:</dt>
                               <dd className="m-0 text-stone-600">{detail.value}</dd>

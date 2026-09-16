@@ -27,15 +27,35 @@ export function formatCartAttributeValue(key: string, value: string) {
 export function cartVariantDetails(
   selectedOptions: SelectedOption[] | undefined,
   fallbackTitle: string,
+  attributes: Array<{ key: string; value: string }> = [],
 ) {
   const options = (selectedOptions || []).filter(
     (option) => option.name !== "Title" && option.value.trim(),
   );
-  if (options.length) {
-    return options.map((option) => ({
-      key: option.name,
-      value: formatCartAttributeValue(option.name, option.value),
-    }));
+  const normalizeKey = (key: string) =>
+    /^(?:selected\s+)?colou?r$/i.test(key.trim()) ? "Colour" : key.trim();
+  const details = new Map<string, string>();
+
+  options.forEach((option) => {
+    const key = normalizeKey(option.name);
+    details.set(key, formatCartAttributeValue(key, option.value));
+  });
+  attributes
+    .filter((attribute) => attribute.value.trim() && !attribute.key.startsWith("_") && !/^(?:type|main product|sample size)$/i.test(attribute.key))
+    .forEach((attribute) => {
+      const key = normalizeKey(attribute.key);
+      details.set(key, formatCartAttributeValue(key, attribute.value));
+    });
+
+  if (details.size) {
+    const preferredOrder = ["Colour", "Width", "Composition"];
+    return [...details.entries()]
+      .sort(([left], [right]) => {
+        const leftIndex = preferredOrder.indexOf(left);
+        const rightIndex = preferredOrder.indexOf(right);
+        return (leftIndex < 0 ? preferredOrder.length : leftIndex) - (rightIndex < 0 ? preferredOrder.length : rightIndex);
+      })
+      .map(([key, value]) => ({ key, value }));
   }
 
   const values = fallbackTitle

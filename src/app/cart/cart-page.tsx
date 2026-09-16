@@ -14,7 +14,7 @@ const CHECKOUT_CART_KEY = "shopify-checkout-cart-id";
 type CartLine = Cart["lines"]["nodes"][number];
 const isSampleLine = (line: CartLine) => line.attributes.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample");
 const sampleOptionAttributes = (line: CartLine) => [
-  ...line.attributes.filter((attribute) => Boolean(attribute.value.trim()) && attribute.key.toLowerCase() !== "width" && attribute.key.toLowerCase() !== "sample size"),
+  ...line.attributes.filter((attribute) => Boolean(attribute.value.trim()) && attribute.key.toLowerCase() !== "sample size"),
   { key: "Sample size", value: "10cm x 15cm" },
 ];
 const sampleAttributeLabel = (key: string) => key.charAt(0).toUpperCase() + key.slice(1);
@@ -171,7 +171,7 @@ export function CartPage() {
                       <div className={styles.itemTop}>
                         <div>
                           {sample ? <><h3 className={styles.sampleTitle}>{line.merchandise.product.title}</h3>{sampleOptionAttributes(line).length > 0 && <dl className={styles.sampleOptions}>{sampleOptionAttributes(line).map((attribute) => <div key={attribute.key}><dt>{sampleAttributeLabel(attribute.key)}:</dt><dd>{formatCartAttributeValue(attribute.key, attribute.value)}</dd></div>)}</dl>}</> : <Link href={`/products/${line.merchandise.product.handle}`}><h3>{line.merchandise.product.title}</h3></Link>}
-                          {!sample && line.merchandise.title !== "Default Title" && <dl className={styles.productOptions}>{cartVariantDetails(line.merchandise.selectedOptions, line.merchandise.title).map((detail) => <div key={detail.key}><dt>{detail.key}:</dt><dd>{detail.value}</dd></div>)}</dl>}
+                          {!sample && <dl className={styles.productOptions}>{cartVariantDetails(line.merchandise.selectedOptions, line.merchandise.title, line.attributes).map((detail) => <div key={detail.key}><dt>{detail.key}:</dt><dd>{detail.value}</dd></div>)}</dl>}
                         </div>
                         <button
                           type="button"
