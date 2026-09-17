@@ -51,7 +51,7 @@ const finderCards = keyed([
   { title: "Structure & Shape", body: "These fabrics offer greater body and are suited to designs requiring definition, volume or structure.", fabrics: ["COUTURE DUCHESS", "SILK DUPIONI", "HAUTE ORGANZA"] },
   { title: "Light & Delicate", body: "Consider these when softness and lightness are important to your design.", fabrics: ["FINE SILK", "SILK GEORGETTE"] },
   { title: "Sheer & Flowing", body: "These fabrics can introduce softness, transparency and movement, particularly when layered.", fabrics: ["SILK GEORGETTE", "TEXTURED CHIFFON", "SOI CHIFFON"] },
-  { title: "Sheer Structure", body: "HAUTE ORGANZA offers the unusual combination of transparency and structure, making it particularly suited to sculptural and layered designs.", fabrics: ["HAUTE ORGANZA"] },
+  { title: "Sheer Structure", body: "Haute Organza offers the unusual combination of transparency and structure, making it particularly suited to sculptural and layered designs.", fabrics: ["HAUTE ORGANZA"] },
   { title: "Texture", body: "Texture can introduce depth and visual interest without relying solely on colour or print.", fabrics: ["SILK DUPIONI", "SILK GEORGETTE", "SOI CHIFFON", "SILK MIST"] },
 ], "finder");
 const guideSections = keyed([
