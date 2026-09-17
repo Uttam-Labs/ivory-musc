@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 
+const MINIMUM_LOADER_TIME = 1000;
+
 export function GlobalLoader({
   logoUrl,
   title = "Ivory Muse",
@@ -32,7 +34,7 @@ export function GlobalLoader({
       minimumTimePassed = true;
       pageLoaded = pageLoaded || document.readyState === "complete";
       finishWhenReady();
-    }, 180);
+    }, MINIMUM_LOADER_TIME);
     const maximumTimer = window.setTimeout(() => setInitialLoading(false), 1500);
     const handleLoad = () => {
       pageLoaded = true;
@@ -69,7 +71,7 @@ export function GlobalLoader({
           navigationMaximumTimer.current = null;
         }
       },
-      Math.max(0, 180 - elapsed),
+      Math.max(0, MINIMUM_LOADER_TIME - elapsed),
     );
     return () => window.clearTimeout(timer);
   }, [pathname, routeKey]);
