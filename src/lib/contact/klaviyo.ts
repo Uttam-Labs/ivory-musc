@@ -50,8 +50,7 @@ export async function trackContactEnquiryInKlaviyo(input: ContactSubmission) {
               type: "profile",
               attributes: {
                 email: input.email.trim().toLowerCase(),
-                first_name: input.firstName,
-                last_name: input.lastName,
+                first_name: input.name,
                 properties: {
                   contact_source: "Ivory Muse website contact form",
                   contact_phone: input.phone,
@@ -60,11 +59,12 @@ export async function trackContactEnquiryInKlaviyo(input: ContactSubmission) {
             },
           },
           properties: {
-            first_name: input.firstName,
-            last_name: input.lastName,
+            name: input.name,
             email: input.email.trim().toLowerCase(),
             phone: input.phone,
             message: input.message,
+            attachment_id: input.attachmentId || "",
+            attachment_name: input.attachmentName || "",
             submitted_at: input.submittedAt,
             source: "Ivory Muse website contact form",
           },

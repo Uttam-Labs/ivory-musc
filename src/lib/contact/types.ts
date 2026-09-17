@@ -1,8 +1,9 @@
 export type ContactSubmission = {
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   phone: string;
   message: string;
   submittedAt: string;
+  attachmentId?: string;
+  attachmentName?: string;
 };
