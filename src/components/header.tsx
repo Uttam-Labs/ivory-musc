@@ -346,6 +346,7 @@ export function Header({
             {visibleNavigation.map((item) =>
               item.href && item.label ? (
                 <Link
+                  prefetch
                   aria-current={
                     normalizedPathname === item.href ||
                     (item.href !== "/" &&
@@ -497,6 +498,7 @@ export function Header({
             {visibleNavigation.map((item) =>
               item.href && item.label ? (
                 <Link
+                  prefetch
                   onClick={() => setMenuOpen(false)}
                   aria-current={
                     normalizedPathname === item.href ||

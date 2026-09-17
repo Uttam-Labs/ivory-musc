@@ -78,6 +78,7 @@ function Button({
     variant === "solid" ? solid : variant === "primary" ? primary : secondary;
   return (
     <Link
+      prefetch
       href={normalizeShopHref(label, href)}
       className={`mt-6 inline-flex h-[38px] items-center justify-center border px-7 text-center text-[10px] font-medium uppercase tracking-[.12em] transition-all duration-300 ${buttonStyle} ${className}`}
     >

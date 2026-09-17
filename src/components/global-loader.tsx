@@ -111,7 +111,7 @@ export function GlobalLoader({
           const current = `${window.location.pathname}${window.location.search}`;
           if (expected && current !== expected) window.location.assign(expected);
         },
-        2500,
+        8000,
       );
 
     };

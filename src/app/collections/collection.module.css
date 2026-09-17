@@ -8,3 +8,13 @@
 .specifications{margin-top:2.5rem;border-top:1px solid #e5ddd5}.specifications h3{margin:1.5rem 0 .8rem;color:#4e4a47;font-family:var(--primary-font,Arial,sans-serif);font-size:1.4rem}.specifications>div{display:flex;justify-content:space-between;gap:2rem;padding:.8rem 0;border-bottom:1px solid #e5ddd5;color:#777;font-size:1.2rem}.specifications strong{color:#4e4a47;font-weight:400;text-align:right}
 .swatchSelected>span{outline-color:#2f2f2f;outline-width:2px}.swatchSelected small{color:#2f2f2f}.optionButton{border-color:#ded8d1}.optionButton:hover{border-color:#8f8881;color:#514b46}.optionSelected,.optionSelected:hover{border-color:#2f2f2f;color:#2f2f2f}
 .inner{max-width:1920px}
+.loadingHeading,.loadingImage,.loadingLine{background:linear-gradient(100deg,#eee6de 20%,#faf5ef 45%,#eee6de 70%);background-size:240% 100%;animation:collectionLoading 1.2s ease-in-out infinite}
+.loadingHeading{width:min(28rem,60vw);height:3.6rem;margin-bottom:5rem}
+.loadingGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(5.5rem,6vw,11rem) clamp(2rem,1.8vw,3.5rem)}
+.loadingImage{aspect-ratio:.746}
+.loadingLine{width:75%;height:1.8rem;margin-top:1.7rem}
+.loadingLineShort{width:42%;height:1.4rem;margin-top:1rem}
+@keyframes collectionLoading{to{background-position:-240% 0}}
+@media(max-width:1100px){.loadingGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:800px){.loadingGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:5rem 1.6rem}}
+@media(prefers-reduced-motion:reduce){.loadingHeading,.loadingImage,.loadingLine{animation:none}}
