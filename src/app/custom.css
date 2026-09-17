@@ -793,18 +793,20 @@ a {
   margin: 0;
   color: var(--accent);
   font-family: var(--secondary-font, serif);
-  font-size: 31px;
+  font-size: clamp(20px, 6.2vw, 27px);
   font-weight: 400;
   line-height: 1.05;
+  white-space: nowrap;
   text-transform: uppercase;
 }
 
 .mobile-newsletter-popup__body {
-  max-width: 340px;
+  max-width: 370px;
   margin: 14px auto 0;
   color: var(--foreground);
-  font-size: 13px;
+  font-size: clamp(10px, 2.8vw, 12px);
   line-height: 1.65;
+  text-wrap: balance;
 }
 
 .mobile-newsletter-popup .newsletter-form__wrapper {
@@ -885,9 +887,6 @@ a {
   }
   .mobile-newsletter-popup__content {
     padding: 60px 22px 28px;
-  }
-  .mobile-newsletter-popup__dialog h2 {
-    font-size: 29px;
   }
 }
 
