@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
 
 export type PreviewLoginCopy = {
   usernameLabel?: string;
@@ -20,7 +19,6 @@ export function PreviewLoginForm({ nextPath = "/", content }: { nextPath?: strin
     fallbackError: "Please try again.",
     ...content,
   };
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -38,8 +36,7 @@ export function PreviewLoginForm({ nextPath = "/", content }: { nextPath?: strin
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Login failed.");
       const destination = nextPath.startsWith("/") && !nextPath.startsWith("//") ? nextPath : "/";
-      router.replace(destination);
-      router.refresh();
+      window.location.replace(destination);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : copy.fallbackError);
       setLoading(false);

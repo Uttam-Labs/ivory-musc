@@ -210,7 +210,7 @@ a {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: opacity .3s ease, visibility 0s linear .3s;
+    transition: opacity .15s ease, visibility 0s linear .15s;
 }
 .global-loader--visible {
     opacity: 1;

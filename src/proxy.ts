@@ -3,15 +3,19 @@ import { createPreviewSessionToken, PREVIEW_COOKIE_NAME, safeEqual } from "@/lib
 import { isPreviewPasswordProtected } from "@/lib/preview-protection";
 
 export async function proxy(request: NextRequest) {
-  const passwordProtected = await isPreviewPasswordProtected();
   const username = process.env.PREVIEW_USERNAME;
   const password = process.env.PREVIEW_PASSWORD;
   const secret = process.env.PREVIEW_AUTH_SECRET || password;
-  if (!passwordProtected || !username || !password || !secret) return NextResponse.next();
+  if (!username || !password || !secret) return NextResponse.next();
 
   const suppliedToken = request.cookies.get(PREVIEW_COOKIE_NAME)?.value || "";
-  const expectedToken = await createPreviewSessionToken(secret);
-  if (safeEqual(suppliedToken, expectedToken)) return NextResponse.next();
+  if (suppliedToken) {
+    const expectedToken = await createPreviewSessionToken(secret);
+    if (safeEqual(suppliedToken, expectedToken)) return NextResponse.next();
+  }
+
+  const passwordProtected = await isPreviewPasswordProtected();
+  if (!passwordProtected) return NextResponse.next();
 
   const loginUrl = new URL("/preview-login", request.url);
   loginUrl.searchParams.set("next", `${request.nextUrl.pathname}${request.nextUrl.search}`);

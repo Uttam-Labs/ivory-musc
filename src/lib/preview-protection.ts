@@ -10,8 +10,9 @@ export async function isPreviewPasswordProtected() {
   if (!projectId || !/^[a-z0-9-]+$/i.test(projectId)) return envFallback();
 
   const query = '*[_id == "siteSettings"][0].previewPasswordProtected';
+  const host = process.env.SANITY_API_READ_TOKEN ? "api.sanity.io" : "apicdn.sanity.io";
   const url = new URL(
-    `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${encodeURIComponent(dataset)}`,
+    `https://${projectId}.${host}/v${apiVersion}/data/query/${encodeURIComponent(dataset)}`,
   );
   url.searchParams.set("query", query);
 
@@ -23,6 +24,7 @@ export async function isPreviewPasswordProtected() {
   try {
     const response = await fetch(url, {
       headers,
+      cache: "force-cache",
       next: { revalidate: 30, tags: ["sanity", "preview-protection"] },
     });
     if (!response.ok) return envFallback();

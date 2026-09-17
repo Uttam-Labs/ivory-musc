@@ -20,6 +20,7 @@ export function GlobalLoader({
   const previousPathname = useRef(pathname);
   const navigationStartedAt = useRef(0);
   const navigationMaximumTimer = useRef<number | null>(null);
+  const navigationDestination = useRef("");
 
   useEffect(() => {
     let minimumTimePassed = false;
@@ -31,8 +32,8 @@ export function GlobalLoader({
       minimumTimePassed = true;
       pageLoaded = pageLoaded || document.readyState === "complete";
       finishWhenReady();
-    }, 1000);
-    const maximumTimer = window.setTimeout(() => setInitialLoading(false), 3000);
+    }, 180);
+    const maximumTimer = window.setTimeout(() => setInitialLoading(false), 1500);
     const handleLoad = () => {
       pageLoaded = true;
       finishWhenReady();
@@ -54,6 +55,7 @@ export function GlobalLoader({
   useEffect(() => {
     if (previousRoute.current === routeKey) return;
     previousRoute.current = routeKey;
+    navigationDestination.current = "";
     if (previousPathname.current !== pathname) {
       previousPathname.current = pathname;
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
@@ -67,7 +69,7 @@ export function GlobalLoader({
           navigationMaximumTimer.current = null;
         }
       },
-      Math.max(0, 1000 - elapsed),
+      Math.max(0, 180 - elapsed),
     );
     return () => window.clearTimeout(timer);
   }, [pathname, routeKey]);
@@ -97,13 +99,19 @@ export function GlobalLoader({
       ) return;
 
       navigationStartedAt.current = performance.now();
+      navigationDestination.current = `${destination.pathname}${destination.search}`;
       setNavigating(true);
       if (navigationMaximumTimer.current) {
         window.clearTimeout(navigationMaximumTimer.current);
       }
       navigationMaximumTimer.current = window.setTimeout(
-        () => setNavigating(false),
-        3000,
+        () => {
+          setNavigating(false);
+          const expected = navigationDestination.current;
+          const current = `${window.location.pathname}${window.location.search}`;
+          if (expected && current !== expected) window.location.assign(expected);
+        },
+        2500,
       );
 
     };
