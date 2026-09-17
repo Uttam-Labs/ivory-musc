@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import type { SanityImageSource } from "@sanity/image-url";
 import Image from "next/image";
-import { redirect } from "next/navigation";
 import { PreviewLoginForm, type PreviewLoginCopy } from "@/components/preview-login-form";
 import { isSanityConfigured } from "@/lib/env";
-import { isPreviewPasswordProtected } from "@/lib/preview-protection";
 import { sanityFetch } from "@/sanity/lib/client";
 import { sanityImageUrl } from "@/sanity/lib/image";
 import { HEADER_SETTINGS_QUERY, STOREFRONT_CONTENT_QUERY } from "@/sanity/lib/queries";
@@ -42,7 +40,6 @@ export default async function PreviewLoginPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  if (!(await isPreviewPasswordProtected())) redirect("/");
   const params = await searchParams;
   const nextPath = typeof params.next === "string" ? params.next : "/";
   const [header, content] = await Promise.all([
