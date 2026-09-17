@@ -55,7 +55,7 @@ export function ContactForm({ settings }: { settings: ContactFormSettings }) {
         />
         <label className={styles.attachmentButton} htmlFor={attachmentId}>
           <Paperclip size={18} aria-hidden="true" />
-          <span>{settings.attachmentLabel || "Attach a photo"}</span>
+          <span>{settings.attachmentLabel || "Attach A File"}</span>
         </label>
         {attachmentName && (
           <div className={styles.attachmentName}>

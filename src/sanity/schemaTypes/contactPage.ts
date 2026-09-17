@@ -45,7 +45,7 @@ export const contactPage = defineType({
             defineField({ name: "emailLabel", title: "Email label", type: "string" }),
             defineField({ name: "phoneLabel", title: "Phone label", type: "string" }),
             defineField({ name: "messageLabel", title: "Message label", type: "string" }),
-            defineField({ name: "attachmentLabel", title: "Attachment button label", type: "string" }),
+            defineField({ name: "attachmentLabel", title: "Attachment button label", type: "string", initialValue: "Attach A File" }),
             defineField({ name: "attachmentHelp", title: "Attachment help text", type: "string" }),
             defineField({ name: "removeAttachmentLabel", title: "Remove attachment accessibility label", type: "string" }),
             defineField({ name: "submitLabel", title: "Submit button label", type: "string" }),
