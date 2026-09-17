@@ -54,6 +54,12 @@ export default defineConfig({
                       "footerSettings",
                       "footerSettings",
                     ),
+                    singletonPage(
+                      S,
+                      "Storefront utility content",
+                      "storefrontContent",
+                      "storefrontContent",
+                    ),
                   ]),
               ),
             S.divider(),

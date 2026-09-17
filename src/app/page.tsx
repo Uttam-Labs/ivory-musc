@@ -33,13 +33,21 @@ type Section = {
     secondaryButtonHref?: string;
   };
   image?: SanityImageSource;
+  videoPoster?: SanityImageSource;
+  videoMp4Url?: string;
+  videoWebmUrl?: string;
   layout?: "split" | "banner";
   imagePosition?: "left" | "right";
   collectionHandle?: string;
   autoSlide?: boolean;
   slideInterval?: number;
   emailPlaceholder?: string;
+  emailLabel?: string;
   submitLabel?: string;
+  submittingLabel?: string;
+  successMessage?: string;
+  alreadySubscribedMessage?: string;
+  fallbackErrorMessage?: string;
   features?: Array<{ title?: string; icon?: SanityImageSource }>;
 };
 type HomeContent = { sections?: Section[] } | null;
@@ -103,6 +111,9 @@ export default async function Home() {
             >
               <HeroLoopVideo
                 className="home-hero-media absolute inset-0 h-full w-full object-cover"
+                posterUrl={section.videoPoster ? sanityImageUrl(section.videoPoster, 3840) : undefined}
+                mp4Url={section.videoMp4Url}
+                webmUrl={section.videoWebmUrl}
               />
               <div className="absolute inset-0 bg-black/15" />
               <div className="home-hero-content relative mx-auto w-full max-w-[1920] px-6 sm:px-12 xl:px-24 pb-16 md:pb-20 lg:pb-36">
@@ -288,8 +299,13 @@ export default async function Home() {
                     </p>
                   )}
                   <NewsletterForm
+                    emailLabel={section.emailLabel}
                     placeholder={section.emailPlaceholder}
                     submitLabel={section.submitLabel}
+                    submittingLabel={section.submittingLabel}
+                    successMessage={section.successMessage}
+                    alreadySubscribedMessage={section.alreadySubscribedMessage}
+                    fallbackErrorMessage={section.fallbackErrorMessage}
                   />
                 </div>
               </div>

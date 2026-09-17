@@ -14,6 +14,7 @@ import { waitlistSubscriber } from "./waitlistSubscriber";
 import { waitlistPage } from "./waitlistPage";
 import { policyPage } from "./policyPage";
 import { silkGuidePage } from "./silkGuidePage";
+import { storefrontContent } from "./storefrontContent";
 import {
   accountAddressesPage,
   accountDashboardPage,
@@ -27,6 +28,7 @@ import {
 } from "./accountPages";
 export const schemaTypes = [
   siteSettings,
+  storefrontContent,
   headerSettings,
   footerSettings,
   homePage,

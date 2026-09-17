@@ -26,6 +26,22 @@ export const waitlistPage = defineType({
     defineField({ name: "alreadySubscribedMessage", title: "Existing subscriber message", type: "string", initialValue: "You are already on the Ivory Muse waitlist." }),
     defineField({ name: "successClosing", title: "Success closing text", type: "string", initialValue: "We look forward to sharing our world of fine silk with you." }),
     defineField({ name: "fallbackErrorMessage", title: "Fallback error message", type: "string", initialValue: "We could not join you to the list. Please try again." }),
+    defineField({
+      name: "mobilePopup",
+      title: "Mobile promotional pop-up",
+      type: "object",
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        defineField({ name: "popupEyebrow", title: "Eyebrow", type: "string", initialValue: "Ivory Muse Privileges" }),
+        defineField({ name: "popupHeading", title: "Heading", type: "string", initialValue: "Private offers await" }),
+        defineField({ name: "popupBody", title: "Body", type: "text", rows: 3, initialValue: "Subscribe for exclusive offers, early access to new arrivals and private Ivory Muse promotions." }),
+        defineField({ name: "popupSubmitLabel", title: "Submit button", type: "string", initialValue: "UNLOCK EXCLUSIVE ACCESS" }),
+        defineField({ name: "popupSubmittingLabel", title: "Submitting text", type: "string", initialValue: "SUBSCRIBING…" }),
+        defineField({ name: "popupSuccessMessage", title: "Success message", type: "text", rows: 2, initialValue: "You're in. Watch your inbox for exclusive Ivory Muse offers." }),
+        defineField({ name: "popupAlreadySubscribedMessage", title: "Existing subscriber message", type: "string", initialValue: "You are already subscribed to Ivory Muse offers." }),
+        defineField({ name: "popupCloseLabel", title: "Close button label", type: "string", initialValue: "Close mailing list pop-up" }),
+      ],
+    }),
   ],
   preview: { prepare: () => ({ title: "Coming soon page" }) },
 });

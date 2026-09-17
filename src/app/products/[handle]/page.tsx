@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProductDetails, type ProductDetailsSettings } from "@/components/product-details";
+import type { ProductGridContent } from "@/components/collection-product-grid";
 import { isSanityConfigured } from "@/lib/env";
 import { getProduct, getProductRecommendations } from "@/lib/shopify";
 import { sanityFetch } from "@/sanity/lib/client";
-import { PRODUCT_PAGE_QUERY } from "@/sanity/lib/queries";
+import { COLLECTION_PAGE_QUERY, PRODUCT_PAGE_QUERY } from "@/sanity/lib/queries";
 
 type ProductPageProps = { params: Promise<{ handle: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
 type ProductPageData = { sections?: Array<({ _type: "productDetailsSettings" } & ProductDetailsSettings) | { _type: "relatedProductsSettings"; heading?: string; productLimit?: number }> } | null;
@@ -15,8 +16,9 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
   const { handle } = await params;
   const product = await getProduct(handle);
   if (!product) notFound();
-  const [pageData, recommendations] = await Promise.all([
+  const [pageData, collectionSettings, recommendations] = await Promise.all([
     isSanityConfigured ? sanityFetch<ProductPageData>(PRODUCT_PAGE_QUERY) : null,
+    isSanityConfigured ? sanityFetch<{ productGridContent?: ProductGridContent } | null>(COLLECTION_PAGE_QUERY) : null,
     getProductRecommendations(product.id).catch(() => []),
   ]);
   const detailSettings = pageData?.sections?.find((section) => section._type === "productDetailsSettings") as (({ _type: "productDetailsSettings" } & ProductDetailsSettings) | undefined);
@@ -32,5 +34,5 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         Number(right.priceRange.minVariantPrice.amount),
     )
     .slice(0, relatedSettings?.productLimit || 4);
-  return <ProductDetails product={product} sampleProduct={sampleProduct} initialSelection={initialSelection} settings={detailSettings} relatedHeading={relatedSettings?.heading?.trim() || "CURATED SELECTION"} relatedProducts={relatedProducts} />;
+  return <ProductDetails product={product} sampleProduct={sampleProduct} initialSelection={initialSelection} settings={detailSettings} relatedHeading={relatedSettings?.heading?.trim() || "CURATED SELECTION"} relatedProducts={relatedProducts} relatedGridContent={collectionSettings?.productGridContent} />;
 }

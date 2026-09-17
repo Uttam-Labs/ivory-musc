@@ -32,6 +32,21 @@ const colorFallbacks: Record<string, string> = {
   pink: "#dcaeae",
 };
 
+export type ProductGridContent = {
+  eyebrow?: string; perUnitLabel?: string; quantityLabel?: string; unavailableText?: string;
+  buyNowLabel?: string; buyLoadingLabel?: string; addToCartLabel?: string; addingLabel?: string;
+  addedLabel?: string; soldOutText?: string; specificationsHeading?: string; compositionLabel?: string;
+  weightLabel?: string; widthLabel?: string; careLabel?: string; detailsLabel?: string; loadingProductLabel?: string;
+};
+const fallbackContent: Required<ProductGridContent> = {
+  eyebrow: "IVORY MUSE · SILK COLLECTION", perUnitLabel: "per metre", quantityLabel: "Quantity",
+  unavailableText: "This option combination is unavailable.", buyNowLabel: "Buy now", buyLoadingLabel: "Redirecting…",
+  addToCartLabel: "Add to cart", addingLabel: "Adding…", addedLabel: "Added to cart",
+  soldOutText: "This variant is currently sold out.", specificationsHeading: "Fabric specifications",
+  compositionLabel: "Composition", weightLabel: "Weight", widthLabel: "Width", careLabel: "Care",
+  detailsLabel: "View full product details", loadingProductLabel: "Loading product…",
+};
+
 function metafieldText(metafield?: Product["specialTag"]) {
   if (!metafield?.value) return "";
   if (metafield.type !== "rich_text_field") return metafield.value;
@@ -76,10 +91,13 @@ function swatchStyle(value: ProductOptionValue) {
 function ProductQuickView({
   handle,
   onClose,
+  content,
 }: {
   handle: string;
   onClose: () => void;
+  content?: ProductGridContent;
 }) {
+  const copy = { ...fallbackContent, ...content };
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -194,7 +212,7 @@ function ProductQuickView({
           <X size={22} />
         </button>
         {loading ? (
-          <div className={styles.modalState}><LoaderCircle className="animate-spin" /> Loading product…</div>
+          <div className={styles.modalState}><LoaderCircle className="animate-spin" /> {copy.loadingProductLabel}</div>
         ) : error && !product ? (
           <div className={styles.modalState}>{error}</div>
         ) : product ? (
@@ -228,12 +246,12 @@ function ProductQuickView({
               )}
             </div>
             <div className={styles.productInfo}>
-              <p className={styles.eyebrow}>IVORY MUSE · SILK COLLECTION</p>
+              <p className={styles.eyebrow}>{copy.eyebrow}</p>
               <h2>{product.title.toLocaleUpperCase("en-AU")}</h2>
               {product.description && <p className={styles.description}>{product.description}</p>}
               <div className={styles.priceRow}>
                 <strong>{variant ? formatMoney(variant.price) : formatMoney(product.priceRange.minVariantPrice)}</strong>
-                <span>per metre</span>
+                <span>{copy.perUnitLabel}</span>
               </div>
               {(product.options || []).filter((option) => option.name !== "Title").map((option) => (
                 <fieldset className={styles.optionGroup} key={option.id} aria-label={option.name}>
@@ -270,7 +288,7 @@ function ProductQuickView({
                 </fieldset>
               ))}
               <div className={styles.quantityRow}>
-                <span>Quantity</span>
+                <span>{copy.quantityLabel}</span>
                 <div className={styles.quantityPicker}>
                   <button onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label="Decrease quantity"><Minus size={14} /></button>
                   <output>{quantity}</output>
@@ -278,27 +296,27 @@ function ProductQuickView({
                 </div>
                 {variant && <strong>{formatMoney({ amount: String(Number(variant.price.amount) * quantity), currencyCode: variant.price.currencyCode })}</strong>}
               </div>
-              {!variant && <p className={styles.error}>This option combination is unavailable.</p>}
+              {!variant && <p className={styles.error}>{copy.unavailableText}</p>}
               <div className={styles.actions}>
                 <button onClick={() => submit("buy")} disabled={!variant?.availableForSale || action === "buy" || action === "cart"} className={styles.buyButton}>
-                  {action === "buy" ? "Redirecting…" : "Buy now"}
+                  {action === "buy" ? copy.buyLoadingLabel : copy.buyNowLabel}
                 </button>
                 <button onClick={() => submit("cart")} disabled={!variant?.availableForSale || action === "cart" || action === "buy"} className={styles.cartButton}>
-                  {action === "cart" ? "Adding…" : action === "added" ? <><Check size={16} /> Added to cart</> : "Add to cart"}
+                  {action === "cart" ? copy.addingLabel : action === "added" ? <><Check size={16} /> {copy.addedLabel}</> : copy.addToCartLabel}
                 </button>
               </div>
-              {!variant?.availableForSale && variant && <p className={styles.error}>This variant is currently sold out.</p>}
+              {!variant?.availableForSale && variant && <p className={styles.error}>{copy.soldOutText}</p>}
               {error && <p className={styles.error}>{error}</p>}
               {[product.composition, product.fabricWeight, product.fabricWidth, product.care].some(Boolean) && (
                 <div className={styles.specifications}>
-                  <h3>Fabric specifications</h3>
-                  {product.composition && <div><span>Composition</span><strong>{product.composition.value}</strong></div>}
-                  {product.fabricWeight && <div><span>Weight</span><strong>{product.fabricWeight.value}</strong></div>}
-                  {product.fabricWidth && <div><span>Width</span><strong>{product.fabricWidth.value}</strong></div>}
-                  {product.care && <div><span>Care</span><strong>{product.care.value}</strong></div>}
+                  <h3>{copy.specificationsHeading}</h3>
+                  {product.composition && <div><span>{copy.compositionLabel}</span><strong>{product.composition.value}</strong></div>}
+                  {product.fabricWeight && <div><span>{copy.weightLabel}</span><strong>{product.fabricWeight.value}</strong></div>}
+                  {product.fabricWidth && <div><span>{copy.widthLabel}</span><strong>{product.fabricWidth.value}</strong></div>}
+                  {product.care && <div><span>{copy.careLabel}</span><strong>{product.care.value}</strong></div>}
                 </div>
               )}
-              <Link className={styles.detailsLink} href={`/products/${product.handle}`}>View full product details</Link>
+              <Link className={styles.detailsLink} href={`/products/${product.handle}`}>{copy.detailsLabel}</Link>
             </div>
           </div>
         ) : null}
@@ -307,7 +325,8 @@ function ProductQuickView({
   );
 }
 
-export function CollectionProductGrid({ products }: { products: Product[] }) {
+export function CollectionProductGrid({ products, content }: { products: Product[]; content?: ProductGridContent }) {
+  const copy = { ...fallbackContent, ...content };
   const [quickView, setQuickView] = useState<string | null>(null);
   return (
     <>
@@ -336,13 +355,13 @@ export function CollectionProductGrid({ products }: { products: Product[] }) {
               <div className={styles.cardContent}>
                 <h2><Link href={`/products/${product.handle}`}>{product.title.toLocaleUpperCase("en-AU")}</Link></h2>
                 {specialTag && <p>{specialTag}</p>}
-                <strong>{formatMoney(product.priceRange.minVariantPrice)} <small>per metre</small></strong>
+                <strong>{formatMoney(product.priceRange.minVariantPrice)} <small>{copy.perUnitLabel}</small></strong>
               </div>
             </article>
           );
         })}
       </div>
-      {quickView && <ProductQuickView handle={quickView} onClose={() => setQuickView(null)} />}
+      {quickView && <ProductQuickView handle={quickView} onClose={() => setQuickView(null)} content={content} />}
     </>
   );
 }

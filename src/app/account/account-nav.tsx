@@ -13,6 +13,10 @@ type Labels = {
   addressesLabel: string;
   profileLabel: string;
   signOutLabel: string;
+  mobileMenuHeading: string;
+  mobileMenuDescription: string;
+  mobilePanelEyebrow: string;
+  mobilePanelHeading: string;
 };
 const items = [
   { href: "/account", key: "overviewLabel", exact: true },
@@ -50,8 +54,8 @@ export function AccountNav({ labels }: { labels: Labels }) {
           onClick={() => setOpen(true)}
         >
           <span className={styles.mobileNavLabel}>
-            <strong>Account menu</strong>
-            <small>Overview, orders &amp; profile</small>
+            <strong>{labels.mobileMenuHeading}</strong>
+            <small>{labels.mobileMenuDescription}</small>
           </span>
           <span className={styles.mobileNavIcon} aria-hidden="true">
             <Settings size={19} strokeWidth={1.7} />
@@ -72,8 +76,8 @@ export function AccountNav({ labels }: { labels: Labels }) {
       >
         <div className={styles.mobileNavHeading}>
           <div>
-            <small>Customer account</small>
-            <strong>Settings</strong>
+            <small>{labels.mobilePanelEyebrow}</small>
+            <strong>{labels.mobilePanelHeading}</strong>
           </div>
           <button type="button" aria-label="Close account settings" onClick={() => setOpen(false)}>
             <X size={21} strokeWidth={1.5} />

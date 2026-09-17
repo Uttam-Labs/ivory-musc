@@ -24,6 +24,13 @@ export const siteSettings = defineType({
     defineField({ name: "allowIndex", title: "Allow search engines to index the site", type: "boolean", initialValue: true }),
     defineField({ name: "allowFollow", title: "Allow search engines to follow links", type: "boolean", initialValue: true }),
     defineField({
+      name: "previewPasswordProtected",
+      title: "Enable website password protection",
+      description: "When enabled, visitors must sign in through the private preview page. Disable it to make the website publicly accessible.",
+      type: "boolean",
+      initialValue: false,
+    }),
+    defineField({
       name: "theme",
       title: "Default fonts, colors and typography",
       type: "object",

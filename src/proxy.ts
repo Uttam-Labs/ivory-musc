@@ -1,8 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createPreviewSessionToken, PREVIEW_COOKIE_NAME, safeEqual } from "@/lib/preview-auth";
+import { isPreviewPasswordProtected } from "@/lib/preview-protection";
 
 export async function proxy(request: NextRequest) {
-  const passwordProtected = process.env.PREVIEW_PASSWORD_PROTECTED === "true";
+  const passwordProtected = await isPreviewPasswordProtected();
   const username = process.env.PREVIEW_USERNAME;
   const password = process.env.PREVIEW_PASSWORD;
   const secret = process.env.PREVIEW_AUTH_SECRET || password;

@@ -26,6 +26,10 @@ export default async function AccountPortalLayout({
     addressesLabel: "Addresses",
     profileLabel: "Profile",
     signOutLabel: "Sign out",
+    mobileMenuHeading: "Account menu",
+    mobileMenuDescription: "Overview, orders & profile",
+    mobilePanelEyebrow: "Customer account",
+    mobilePanelHeading: "Settings",
     ...(await getAccountContent<Record<string, string>>("accountNavigation")),
   };
   return (

@@ -14,9 +14,9 @@ import { AccountIcon, CartIcon, SearchIcon } from "./header-icons";
 type NavItem = { label?: string; href?: string; isVisible?: boolean };
 type CartLine = Cart["lines"]["nodes"][number];
 const isSampleLine = (line: CartLine) => line.attributes.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample");
-const sampleOptionAttributes = (line: CartLine) => [
+const sampleOptionAttributes = (line: CartLine, label: string, value: string) => [
   ...line.attributes.filter((attribute) => Boolean(attribute.value.trim()) && attribute.key.toLowerCase() !== "sample size"),
-  { key: "Sample size", value: "10cm x 15cm" },
+  { key: label, value },
 ];
 const sampleAttributeLabel = (key: string) => key.charAt(0).toUpperCase() + key.slice(1);
 type Props = {
@@ -31,6 +31,13 @@ type Props = {
   accountHref?: string;
   showCart?: boolean;
   cartHref?: string;
+  uiContent?: {
+    menuLabel?: string; searchTitle?: string; searchPlaceholder?: string; noSearchResults?: string;
+    cartTitle?: string; emptyCartText?: string; continueShoppingLabel?: string; quantityLabel?: string;
+    sampleUnitLabel?: string; singleMetreLabel?: string; multipleMetresLabel?: string;
+    sampleSizeLabel?: string; sampleSizeValue?: string; subtotalLabel?: string; viewBagLabel?: string;
+    checkoutLabel?: string; checkoutLoadingLabel?: string;
+  };
 };
 
 export function Header({
@@ -43,7 +50,16 @@ export function Header({
   showAccount = false,
   accountHref,
   showCart = false,
+  uiContent,
 }: Props) {
+  const copy = {
+    menuLabel: "Menu", searchTitle: "Search products", searchPlaceholder: "What are you looking for?",
+    noSearchResults: "No products found.", cartTitle: "Your cart", emptyCartText: "Your cart is empty",
+    continueShoppingLabel: "Continue shopping", quantityLabel: "Quantity", sampleSizeLabel: "Sample size",
+    sampleUnitLabel: "sample", singleMetreLabel: "meter", multipleMetresLabel: "meters",
+    sampleSizeValue: "10cm x 15cm", subtotalLabel: "Subtotal", viewBagLabel: "View shopping bag",
+    checkoutLabel: "Checkout", checkoutLoadingLabel: "Preparing checkout…", ...uiContent,
+  };
   const pathname = usePathname();
   const router = useRouter();
   const visibleNavigation = navigation.filter((item) => item.isVisible !== false);
@@ -466,7 +482,7 @@ export function Header({
           onMouseDown={(event) => event.stopPropagation()}
         >
           <div className="flex h-[76px] shrink-0 items-center justify-between border-b border-stone-900/10 px-6">
-            <p className="font-heading text-xl text-[var(--accent)]">Menu</p>
+            <p className="font-heading text-xl text-[var(--accent)]">{copy.menuLabel}</p>
             <button
               ref={menuCloseButton}
               aria-label="Close menu"
@@ -525,7 +541,7 @@ export function Header({
             <div className="mx-auto max-w-5xl">
               <div className="flex items-center justify-between">
                 <p className="font-heading text-xl text-[var(--accent)]">
-                  Search products
+                  {copy.searchTitle}
                 </p>
                 <button
                   aria-label="Close search"
@@ -544,7 +560,7 @@ export function Header({
                   ref={searchInput}
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  placeholder="What are you looking for?"
+                  placeholder={copy.searchPlaceholder}
                   className="min-w-0 flex-1 bg-transparent py-4 text-base outline-none placeholder:text-stone-400"
                 />
                 {searching && (
@@ -585,7 +601,7 @@ export function Header({
               )}
               {query.trim().length >= 2 && !searching && !results.length && (
                 <p className="py-12 text-center text-sm text-stone-500">
-                  No products found.
+                  {copy.noSearchResults}
                 </p>
               )}
             </div>
@@ -613,7 +629,7 @@ export function Header({
         >
           <div className="flex h-[72px] shrink-0 items-center justify-between border-b border-stone-300 px-7">
             <h2 className="font-heading text-[22px] text-[var(--accent)]">
-              Your cart {cart?.totalQuantity ? `(${cart.totalQuantity})` : ""}
+              {copy.cartTitle} {cart?.totalQuantity ? `(${cart.totalQuantity})` : ""}
             </h2>
             <button
               aria-label="Close cart"
@@ -654,9 +670,9 @@ export function Header({
                         {isSampleLine(line) ? (
                           <div className="min-w-0">
                             <p className="text-[14px] font-semibold leading-snug text-stone-900">{line.merchandise.product.title}</p>
-                            {sampleOptionAttributes(line).length > 0 && (
+                            {sampleOptionAttributes(line, copy.sampleSizeLabel, copy.sampleSizeValue).length > 0 && (
                               <dl className="mt-2 grid gap-1">
-                                {sampleOptionAttributes(line).map((attribute) => (
+                                {sampleOptionAttributes(line, copy.sampleSizeLabel, copy.sampleSizeValue).map((attribute) => (
                                   <div key={attribute.key} className="grid grid-cols-[auto_1fr] items-baseline gap-1 text-[12px] leading-relaxed">
                                     <dt className="text-stone-500">{sampleAttributeLabel(attribute.key)}:</dt>
                                     <dd className="m-0 text-stone-600">{formatCartAttributeValue(attribute.key, attribute.value)}</dd>
@@ -699,7 +715,7 @@ export function Header({
                           ))}
                         </dl>
                       )}
-                      {isSampleLine(line) ? <p className="mt-4 text-[12px] leading-relaxed text-stone-600">Quantity: 1</p> : <div className="mt-4 flex h-[38px] w-[126px] items-center border border-stone-300 bg-white/50">
+                      {isSampleLine(line) ? <p className="mt-4 text-[12px] leading-relaxed text-stone-600">{copy.quantityLabel}: 1</p> : <div className="mt-4 flex h-[38px] w-[126px] items-center border border-stone-300 bg-white/50">
                         <button
                           type="button"
                           aria-label={`Decrease ${line.merchandise.product.title} quantity`}
@@ -779,7 +795,7 @@ export function Header({
                       </div>
                       <p className="mt-1 text-[12px] text-stone-500">
                         {line.quantity}{" "}
-                        {isSampleLine(line) ? "sample" : line.quantity === 1 ? "meter" : "meters"} ×{" "}
+                        {isSampleLine(line) ? copy.sampleUnitLabel : line.quantity === 1 ? copy.singleMetreLabel : copy.multipleMetresLabel} ×{" "}
                         {formatMoney(line.cost.amountPerQuantity)}
                       </p>
                     </div>
@@ -789,13 +805,13 @@ export function Header({
             ) : (
               <div className="flex h-full flex-col items-center justify-center text-center">
                 <CartIcon className="h-10 w-9 text-stone-400" />
-                <p className="mt-5 font-heading text-xl">Your cart is empty</p>
+                <p className="mt-5 font-heading text-xl">{copy.emptyCartText}</p>
                 <Link
                   href="/collections/shop"
                   onClick={() => setCartOpen(false)}
                   className="mt-5 inline-flex min-h-12 items-center justify-center border border-[var(--accent)] bg-[var(--accent)] px-7 py-3 text-[11px] font-medium uppercase tracking-[.12em] text-white no-underline transition-colors hover:bg-transparent hover:text-[var(--accent)]"
                 >
-                  Continue shopping
+                  {copy.continueShoppingLabel}
                 </Link>
               </div>
             )}
@@ -808,7 +824,7 @@ export function Header({
           {cart?.lines.nodes.length ? (
             <div className="border-t border-stone-300 px-7 py-6">
               <div className="mb-5 flex justify-between text-[14px]">
-                <span>Subtotal</span>
+                <span>{copy.subtotalLabel}</span>
                 <strong>{formatMoney(cart.cost.subtotalAmount)}</strong>
               </div>
               <Link
@@ -816,7 +832,7 @@ export function Header({
                 onClick={() => setCartOpen(false)}
                 className="mb-3 flex h-[50px] w-full items-center justify-center border border-[#a95850] text-[12px] uppercase tracking-[.12em] text-[#a95850] transition hover:bg-[#f7ebe7]"
               >
-                View shopping bag
+                {copy.viewBagLabel}
               </Link>
               <button
                 type="button"
@@ -827,7 +843,7 @@ export function Header({
                 {checkoutLoading && (
                   <LoaderCircle className="animate-spin" size={17} />
                 )}
-                {checkoutLoading ? "Preparing checkout…" : "Checkout"}
+                {checkoutLoading ? copy.checkoutLoadingLabel : copy.checkoutLabel}
               </button>
             </div>
           ) : null}

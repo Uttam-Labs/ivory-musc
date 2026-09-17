@@ -15,6 +15,10 @@ export const accountNavigation = defineType({
     profileLabel: "Profile",
     supportLabel: "Support",
     signOutLabel: "Sign out",
+    mobileMenuHeading: "Account menu",
+    mobileMenuDescription: "Overview, orders & profile",
+    mobilePanelEyebrow: "Customer account",
+    mobilePanelHeading: "Settings",
   },
   fields: [
     text("ariaLabel", "Navigation accessibility label"),
@@ -24,6 +28,10 @@ export const accountNavigation = defineType({
     text("profileLabel", "Profile link"),
     text("supportLabel", "Support link"),
     text("signOutLabel", "Sign out link"),
+    text("mobileMenuHeading", "Mobile menu heading"),
+    text("mobileMenuDescription", "Mobile menu description"),
+    text("mobilePanelEyebrow", "Mobile panel eyebrow"),
+    text("mobilePanelHeading", "Mobile panel heading"),
   ],
 });
 

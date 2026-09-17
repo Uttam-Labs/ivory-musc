@@ -1,10 +1,32 @@
+import type { Metadata } from "next";
 import { Search } from "lucide-react";
-import { CollectionProductGrid } from "@/components/collection-product-grid";
+import { CollectionProductGrid, type ProductGridContent } from "@/components/collection-product-grid";
 import { SiteContainer } from "@/components/site-container";
 import { getProducts } from "@/lib/shopify";
+import { isSanityConfigured } from "@/lib/env";
+import { sanityFetch } from "@/sanity/lib/client";
+import { COLLECTION_PAGE_QUERY, STOREFRONT_CONTENT_QUERY } from "@/sanity/lib/queries";
 import styles from "./search.module.css";
 
-export const metadata = { title: "Search" };
+type SearchCopy = {
+  seoTitle?: string; eyebrow?: string; heading?: string; intro?: string; inputLabel?: string;
+  placeholder?: string; submitLabel?: string; singleResultLabel?: string; multipleResultsLabel?: string;
+  resultsForLabel?: string; resultsSuffix?: string; noResultsHeading?: string; noResultsText?: string; emptyHeading?: string; emptyText?: string;
+};
+type StorefrontContent = { searchPage?: SearchCopy } | null;
+const fallback: Required<SearchCopy> = {
+  seoTitle: "Search", eyebrow: "Discover Ivory Muse", heading: "Search our collection",
+  intro: "Find silk fabrics by name, finish, colour or intended use.", inputLabel: "Search products",
+  placeholder: "What are you looking for?", submitLabel: "Search", singleResultLabel: "result",
+  multipleResultsLabel: "results", resultsForLabel: "for", resultsSuffix: "Explore the matching collection below",
+  noResultsHeading: "No products found", noResultsText: "Try a different product name, colour or fabric type.",
+  emptyHeading: "Find your perfect silk", emptyText: "Enter a search term to explore the Ivory Muse collection.",
+};
+async function getCopy() {
+  const data = isSanityConfigured ? await sanityFetch<StorefrontContent>(STOREFRONT_CONTENT_QUERY, {}, ["sanity", "storefront-content"]) : null;
+  return { ...fallback, ...data?.searchPage };
+}
+export async function generateMetadata(): Promise<Metadata> { const copy = await getCopy(); return { title: copy.seoTitle }; }
 
 export default async function SearchPage({
   searchParams,
@@ -12,6 +34,10 @@ export default async function SearchPage({
   searchParams: Promise<{ q?: string | string[] }>;
 }) {
   const { q } = await searchParams;
+  const copy = await getCopy();
+  const collectionContent = isSanityConfigured
+    ? await sanityFetch<{ productGridContent?: ProductGridContent } | null>(COLLECTION_PAGE_QUERY, {}, ["sanity", "collection-page"])
+    : null;
   const term = typeof q === "string" ? q.trim() : "";
   const products = term ? await getProducts(24, term) : [];
 
@@ -20,26 +46,24 @@ export default async function SearchPage({
       <SiteContainer className={styles.inner}>
         <header className={styles.header}>
           <div>
-            <p className={styles.eyebrow}>Discover Ivory Muse</p>
-            <h1 className={styles.heading}>Search our collection</h1>
-            <p className={styles.intro}>
-              Find silk fabrics by name, finish, colour or intended use.
-            </p>
+            <p className={styles.eyebrow}>{copy.eyebrow}</p>
+            <h1 className={styles.heading}>{copy.heading}</h1>
+            <p className={styles.intro}>{copy.intro}</p>
           </div>
           <form className={styles.form} action="/search">
             <label className={styles.inputWrap} htmlFor="q">
               <Search size={20} strokeWidth={1.5} aria-hidden="true" />
-              <span className="sr-only">Search products</span>
+              <span className="sr-only">{copy.inputLabel}</span>
               <input
                 id="q"
                 name="q"
                 defaultValue={term}
-                placeholder="What are you looking for?"
+                placeholder={copy.placeholder}
                 autoComplete="off"
               />
             </label>
             <button className={styles.submit} type="submit">
-              Search
+              {copy.submitLabel}
             </button>
           </form>
         </header>
@@ -49,17 +73,17 @@ export default async function SearchPage({
             <div className={styles.resultMeta} aria-live="polite">
               <p>
                 <strong>{products.length}</strong>{" "}
-                {products.length === 1 ? "result" : "results"} for “{term}”
+                {products.length === 1 ? copy.singleResultLabel : copy.multipleResultsLabel} {copy.resultsForLabel} “{term}”
               </p>
-              {products.length > 0 && <span>Explore the matching collection below</span>}
+              {products.length > 0 && <span>{copy.resultsSuffix}</span>}
             </div>
             {products.length > 0 ? (
-              <CollectionProductGrid products={products} />
+              <CollectionProductGrid products={products} content={collectionContent?.productGridContent} />
             ) : (
               <div className={styles.empty}>
                 <div>
-                  <h2>No products found</h2>
-                  <p>Try a different product name, colour or fabric type.</p>
+                  <h2>{copy.noResultsHeading}</h2>
+                  <p>{copy.noResultsText}</p>
                 </div>
               </div>
             )}
@@ -67,8 +91,8 @@ export default async function SearchPage({
         ) : (
           <div className={styles.empty}>
             <div>
-              <h2>Find your perfect silk</h2>
-              <p>Enter a search term to explore the Ivory Muse collection.</p>
+              <h2>{copy.emptyHeading}</h2>
+              <p>{copy.emptyText}</p>
             </div>
           </div>
         )}

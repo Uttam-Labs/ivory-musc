@@ -12,6 +12,7 @@ const SHOW_AFTER_MS = 10_000;
 const SHOW_AFTER_SCROLL = 0.35;
 
 type MobileNewsletterPopupProps = {
+  eyebrow?: string;
   heading?: string;
   body?: string;
   imageUrl?: string;
@@ -24,9 +25,11 @@ type MobileNewsletterPopupProps = {
   alreadySubscribedMessage?: string;
   successMessage?: string;
   fallbackErrorMessage?: string;
+  closeLabel?: string;
 };
 
 export function MobileNewsletterPopup({
+  eyebrow = "Ivory Muse Privileges",
   heading = "Private offers await",
   body = "Subscribe for exclusive offers, early access to new arrivals and private Ivory Muse promotions.",
   imageUrl = "/figma/hero.jpg",
@@ -39,6 +42,7 @@ export function MobileNewsletterPopup({
   alreadySubscribedMessage = "You are already subscribed to Ivory Muse offers.",
   successMessage = "You're in. Watch your inbox for exclusive Ivory Muse offers.",
   fallbackErrorMessage,
+  closeLabel = "Close mailing list pop-up",
 }: MobileNewsletterPopupProps) {
   const [open, setOpen] = useState(false);
 
@@ -101,14 +105,14 @@ export function MobileNewsletterPopup({
   return (
     <div className="mobile-newsletter-popup" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && dismiss()}>
       <section role="dialog" aria-modal="true" aria-labelledby="mobile-newsletter-heading" className="mobile-newsletter-popup__dialog">
-        <button type="button" onClick={dismiss} className="mobile-newsletter-popup__close" aria-label="Close mailing list pop-up">
+        <button type="button" onClick={dismiss} className="mobile-newsletter-popup__close" aria-label={closeLabel}>
           <X size={21} strokeWidth={1.5} />
         </button>
         <div className="mobile-newsletter-popup__image">
           <Image src={imageUrl} alt={imageAlt} fill sizes="410px" quality={95} />
         </div>
         <div className="mobile-newsletter-popup__content">
-          <p className="mobile-newsletter-popup__eyebrow">Ivory Muse Privileges</p>
+          <p className="mobile-newsletter-popup__eyebrow">{eyebrow}</p>
           <h2 id="mobile-newsletter-heading">{heading}</h2>
           <p className="mobile-newsletter-popup__body">{body}</p>
           <WaitlistForm

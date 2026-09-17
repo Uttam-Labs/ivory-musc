@@ -3,7 +3,20 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
-export function HeroLoopVideo({ className }: { className?: string }) {
+export function HeroLoopVideo({
+  className,
+  posterUrl = "/media/ivory-muse-hero-poster.webp",
+  mp4Url,
+  webmUrl,
+}: {
+  className?: string;
+  posterUrl?: string;
+  mp4Url?: string;
+  webmUrl?: string;
+}) {
+  const hasCustomVideo = Boolean(mp4Url || webmUrl);
+  const resolvedMp4Url = hasCustomVideo ? mp4Url : "/media/ivory-muse-hero.mp4";
+  const resolvedWebmUrl = hasCustomVideo ? webmUrl : "/media/ivory-muse-hero.webm";
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
 
@@ -49,7 +62,7 @@ export function HeroLoopVideo({ className }: { className?: string }) {
   return (
     <div className={className} aria-hidden="true">
       <Image
-        src="/media/ivory-muse-hero-poster.webp"
+        src={posterUrl}
         alt=""
         fill
         priority
@@ -69,8 +82,8 @@ export function HeroLoopVideo({ className }: { className?: string }) {
         disablePictureInPicture
         onPlaying={() => setPlaying(true)}
       >
-        <source src="/media/ivory-muse-hero.webm" type="video/webm" />
-        <source src="/media/ivory-muse-hero.mp4" type="video/mp4" />
+        {resolvedWebmUrl && <source src={resolvedWebmUrl} type="video/webm" />}
+        {resolvedMp4Url && <source src={resolvedMp4Url} type="video/mp4" />}
       </video>
     </div>
   );

@@ -134,6 +134,13 @@ type HeaderData = {
   accountHref?: string;
   showCart?: boolean;
   cartHref?: string;
+  uiContent?: {
+    menuLabel?: string; searchTitle?: string; searchPlaceholder?: string; noSearchResults?: string;
+    cartTitle?: string; emptyCartText?: string; continueShoppingLabel?: string; quantityLabel?: string;
+    sampleUnitLabel?: string; singleMetreLabel?: string; multipleMetresLabel?: string;
+    sampleSizeLabel?: string; sampleSizeValue?: string; subtotalLabel?: string; viewBagLabel?: string;
+    checkoutLabel?: string; checkoutLoadingLabel?: string;
+  };
 } | null;
 type FooterData = {
   contactHeading?: string;
@@ -149,6 +156,14 @@ type FooterData = {
 } | null;
 type NewsletterPopupData = {
   backgroundImage?: SanityImageSource & { alt?: string; assetUrl?: string };
+  popupEyebrow?: string;
+  popupHeading?: string;
+  popupBody?: string;
+  popupSubmitLabel?: string;
+  popupSubmittingLabel?: string;
+  popupSuccessMessage?: string;
+  popupAlreadySubscribedMessage?: string;
+  popupCloseLabel?: string;
   emailLabel?: string;
   emailPlaceholder?: string;
   consentText?: string;
@@ -283,13 +298,22 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           accountHref={header?.accountHref}
           showCart={header?.showCart}
           cartHref={header?.cartHref}
+          uiContent={header?.uiContent}
         />
         {children}
         <MobileNewsletterPopup
+          eyebrow={newsletterPopup?.popupEyebrow}
+          heading={newsletterPopup?.popupHeading}
+          body={newsletterPopup?.popupBody}
           imageUrl={newsletterPopup?.backgroundImage?.assetUrl || (newsletterPopup?.backgroundImage ? sanityImageUrl(newsletterPopup.backgroundImage, 1200) : undefined)}
           imageAlt={newsletterPopup?.backgroundImage?.alt}
           emailLabel={newsletterPopup?.emailLabel}
           emailPlaceholder={newsletterPopup?.emailPlaceholder}
+          submitLabel={newsletterPopup?.popupSubmitLabel}
+          submittingLabel={newsletterPopup?.popupSubmittingLabel}
+          successMessage={newsletterPopup?.popupSuccessMessage}
+          alreadySubscribedMessage={newsletterPopup?.popupAlreadySubscribedMessage}
+          closeLabel={newsletterPopup?.popupCloseLabel}
           consentText={newsletterPopup?.consentText}
           fallbackErrorMessage={newsletterPopup?.fallbackErrorMessage}
         />

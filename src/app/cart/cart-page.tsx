@@ -19,7 +19,26 @@ const sampleOptionAttributes = (line: CartLine) => [
 ];
 const sampleAttributeLabel = (key: string) => key.charAt(0).toUpperCase() + key.slice(1);
 
-export function CartPage() {
+export type CartPageCopy = {
+  loadingText?: string; itemsHeading?: string; singleItemLabel?: string; multipleItemsLabel?: string;
+  quantityLabel?: string; summaryEyebrow?: string; summaryHeading?: string; subtotalLabel?: string;
+  shippingLabel?: string; shippingValue?: string; totalLabel?: string; taxNote?: string;
+  checkoutLabel?: string; checkoutLoadingLabel?: string; secureNote?: string; emptyEyebrow?: string;
+  emptyHeading?: string; emptyText?: string; continueLabel?: string;
+};
+const fallbackCopy: Required<CartPageCopy> = {
+  loadingText: "Preparing your shopping bag…", itemsHeading: "Your pieces", singleItemLabel: "item",
+  multipleItemsLabel: "items", quantityLabel: "Quantity", summaryEyebrow: "Order summary",
+  summaryHeading: "Summary", subtotalLabel: "Subtotal", shippingLabel: "Shipping",
+  shippingValue: "Calculated at checkout", totalLabel: "Estimated total",
+  taxNote: "Taxes and delivery options are calculated securely at checkout.", checkoutLabel: "Secure checkout",
+  checkoutLoadingLabel: "Preparing checkout…", secureNote: "Secure checkout powered by Shopify",
+  emptyEyebrow: "Your collection awaits", emptyHeading: "Your shopping bag is empty",
+  emptyText: "Discover considered silks selected for timeless garments and interiors.", continueLabel: "Continue shopping",
+};
+
+export function CartPage({ content }: { content?: CartPageCopy }) {
+  const copy = { ...fallbackCopy, ...content };
   const [cart, setCart] = useState<Cart | null>(null);
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
@@ -142,14 +161,14 @@ export function CartPage() {
         {loading ? (
           <div className={styles.state} role="status">
             <LoaderCircle className={styles.spinner} />
-            <p>Preparing your shopping bag…</p>
+            <p>{copy.loadingText}</p>
           </div>
         ) : cart?.lines.nodes.length ? (
           <div className={styles.layout}>
             <section className={styles.items} aria-label="Shopping bag items">
               <div className={styles.itemsHeading}>
-                <h2>Your pieces</h2>
-                <span>{cart.totalQuantity} {cart.totalQuantity === 1 ? "item" : "items"}</span>
+                <h2>{copy.itemsHeading}</h2>
+                <span>{cart.totalQuantity} {cart.totalQuantity === 1 ? copy.singleItemLabel : copy.multipleItemsLabel}</span>
               </div>
               {cart.lines.nodes.map((line) => {
                 const updating = updatingLines.includes(line.id);
@@ -184,7 +203,7 @@ export function CartPage() {
                         </button>
                       </div>
                       <div className={styles.itemBottom}>
-                        {sample ? <p className={styles.sampleQuantity}>Quantity: 1</p> : <div className={styles.quantity} aria-label="Quantity selector">
+                        {sample ? <p className={styles.sampleQuantity}>{copy.quantityLabel}: 1</p> : <div className={styles.quantity} aria-label={`${copy.quantityLabel} selector`}>
                           <button
                             type="button"
                             aria-label={`Decrease ${line.merchandise.product.title} quantity`}
@@ -211,28 +230,28 @@ export function CartPage() {
             </section>
 
             <aside className={styles.summary}>
-              <p className={styles.summaryEyebrow}>Order summary</p>
-              <h2>Summary</h2>
-              <div className={styles.summaryRow}><span>Subtotal</span><strong>{formatMoney(cart.cost.subtotalAmount)}</strong></div>
-              <div className={styles.summaryRow}><span>Shipping</span><span>Calculated at checkout</span></div>
-              <div className={styles.total}><span>Estimated total</span><strong>{formatMoney(cart.cost.totalAmount)}</strong></div>
-              <p className={styles.note}>Taxes and delivery options are calculated securely at checkout.</p>
+              <p className={styles.summaryEyebrow}>{copy.summaryEyebrow}</p>
+              <h2>{copy.summaryHeading}</h2>
+              <div className={styles.summaryRow}><span>{copy.subtotalLabel}</span><strong>{formatMoney(cart.cost.subtotalAmount)}</strong></div>
+              <div className={styles.summaryRow}><span>{copy.shippingLabel}</span><span>{copy.shippingValue}</span></div>
+              <div className={styles.total}><span>{copy.totalLabel}</span><strong>{formatMoney(cart.cost.totalAmount)}</strong></div>
+              <p className={styles.note}>{copy.taxNote}</p>
               {error && <p className={styles.error} role="alert">{error}</p>}
               <button className={styles.checkout} type="button" onClick={checkout} disabled={checkoutLoading}>
                 {checkoutLoading && <LoaderCircle className={styles.spinner} size={18} />}
-                {checkoutLoading ? "Preparing checkout…" : "Secure checkout"}
+                {checkoutLoading ? copy.checkoutLoadingLabel : copy.checkoutLabel}
               </button>
-              <p className={styles.secure}>Secure checkout powered by Shopify</p>
+              <p className={styles.secure}>{copy.secureNote}</p>
             </aside>
           </div>
         ) : (
           <section className={styles.empty}>
             <span><ShoppingBag size={31} strokeWidth={1.25} /></span>
-            <p className={styles.eyebrow}>Your collection awaits</p>
-            <h2>Your shopping bag is empty</h2>
-            <p>Discover considered silks selected for timeless garments and interiors.</p>
+            <p className={styles.eyebrow}>{copy.emptyEyebrow}</p>
+            <h2>{copy.emptyHeading}</h2>
+            <p>{copy.emptyText}</p>
             {error && <p className={styles.error} role="alert">{error}</p>}
-            <Link href="/collections/shop">Continue shopping</Link>
+            <Link href="/collections/shop">{copy.continueLabel}</Link>
           </section>
         )}
       </div>

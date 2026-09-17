@@ -3,7 +3,22 @@
 import { FormEvent, useId, useState } from "react";
 import { NEWSLETTER_SUBSCRIBED_KEY } from "@/lib/newsletter-preferences";
 
-export function NewsletterForm({ placeholder, submitLabel, onSuccess }: { placeholder?: string; submitLabel?: string; onSuccess?: () => void }) {
+type NewsletterFormProps = {
+  emailLabel?: string;
+  placeholder?: string;
+  submitLabel?: string;
+  submittingLabel?: string;
+  successMessage?: string;
+  alreadySubscribedMessage?: string;
+  fallbackErrorMessage?: string;
+  onSuccess?: () => void;
+};
+
+export function NewsletterForm({
+  emailLabel = "Email address", placeholder, submitLabel, submittingLabel = "Subscribing…",
+  successMessage = "Thank you for subscribing.", alreadySubscribedMessage = "You are already subscribed.",
+  fallbackErrorMessage = "Please try again.", onSuccess,
+}: NewsletterFormProps) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -23,7 +38,7 @@ export function NewsletterForm({ placeholder, submitLabel, onSuccess }: { placeh
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Subscription failed.");
       setStatus("success");
-      setMessage(payload.alreadySubscribed ? "You are already subscribed." : "Thank you for subscribing.");
+      setMessage(payload.alreadySubscribed ? alreadySubscribedMessage : successMessage);
       try {
         window.localStorage.setItem(NEWSLETTER_SUBSCRIBED_KEY, "true");
       } catch {
@@ -33,14 +48,14 @@ export function NewsletterForm({ placeholder, submitLabel, onSuccess }: { placeh
       setEmail("");
     } catch (error) {
       setStatus("error");
-      setMessage(error instanceof Error ? error.message : "Please try again.");
+      setMessage(error instanceof Error ? error.message : fallbackErrorMessage);
     }
   }
 
   return (
     <div className="newsletter-form__wrapper mt-8 w-full max-w-[100%]">
       <form onSubmit={submit} className="flex items-stretch border-b border-[var(--accent)]/60 pb-3">
-        <label htmlFor={inputId} className="sr-only">Email address</label>
+        <label htmlFor={inputId} className="sr-only">{emailLabel}</label>
         <input
           id={inputId}
           name="email"
@@ -55,7 +70,7 @@ export function NewsletterForm({ placeholder, submitLabel, onSuccess }: { placeh
         />
         {submitLabel && (
           <button disabled={status === "loading"} className="newsletter-button ml-4 min-w-[132px] border-l border-[var(--accent)]/70 px-4 text-[10px] uppercase tracking-[.06em] text-[var(--accent)] underline decoration-[1px] underline-offset-[3px] transition-opacity hover:opacity-60 disabled:cursor-wait disabled:opacity-50">
-            {status === "loading" ? "Subscribing…" : submitLabel}
+            {status === "loading" ? submittingLabel : submitLabel}
           </button>
         )}
       </form>

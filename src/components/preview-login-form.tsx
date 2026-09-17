@@ -3,7 +3,23 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export function PreviewLoginForm({ nextPath = "/" }: { nextPath?: string }) {
+export type PreviewLoginCopy = {
+  usernameLabel?: string;
+  passwordLabel?: string;
+  submitLabel?: string;
+  submittingLabel?: string;
+  fallbackError?: string;
+};
+
+export function PreviewLoginForm({ nextPath = "/", content }: { nextPath?: string; content?: PreviewLoginCopy }) {
+  const copy = {
+    usernameLabel: "Username",
+    passwordLabel: "Password",
+    submitLabel: "Enter preview",
+    submittingLabel: "Signing in…",
+    fallbackError: "Please try again.",
+    ...content,
+  };
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -25,7 +41,7 @@ export function PreviewLoginForm({ nextPath = "/" }: { nextPath?: string }) {
       router.replace(destination);
       router.refresh();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Please try again.");
+      setError(cause instanceof Error ? cause.message : copy.fallbackError);
       setLoading(false);
     }
   }
@@ -33,14 +49,14 @@ export function PreviewLoginForm({ nextPath = "/" }: { nextPath?: string }) {
   return (
     <form onSubmit={submit} className="preview-login-form">
       <div>
-        <label htmlFor="preview-username">Username</label>
+        <label htmlFor="preview-username">{copy.usernameLabel}</label>
         <input id="preview-username" name="username" type="text" autoComplete="username" required disabled={loading} />
       </div>
       <div>
-        <label htmlFor="preview-password">Password</label>
+        <label htmlFor="preview-password">{copy.passwordLabel}</label>
         <input id="preview-password" name="password" type="password" autoComplete="current-password" required disabled={loading} />
       </div>
-      <button type="submit" disabled={loading}>{loading ? "Signing in…" : "Enter preview"}</button>
+      <button type="submit" disabled={loading}>{loading ? copy.submittingLabel : copy.submitLabel}</button>
       {error && <p role="alert">{error}</p>}
     </form>
   );

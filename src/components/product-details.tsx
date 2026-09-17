@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Check, ChevronLeft, ChevronRight, LoaderCircle, Minus, Plus, X, ZoomIn } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CollectionProductGrid } from "@/components/collection-product-grid";
+import { CollectionProductGrid, type ProductGridContent } from "@/components/collection-product-grid";
 import { SiteContainer } from "@/components/site-container";
 import { formatMoney } from "@/lib/format";
 import { SHOP_HREF } from "@/lib/navigation";
@@ -37,9 +37,18 @@ export type ProductDetailsSettings = {
   purchaseSampleHref?: string; shippingText?: string; specificationsHeading?: string;
   compositionLabel?: string; weightLabel?: string; widthLabel?: string; careLabel?: string;
   sampleDetailsHeading?: string; sampleSizeText?: string; sampleShippingNote?: string;
+  selectedLabel?: string; unavailableText?: string; outOfStockText?: string; actionErrorText?: string;
+  sampleErrorText?: string; zoomLabel?: string;
 };
 
-export function ProductDetails({ product, sampleProduct, initialSelection, settings, relatedHeading, relatedProducts }: { product: Product; sampleProduct: Product | null; initialSelection: Record<string, string>; settings?: ProductDetailsSettings; relatedHeading?: string; relatedProducts: Product[] }) {
+export function ProductDetails({ product, sampleProduct, initialSelection, settings, relatedHeading, relatedProducts, relatedGridContent }: { product: Product; sampleProduct: Product | null; initialSelection: Record<string, string>; settings?: ProductDetailsSettings; relatedHeading?: string; relatedProducts: Product[]; relatedGridContent?: ProductGridContent }) {
+  const copy = {
+    selectedLabel: "Selected", unavailableText: "This combination is unavailable.", outOfStockText: "Out of stock",
+    actionErrorText: "Please try again.", sampleErrorText: "This sample is already in your cart, or the 10-sample limit has been reached.",
+    zoomLabel: "Click to zoom", sampleDetailsHeading: "Sample details", sampleSizeText: "Sample size is 10cm x 15cm",
+    sampleShippingNote: "$3 AUD per sample, excluding shipping", ...settings,
+  };
+  const sampleNoteParts = copy.sampleShippingNote.trim().split(/\s+/);
   const router = useRouter();
   const pathname = usePathname();
   const [selected, setSelected] = useState<Record<string, string>>(() => {
@@ -196,7 +205,7 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
         <div className={`${styles.gallery} product-info-details__gallery`}>
           <button type="button" className={styles.mainImage} onClick={() => activeImage && setZoomOpen(true)} aria-label={`Zoom ${activeImage?.altText || product.title}`}>
             {activeImage && <Image src={activeImage.url} alt={activeImage.altText || product.title} fill preload quality={95} sizes="(min-width:768px) 50vw, 100vw" />}
-            {activeImage && <span className={styles.zoomHint}><ZoomIn size={18} /> Click to zoom</span>}
+            {activeImage && <span className={styles.zoomHint}><ZoomIn size={18} /> {copy.zoomLabel}</span>}
           </button>
           {thumbnailImages.length > 0 && <div className={`${styles.thumbnails} product-details__thumbnails`}>{thumbnailImages.map((image) => <button key={image.url} aria-label={`View ${image.altText || product.title}`} onClick={() => setManualImage(image.url)}><Image src={image.url} alt={image.altText || product.title} fill quality={95} sizes="(min-width: 1200px) 16vw, (min-width: 768px) 20vw, 33vw" /></button>)}</div>}
         </div>
@@ -209,7 +218,7 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
             : product.description && <p className={`${styles.description} product-description`}>{product.description}</p>}
           <div className={`${styles.priceRow} product-details__price-row`}>{variant?.compareAtPrice && Number(variant.compareAtPrice.amount) > Number(price.amount) && <del>{formatMoney(variant.compareAtPrice)}</del>}<p className={`${styles.price} product-details__price`}>{formatMoney(price)}</p>{settings?.perUnitLabel && <small className="label-unit">{settings.perUnitLabel}</small>}</div>
           {selectedVariantLabel && <div className={styles.selectionSummary} aria-live="polite">
-            <p><span>Selected:</span><strong>{selectedVariantLabel}</strong></p>
+            <p><span>{copy.selectedLabel}:</span><strong>{selectedVariantLabel}</strong></p>
           </div>}
           {productOptions.map((option, optionIndex) => <fieldset key={option.id} aria-label={option.name} className={`${styles.options} product-details__options`}>
             {!isColor(option.name) && <legend className="option-label">{option.name}</legend>}
@@ -220,24 +229,24 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
             <div className={`${styles.total} product-details__total`}>{settings?.totalLabel && <span>{settings.totalLabel}</span>}<strong>{formatMoney(total)}</strong></div>
             {settings?.minimumPurchaseText && <p>{settings.minimumPurchaseText}</p>}
           </div>
-          {!variant && <p className={styles.unavailable}>This combination is unavailable.</p>}
+          {!variant && <p className={styles.unavailable}>{copy.unavailableText}</p>}
           <div className={`${styles.actions} ${sampleProduct ? "" : styles.actionsWithoutSample} product-details__actions`}>
-            {settings?.buyNowLabel && <button className={`${styles.buyButton} button buy-button`} onClick={() => submit("buy")} disabled={!variant?.availableForSale || isOutOfStock || action === "buy" || action === "cart"}>{isOutOfStock ? "Out of stock" : action === "buy" ? <LoaderCircle className="animate-spin" size={17} /> : settings.buyNowLabel}</button>}
-            {settings?.addToCartLabel && <button className={`${styles.cartButton} button button-add-to-cart`} onClick={() => submit("cart")} disabled={!variant?.availableForSale || isOutOfStock || action === "cart" || action === "buy"}>{isOutOfStock ? "Out of stock" : action === "cart" ? <LoaderCircle className="animate-spin" size={17} /> : action === "added" ? <><Check size={17} /> {settings.addToCartLabel}</> : settings.addToCartLabel}</button>}
+            {settings?.buyNowLabel && <button className={`${styles.buyButton} button buy-button`} onClick={() => submit("buy")} disabled={!variant?.availableForSale || isOutOfStock || action === "buy" || action === "cart"}>{isOutOfStock ? copy.outOfStockText : action === "buy" ? <LoaderCircle className="animate-spin" size={17} /> : settings.buyNowLabel}</button>}
+            {settings?.addToCartLabel && <button className={`${styles.cartButton} button button-add-to-cart`} onClick={() => submit("cart")} disabled={!variant?.availableForSale || isOutOfStock || action === "cart" || action === "buy"}>{isOutOfStock ? copy.outOfStockText : action === "cart" ? <LoaderCircle className="animate-spin" size={17} /> : action === "added" ? <><Check size={17} /> {settings.addToCartLabel}</> : settings.addToCartLabel}</button>}
             {sampleProduct && <button type="button" className={`${styles.sampleButton} button button-sample`} onClick={purchaseSample} disabled={!sampleVariant || sampleAction === "loading"}>{sampleAction === "loading" ? <LoaderCircle className="animate-spin" size={17} /> : settings?.purchaseSampleLabel || "Purchase sample"}</button>}
           </div>
-          {action === "error" && <p className={styles.unavailable}>Please try again.</p>}
-          {sampleAction === "error" && <p className={styles.unavailable}>This sample is already in your cart, or the 10-sample limit has been reached.</p>}
+          {action === "error" && <p className={styles.unavailable}>{copy.actionErrorText}</p>}
+          {sampleAction === "error" && <p className={styles.unavailable}>{copy.sampleErrorText}</p>}
           {sampleProduct && <div className={styles.sampleInformation}>
-            <h2>{settings?.sampleDetailsHeading || "Sample details"}</h2>
-            <p>Sample size is 10cm x 15cm</p>
-            <p><strong>$3 AUD</strong> per sample, excluding shipping</p>
+            <h2>{copy.sampleDetailsHeading}</h2>
+            <p>{copy.sampleSizeText}</p>
+            <p><strong>{sampleNoteParts.slice(0, 2).join(" ")}</strong>{sampleNoteParts.length > 2 ? ` ${sampleNoteParts.slice(2).join(" ")}` : ""}</p>
           </div>}
           {specifications.length > 0 && <div className={`${styles.specifications} product-details__specifications`}>{settings?.specificationsHeading && <h2>{settings.specificationsHeading}</h2>}{specifications.map(([label, value]) => <div className="spec" key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>}
         </div>
         </div>
       </section>
-      {relatedProducts.length > 0 && <section className={styles.related}>{relatedHeading && <h2 className="common-heading">{relatedHeading}</h2>}<div className={styles.relatedGrid}><CollectionProductGrid products={relatedProducts} /></div></section>}
+      {relatedProducts.length > 0 && <section className={styles.related}>{relatedHeading && <h2 className="common-heading">{relatedHeading}</h2>}<div className={styles.relatedGrid}><CollectionProductGrid products={relatedProducts} content={relatedGridContent} /></div></section>}
     </SiteContainer>
     {zoomOpen && activeImage && <div className={styles.lightbox} role="dialog" aria-modal="true" aria-label={`${product.title} image zoom`} onMouseDown={(event) => event.target === event.currentTarget && setZoomOpen(false)}>
       <button type="button" className={styles.lightboxClose} onClick={() => setZoomOpen(false)} aria-label="Close zoom view"><X size={24} /></button>
