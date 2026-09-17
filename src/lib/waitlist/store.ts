@@ -28,7 +28,7 @@ export async function storeWaitlistSubscriber(
   }
 
   const id = documentId(email);
-  const existing = await writeClient.getDocument<{ _id: string; welcomeEmailSent?: boolean }>(id);
+  const existing = await writeClient.getDocument<{ _id: string }>(id);
   if (existing) {
     await writeClient
       .patch(id)
@@ -42,7 +42,6 @@ export async function storeWaitlistSubscriber(
     return {
       id,
       alreadySubscribed: true,
-      welcomeEmailSent: existing.welcomeEmailSent === true,
     };
   }
 
@@ -56,12 +55,6 @@ export async function storeWaitlistSubscriber(
     tag: "Ivory Muse Waitlist",
     source,
     subscribedAt: consentedAt,
-    welcomeEmailSent: false,
   });
-  return { id, alreadySubscribed: false, welcomeEmailSent: false };
-}
-
-export async function markWelcomeEmailSent(id: string) {
-  if (!token) return;
-  await writeClient.patch(id).set({ welcomeEmailSent: true }).commit();
+  return { id, alreadySubscribed: false };
 }

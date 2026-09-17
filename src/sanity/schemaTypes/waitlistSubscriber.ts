@@ -12,7 +12,6 @@ export const waitlistSubscriber = defineType({
     defineField({ name: "tag", title: "Tag", type: "string", readOnly: true }),
     defineField({ name: "source", title: "Source", type: "string", readOnly: true }),
     defineField({ name: "subscribedAt", title: "Subscribed at", type: "datetime", readOnly: true }),
-    defineField({ name: "welcomeEmailSent", title: "Welcome email sent", type: "boolean", readOnly: true }),
   ],
   preview: { select: { title: "email", subtitle: "subscribedAt" } },
 });

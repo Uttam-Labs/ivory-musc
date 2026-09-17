@@ -1,80 +1,42 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { env } from "@/lib/env";
+import { subscribeMarketingProfileToKlaviyo } from "@/lib/waitlist/klaviyo";
+import { syncMarketingCustomerToShopify } from "@/lib/waitlist/shopify-customer";
 
 const inputSchema = z.object({ email: z.string().trim().email().max(254) });
-
-const mutation = `#graphql
-  mutation NewsletterSubscribe($email: String!) {
-    customerEmailMarketingSubscribe(email: $email) {
-      customer { id }
-      customerUserErrors { field message code }
-    }
-  }
-`;
-
-async function subscribeWithStorefront(email: string) {
-  if (!env.SHOPIFY_STORE_DOMAIN || !env.SHOPIFY_STOREFRONT_ACCESS_TOKEN) return false;
-  const response = await fetch(`https://${env.SHOPIFY_STORE_DOMAIN}/api/unstable/graphql.json`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-shopify-storefront-access-token": env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,
-    },
-    body: JSON.stringify({ query: mutation, variables: { email } }),
-    cache: "no-store",
-  });
-  const payload = await response.json() as {
-    data?: { customerEmailMarketingSubscribe?: { customer?: { id: string }; customerUserErrors?: Array<{ message: string }> } };
-    errors?: Array<{ message: string }>;
-  };
-  const result = payload.data?.customerEmailMarketingSubscribe;
-  if (result?.customer?.id) return true;
-  if (result?.customerUserErrors?.length) throw new Error(result.customerUserErrors[0].message);
-  return false;
-}
-
-async function subscribeWithCustomerForm(email: string) {
-  if (!env.SHOPIFY_STORE_DOMAIN) return false;
-  const body = new URLSearchParams({
-    form_type: "customer",
-    utf8: "✓",
-    "contact[email]": email,
-    "contact[tags]": "newsletter",
-  });
-  const response = await fetch(`https://${env.SHOPIFY_STORE_DOMAIN}/contact`, {
-    method: "POST",
-    headers: { "content-type": "application/x-www-form-urlencoded" },
-    body,
-    redirect: "manual",
-    cache: "no-store",
-  });
-  return response.ok || response.status === 302 || response.status === 303;
-}
+const NEWSLETTER_TAG = "newsletter";
+const CONSENT_TEXT =
+  "I agree to receive emails from Ivory Muse about new collections, design inspiration, exclusive offers and brand updates. I can unsubscribe at any time.";
+const CONSENT_SOURCE = "Ivory Muse homepage newsletter form";
 
 export async function POST(request: Request) {
   try {
     const { email } = inputSchema.parse(await request.json());
-    let subscribed = false;
-    try {
-      subscribed = await subscribeWithStorefront(email);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "";
-      if (/already|taken|subscribed/i.test(message)) {
-        return NextResponse.json({ success: true, alreadySubscribed: true });
-      }
-      throw error;
-    }
-    if (!subscribed) subscribed = await subscribeWithCustomerForm(email);
-    if (!subscribed) throw new Error("Subscription could not be completed.");
-    return NextResponse.json({ success: true });
+    const consentedAt = new Date().toISOString();
+    const consent = {
+      marketingConsent: true as const,
+      consentText: CONSENT_TEXT,
+      consentedAt,
+      consentSource: CONSENT_SOURCE,
+    };
+
+    await Promise.all([
+      syncMarketingCustomerToShopify(email, NEWSLETTER_TAG, consentedAt),
+      subscribeMarketingProfileToKlaviyo(email, consent, {
+        source: CONSENT_SOURCE,
+        listName: "Ivory Muse Mailing List",
+      }),
+    ]);
+
+    return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {
+    console.error("Newsletter subscription failed:", error);
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
     }
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Subscription failed. Please try again." },
-      { status: 400 },
+      { error: "We could not complete your subscription. Please try again." },
+      { status: 500 },
     );
   }
 }

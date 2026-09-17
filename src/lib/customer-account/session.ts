@@ -24,7 +24,6 @@ function key() {
     env.SHOPIFY_ADMIN_ACCESS_TOKEN ||
     env.SANITY_API_WRITE_TOKEN ||
     env.SANITY_API_READ_TOKEN ||
-    env.SMTP_CREDENTIAL_ENCRYPTION_KEY ||
     env.PREVIEW_AUTH_SECRET;
   if (!secret)
     throw new Error("Secure customer sessions are not configured");
