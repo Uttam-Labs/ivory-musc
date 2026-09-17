@@ -37,3 +37,16 @@
 :global(.preview-login-form button:hover:not(:disabled)) { opacity: .88; transform: translateY(-1px); }
 :global(.preview-login-form button:disabled) { cursor: wait; opacity: .55; }
 :global(.preview-login-form [role="alert"]) { margin: 0; text-align: center; font: 12px/1.5 var(--primary-font); color: #a13d36; }
+
+@media (max-width: 767px) {
+  .page { padding: 18px 14px; }
+  .card { width: min(100%, 430px); padding: 30px 22px 34px; }
+  .logo { min-height: 72px; margin-bottom: 16px; }
+  .logo img { max-height: 78px; }
+  .eyebrow { margin-bottom: 9px; font-size: 9px; }
+  .card h1 { font-size: clamp(27px, 8vw, 32px); line-height: 1.12; }
+  .intro { margin: 12px auto 24px; max-width: 32rem; font-size: 12px; line-height: 1.6; }
+  :global(.preview-login-form) { gap: 15px; }
+  :global(.preview-login-form input) { padding: 13px 14px; }
+  :global(.preview-login-form button) { padding: 14px 18px; }
+}

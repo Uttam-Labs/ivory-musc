@@ -2,6 +2,7 @@
 
 import { X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { NEWSLETTER_SUBSCRIBED_KEY } from "@/lib/newsletter-preferences";
 
@@ -39,6 +40,8 @@ export function MobileNewsletterPopup({
   fallbackErrorMessage = "Please try again.",
   closeLabel = "Close newsletter pop-up",
 }: MobileNewsletterPopupProps) {
+  const pathname = usePathname();
+  const isPreviewLogin = pathname === "/preview-login";
   const copy = {
     heading: textOr(heading, "JOIN OUR WORLD OF SILK"),
     body: textOr(body, "Receive exclusive access to new collections, design inspiration, and stories celebrating the artistry of fine silk."),
@@ -63,6 +66,7 @@ export function MobileNewsletterPopup({
   }, []);
 
   useEffect(() => {
+    if (isPreviewLogin) return;
     if (!window.matchMedia(MOBILE_QUERY).matches) return;
     try {
       if (window.localStorage.getItem(NEWSLETTER_SUBSCRIBED_KEY) === "true") return;
@@ -94,10 +98,10 @@ export function MobileNewsletterPopup({
       window.clearTimeout(timer);
       window.removeEventListener("scroll", checkScroll);
     };
-  }, []);
+  }, [isPreviewLogin]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || isPreviewLogin) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const closeOnEscape = (event: KeyboardEvent) => event.key === "Escape" && dismiss();
@@ -106,9 +110,9 @@ export function MobileNewsletterPopup({
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", closeOnEscape);
     };
-  }, [dismiss, open]);
+  }, [dismiss, isPreviewLogin, open]);
 
-  if (!open) return null;
+  if (!open || isPreviewLogin) return null;
 
   return (
     <div className="mobile-newsletter-popup" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && dismiss()}>
