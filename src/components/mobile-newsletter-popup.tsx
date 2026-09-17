@@ -12,21 +12,24 @@ const SHOW_AFTER_MS = 10_000;
 const SHOW_AFTER_SCROLL = 0.35;
 
 type MobileNewsletterPopupProps = {
-  eyebrow?: string;
-  heading?: string;
-  body?: string;
+  eyebrow?: string | null;
+  heading?: string | null;
+  body?: string | null;
   imageUrl?: string;
   imageAlt?: string;
-  emailLabel?: string;
-  emailPlaceholder?: string;
-  submitLabel?: string;
-  submittingLabel?: string;
-  consentText?: string;
-  alreadySubscribedMessage?: string;
-  successMessage?: string;
-  fallbackErrorMessage?: string;
-  closeLabel?: string;
+  emailLabel?: string | null;
+  emailPlaceholder?: string | null;
+  submitLabel?: string | null;
+  submittingLabel?: string | null;
+  consentText?: string | null;
+  alreadySubscribedMessage?: string | null;
+  successMessage?: string | null;
+  fallbackErrorMessage?: string | null;
+  closeLabel?: string | null;
 };
+
+const textOr = (value: string | null | undefined, fallback: string) =>
+  typeof value === "string" && value.trim() ? value : fallback;
 
 export function MobileNewsletterPopup({
   eyebrow = "Ivory Muse Privileges",
@@ -44,6 +47,20 @@ export function MobileNewsletterPopup({
   fallbackErrorMessage,
   closeLabel = "Close mailing list pop-up",
 }: MobileNewsletterPopupProps) {
+  const copy = {
+    eyebrow: textOr(eyebrow, "Ivory Muse Privileges"),
+    heading: textOr(heading, "Private offers await"),
+    body: textOr(body, "Subscribe for exclusive offers, early access to new arrivals and private Ivory Muse promotions."),
+    emailLabel: textOr(emailLabel, "Email address"),
+    emailPlaceholder: textOr(emailPlaceholder, "EMAIL ADDRESS"),
+    submitLabel: textOr(submitLabel, "UNLOCK EXCLUSIVE ACCESS"),
+    submittingLabel: textOr(submittingLabel, "SUBSCRIBING…"),
+    consentText: textOr(consentText, "I agree to receive emails from Ivory Muse about new collections, restocks, exclusive offers and brand updates. I can unsubscribe at any time."),
+    alreadySubscribedMessage: textOr(alreadySubscribedMessage, "You are already subscribed to Ivory Muse offers."),
+    successMessage: textOr(successMessage, "You're in. Watch your inbox for exclusive Ivory Muse offers."),
+    fallbackErrorMessage: textOr(fallbackErrorMessage, "We could not subscribe you. Please try again."),
+    closeLabel: textOr(closeLabel, "Close mailing list pop-up"),
+  };
   const [open, setOpen] = useState(false);
 
   const dismiss = useCallback(() => {
@@ -105,25 +122,25 @@ export function MobileNewsletterPopup({
   return (
     <div className="mobile-newsletter-popup" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && dismiss()}>
       <section role="dialog" aria-modal="true" aria-labelledby="mobile-newsletter-heading" className="mobile-newsletter-popup__dialog">
-        <button type="button" onClick={dismiss} className="mobile-newsletter-popup__close" aria-label={closeLabel}>
+        <button type="button" onClick={dismiss} className="mobile-newsletter-popup__close" aria-label={copy.closeLabel}>
           <X size={21} strokeWidth={1.5} />
         </button>
         <div className="mobile-newsletter-popup__image">
           <Image src={imageUrl} alt={imageAlt} fill sizes="410px" quality={95} />
         </div>
         <div className="mobile-newsletter-popup__content">
-          <p className="mobile-newsletter-popup__eyebrow">{eyebrow}</p>
-          <h2 id="mobile-newsletter-heading">{heading}</h2>
-          <p className="mobile-newsletter-popup__body">{body}</p>
+          <p className="mobile-newsletter-popup__eyebrow">{copy.eyebrow}</p>
+          <h2 id="mobile-newsletter-heading">{copy.heading}</h2>
+          <p className="mobile-newsletter-popup__body">{copy.body}</p>
           <WaitlistForm
-            emailLabel={emailLabel}
-            emailPlaceholder={emailPlaceholder}
-            submitLabel={submitLabel}
-            submittingLabel={submittingLabel}
-            consentText={consentText}
-            alreadySubscribedMessage={alreadySubscribedMessage}
-            successMessage={successMessage}
-            fallbackErrorMessage={fallbackErrorMessage}
+            emailLabel={copy.emailLabel}
+            emailPlaceholder={copy.emailPlaceholder}
+            submitLabel={copy.submitLabel}
+            submittingLabel={copy.submittingLabel}
+            consentText={copy.consentText}
+            alreadySubscribedMessage={copy.alreadySubscribedMessage}
+            successMessage={copy.successMessage}
+            fallbackErrorMessage={copy.fallbackErrorMessage}
             onSuccess={() => window.setTimeout(() => setOpen(false), 1400)}
           />
         </div>
