@@ -99,7 +99,7 @@ We take care when preparing and packaging each order.
 
 ### Products
 
-Once your order has been dispatched, delivery is estimated to take approximately **2 to 6 business days for standard shipping** and approximately **1-3 business days for express shipping**.
+Once your order has been dispatched, delivery is estimated to take approximately **2-6 business days for standard shipping** and approximately **1-3 business days for express shipping**.
 
 This depends on your location.
 
@@ -107,7 +107,7 @@ Delivery timeframes are estimates and may vary during peak periods, public holid
 
 ### Samples
 
-Standard sample shipping takes approximately **2 to 6 business days**.
+Standard sample shipping takes approximately **2-6 business days**.
 
 Express sample shipping takes approximately **1 to 3 business days**.
 
