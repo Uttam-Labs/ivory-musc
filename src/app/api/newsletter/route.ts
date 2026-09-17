@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     };
 
     await Promise.all([
-      syncMarketingCustomerToShopify(email, NEWSLETTER_TAG, consentedAt),
+      syncMarketingCustomerToShopify(email, [NEWSLETTER_TAG], consentedAt),
       subscribeMarketingProfileToKlaviyo(email, consent, {
         source: CONSENT_SOURCE,
         listName: "Ivory Muse Mailing List",

@@ -49,14 +49,14 @@ async function findCustomerId(email: string) {
   return data.customers.nodes[0]?.id;
 }
 
-async function updateExistingCustomer(customerId: string, tag: string, consentUpdatedAt: string) {
+async function updateExistingCustomer(customerId: string, tags: string[], consentUpdatedAt: string) {
   const tagData = await shopifyAdminRequest<{
     tagsAdd: { userErrors: UserError[] };
   }>(
     `mutation AddWaitlistTag($id: ID!, $tags: [String!]!) {
       tagsAdd(id: $id, tags: $tags) { userErrors { field message } }
     }`,
-    { id: customerId, tags: [tag] },
+    { id: customerId, tags },
   );
   if (tagData.tagsAdd.userErrors.length) {
     throw new Error(tagData.tagsAdd.userErrors.map(({ message }) => message).join("; "));
@@ -94,13 +94,13 @@ async function updateExistingCustomer(customerId: string, tag: string, consentUp
 
 export async function syncMarketingCustomerToShopify(
   email: string,
-  tag: string,
+  tags: string[],
   consentUpdatedAt = new Date().toISOString(),
 ) {
   const normalizedEmail = email.trim().toLowerCase();
   const existingCustomerId = await findCustomerId(normalizedEmail);
   if (existingCustomerId) {
-    return updateExistingCustomer(existingCustomerId, tag, consentUpdatedAt);
+    return updateExistingCustomer(existingCustomerId, tags, consentUpdatedAt);
   }
 
   const data = await shopifyAdminRequest<{
@@ -118,18 +118,18 @@ export async function syncMarketingCustomerToShopify(
     {
       input: {
         email: normalizedEmail,
-        tags: [tag],
+        tags,
       },
     },
   );
 
   if (data.customerCreate.customer) {
-    return updateExistingCustomer(data.customerCreate.customer.id, tag, consentUpdatedAt);
+    return updateExistingCustomer(data.customerCreate.customer.id, tags, consentUpdatedAt);
   }
 
   // A simultaneous submission can create the customer after our initial lookup.
   const customerId = await findCustomerId(normalizedEmail);
-  if (customerId) return updateExistingCustomer(customerId, tag, consentUpdatedAt);
+  if (customerId) return updateExistingCustomer(customerId, tags, consentUpdatedAt);
   throw new Error(
     data.customerCreate.userErrors.map(({ message }) => message).join("; ") ||
       "Shopify customer could not be created.",
@@ -140,5 +140,9 @@ export function syncWaitlistCustomerToShopify(
   email: string,
   consentUpdatedAt = new Date().toISOString(),
 ) {
-  return syncMarketingCustomerToShopify(email, "Ivory Muse Waitlist", consentUpdatedAt);
+  return syncMarketingCustomerToShopify(
+    email,
+    ["newsletter", "Ivory Muse Waitlist"],
+    consentUpdatedAt,
+  );
 }
