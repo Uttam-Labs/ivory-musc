@@ -16,7 +16,7 @@ import { sanityFetch } from "@/sanity/lib/client";
 import {
   FOOTER_SETTINGS_QUERY,
   HEADER_SETTINGS_QUERY,
-  NEWSLETTER_POPUP_QUERY,
+  HOME_NEWSLETTER_QUERY,
   SITE_SETTINGS_QUERY,
 } from "@/sanity/lib/queries";
 import { sanityImageUrl } from "@/sanity/lib/image";
@@ -154,27 +154,23 @@ type FooterData = {
   }>;
   copyright?: string;
 } | null;
-type NewsletterPopupData = {
-  backgroundImage?: SanityImageSource & { alt?: string; assetUrl?: string };
-  popupEyebrow?: string;
-  popupHeading?: string;
-  popupBody?: string;
-  popupSubmitLabel?: string;
-  popupSubmittingLabel?: string;
-  popupSuccessMessage?: string;
-  popupAlreadySubscribedMessage?: string;
-  popupCloseLabel?: string;
+type HomeNewsletterData = {
+  heading?: string;
+  body?: string;
   emailLabel?: string;
   emailPlaceholder?: string;
-  consentText?: string;
+  submitLabel?: string;
+  submittingLabel?: string;
+  successMessage?: string;
+  alreadySubscribedMessage?: string;
   fallbackErrorMessage?: string;
 } | null;
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [settings, header, footer, newsletterPopup] = await Promise.all([
+  const [settings, header, footer, homeNewsletter] = await Promise.all([
     isSanityConfigured ? getDefaultSettings() : null,
     isSanityConfigured ? sanityFetch<HeaderData>(HEADER_SETTINGS_QUERY) : null,
     isSanityConfigured ? sanityFetch<FooterData>(FOOTER_SETTINGS_QUERY) : null,
-    isSanityConfigured ? sanityFetch<NewsletterPopupData>(NEWSLETTER_POPUP_QUERY) : null,
+    isSanityConfigured ? sanityFetch<HomeNewsletterData>(HOME_NEWSLETTER_QUERY) : null,
   ]);
   const headerLogoUrl = header?.logo
     ? sanityImageUrl(header.logo, 640)
@@ -302,20 +298,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         />
         {children}
         <MobileNewsletterPopup
-          eyebrow={newsletterPopup?.popupEyebrow}
-          heading={newsletterPopup?.popupHeading}
-          body={newsletterPopup?.popupBody}
-          imageUrl={newsletterPopup?.backgroundImage?.assetUrl || (newsletterPopup?.backgroundImage ? sanityImageUrl(newsletterPopup.backgroundImage, 1200) : undefined)}
-          imageAlt={newsletterPopup?.backgroundImage?.alt}
-          emailLabel={newsletterPopup?.emailLabel}
-          emailPlaceholder={newsletterPopup?.emailPlaceholder}
-          submitLabel={newsletterPopup?.popupSubmitLabel}
-          submittingLabel={newsletterPopup?.popupSubmittingLabel}
-          successMessage={newsletterPopup?.popupSuccessMessage}
-          alreadySubscribedMessage={newsletterPopup?.popupAlreadySubscribedMessage}
-          closeLabel={newsletterPopup?.popupCloseLabel}
-          consentText={newsletterPopup?.consentText}
-          fallbackErrorMessage={newsletterPopup?.fallbackErrorMessage}
+          heading={homeNewsletter?.heading}
+          body={homeNewsletter?.body}
+          emailLabel={homeNewsletter?.emailLabel}
+          emailPlaceholder={homeNewsletter?.emailPlaceholder}
+          submitLabel={homeNewsletter?.submitLabel}
+          submittingLabel={homeNewsletter?.submittingLabel}
+          successMessage={homeNewsletter?.successMessage}
+          alreadySubscribedMessage={homeNewsletter?.alreadySubscribedMessage}
+          fallbackErrorMessage={homeNewsletter?.fallbackErrorMessage}
         />
         <Footer
           contactHeading={footer?.contactHeading}

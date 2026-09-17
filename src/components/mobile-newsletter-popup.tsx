@@ -1,27 +1,23 @@
 "use client";
 
-import Image from "next/image";
 import { X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { WaitlistForm } from "@/components/waitlist-form";
+import { NewsletterForm } from "@/components/newsletter-form";
 import { NEWSLETTER_SUBSCRIBED_KEY } from "@/lib/newsletter-preferences";
 
-const DISMISSED_THIS_VISIT_KEY = "ivory-muse-newsletter-dismissed-this-visit";
+const DISMISSED_UNTIL_KEY = "ivory-muse-newsletter-dismissed-until";
+const DISMISS_FOR_MS = 7 * 24 * 60 * 60 * 1000;
 const MOBILE_QUERY = "(max-width: 767px)";
 const SHOW_AFTER_MS = 10_000;
 const SHOW_AFTER_SCROLL = 0.35;
 
 type MobileNewsletterPopupProps = {
-  eyebrow?: string | null;
   heading?: string | null;
   body?: string | null;
-  imageUrl?: string;
-  imageAlt?: string;
   emailLabel?: string | null;
   emailPlaceholder?: string | null;
   submitLabel?: string | null;
   submittingLabel?: string | null;
-  consentText?: string | null;
   alreadySubscribedMessage?: string | null;
   successMessage?: string | null;
   fallbackErrorMessage?: string | null;
@@ -32,40 +28,34 @@ const textOr = (value: string | null | undefined, fallback: string) =>
   typeof value === "string" && value.trim() ? value : fallback;
 
 export function MobileNewsletterPopup({
-  eyebrow = "Ivory Muse Privileges",
-  heading = "Private offers await",
-  body = "Subscribe for exclusive offers, early access to new arrivals and private Ivory Muse promotions.",
-  imageUrl = "/figma/hero.jpg",
-  imageAlt = "Ivory silk in the Ivory Muse studio",
+  heading = "JOIN OUR WORLD OF SILK",
+  body = "Receive exclusive access to new collections, design inspiration, and stories celebrating the artistry of fine silk.",
   emailLabel = "Email address",
-  emailPlaceholder = "EMAIL ADDRESS",
-  submitLabel = "UNLOCK EXCLUSIVE ACCESS",
+  emailPlaceholder = "Enter your email ID",
+  submitLabel = "SUBSCRIBE NOW",
   submittingLabel = "SUBSCRIBING…",
-  consentText,
-  alreadySubscribedMessage = "You are already subscribed to Ivory Muse offers.",
-  successMessage = "You're in. Watch your inbox for exclusive Ivory Muse offers.",
-  fallbackErrorMessage,
-  closeLabel = "Close mailing list pop-up",
+  alreadySubscribedMessage = "You are already subscribed.",
+  successMessage = "Thank you for subscribing.",
+  fallbackErrorMessage = "Please try again.",
+  closeLabel = "Close newsletter pop-up",
 }: MobileNewsletterPopupProps) {
   const copy = {
-    eyebrow: textOr(eyebrow, "Ivory Muse Privileges"),
-    heading: textOr(heading, "Private offers await"),
-    body: textOr(body, "Subscribe for exclusive offers, early access to new arrivals and private Ivory Muse promotions."),
+    heading: textOr(heading, "JOIN OUR WORLD OF SILK"),
+    body: textOr(body, "Receive exclusive access to new collections, design inspiration, and stories celebrating the artistry of fine silk."),
     emailLabel: textOr(emailLabel, "Email address"),
-    emailPlaceholder: textOr(emailPlaceholder, "EMAIL ADDRESS"),
-    submitLabel: textOr(submitLabel, "UNLOCK EXCLUSIVE ACCESS"),
+    emailPlaceholder: textOr(emailPlaceholder, "Enter your email ID"),
+    submitLabel: textOr(submitLabel, "SUBSCRIBE NOW"),
     submittingLabel: textOr(submittingLabel, "SUBSCRIBING…"),
-    consentText: textOr(consentText, "I agree to receive emails from Ivory Muse about new collections, restocks, exclusive offers and brand updates. I can unsubscribe at any time."),
-    alreadySubscribedMessage: textOr(alreadySubscribedMessage, "You are already subscribed to Ivory Muse offers."),
-    successMessage: textOr(successMessage, "You're in. Watch your inbox for exclusive Ivory Muse offers."),
-    fallbackErrorMessage: textOr(fallbackErrorMessage, "We could not subscribe you. Please try again."),
-    closeLabel: textOr(closeLabel, "Close mailing list pop-up"),
+    alreadySubscribedMessage: textOr(alreadySubscribedMessage, "You are already subscribed."),
+    successMessage: textOr(successMessage, "Thank you for subscribing."),
+    fallbackErrorMessage: textOr(fallbackErrorMessage, "Please try again."),
+    closeLabel: textOr(closeLabel, "Close newsletter pop-up"),
   };
   const [open, setOpen] = useState(false);
 
   const dismiss = useCallback(() => {
     try {
-      window.sessionStorage.setItem(DISMISSED_THIS_VISIT_KEY, "true");
+      window.localStorage.setItem(DISMISSED_UNTIL_KEY, String(Date.now() + DISMISS_FOR_MS));
     } catch {
       // Closing the pop-up should still work if browser storage is unavailable.
     }
@@ -75,10 +65,11 @@ export function MobileNewsletterPopup({
   useEffect(() => {
     if (!window.matchMedia(MOBILE_QUERY).matches) return;
     try {
-      if (
-        window.localStorage.getItem(NEWSLETTER_SUBSCRIBED_KEY) === "true" ||
-        window.sessionStorage.getItem(DISMISSED_THIS_VISIT_KEY) === "true"
-      ) return;
+      if (window.localStorage.getItem(NEWSLETTER_SUBSCRIBED_KEY) === "true") return;
+
+      const dismissedUntil = Number(window.localStorage.getItem(DISMISSED_UNTIL_KEY));
+      if (Number.isFinite(dismissedUntil) && dismissedUntil > Date.now()) return;
+      window.localStorage.removeItem(DISMISSED_UNTIL_KEY);
     } catch {
       // Continue with normal trigger behaviour if browser storage is unavailable.
     }
@@ -123,21 +114,16 @@ export function MobileNewsletterPopup({
     <div className="mobile-newsletter-popup" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && dismiss()}>
       <section role="dialog" aria-modal="true" aria-labelledby="mobile-newsletter-heading" className="mobile-newsletter-popup__dialog">
         <button type="button" onClick={dismiss} className="mobile-newsletter-popup__close" aria-label={copy.closeLabel}>
-          <X size={21} strokeWidth={1.5} />
+          <X size={20} strokeWidth={1.5} />
         </button>
-        <div className="mobile-newsletter-popup__image">
-          <Image src={imageUrl} alt={imageAlt} fill sizes="410px" quality={95} />
-        </div>
         <div className="mobile-newsletter-popup__content">
-          <p className="mobile-newsletter-popup__eyebrow">{copy.eyebrow}</p>
           <h2 id="mobile-newsletter-heading">{copy.heading}</h2>
           <p className="mobile-newsletter-popup__body">{copy.body}</p>
-          <WaitlistForm
+          <NewsletterForm
             emailLabel={copy.emailLabel}
-            emailPlaceholder={copy.emailPlaceholder}
+            placeholder={copy.emailPlaceholder}
             submitLabel={copy.submitLabel}
             submittingLabel={copy.submittingLabel}
-            consentText={copy.consentText}
             alreadySubscribedMessage={copy.alreadySubscribedMessage}
             successMessage={copy.successMessage}
             fallbackErrorMessage={copy.fallbackErrorMessage}

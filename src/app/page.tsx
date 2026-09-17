@@ -284,7 +284,7 @@ export default async function Home() {
           return (
             <section
               key={key}
-              className="home-newsletter grid bg-[#fff9f3] md:min-h-[659px] md:grid-cols-[45%_55%]"
+              className="home-newsletter hidden bg-[#fff9f3] md:grid md:min-h-[659px] md:grid-cols-[45%_55%]"
             >
               <div className="flex flex-col items-center justify-center bg-[#fff5ea] px-6 sm:px-12 xl:px-24 py-14 text-center md:py-16">
                 <div className="newsletter-wrapper max-w-[570px] mx-auto">
