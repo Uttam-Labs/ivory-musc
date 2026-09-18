@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Check, LoaderCircle, Minus, Plus, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { ProductDetailsSettings } from "@/components/product-details";
 import { formatMoney } from "@/lib/format";
 import type {
   Product,
@@ -81,6 +82,16 @@ function isColorOption(name: string) {
   return /colou?r|shade|finish/i.test(name);
 }
 
+function isWidthOption(name: string) {
+  return /width/i.test(name);
+}
+
+function formatWidth(value?: string) {
+  if (!value) return value;
+  if (/55\s*["″]/i.test(value)) return "140 CM";
+  return value.replace(/\bcm\b/gi, "CM");
+}
+
 function swatchStyle(value: ProductOptionValue) {
   const image = value.swatch?.image?.previewImage?.url;
   return image
@@ -99,11 +110,14 @@ function ProductQuickView({
 }) {
   const copy = { ...fallbackContent, ...content };
   const [product, setProduct] = useState<Product | null>(null);
+  const [sampleProduct, setSampleProduct] = useState<Product | null>(null);
+  const [detailsSettings, setDetailsSettings] = useState<ProductDetailsSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selected, setSelected] = useState<Record<string, string>>({});
   const [quantity, setQuantity] = useState(1);
   const [action, setAction] = useState<"idle" | "cart" | "buy" | "added">("idle");
+  const [sampleAction, setSampleAction] = useState<"idle" | "loading" | "error">("idle");
   const submitting = useRef(false);
   const [activeImage, setActiveImage] = useState<ShopifyImage | null>(null);
 
@@ -114,6 +128,8 @@ function ProductQuickView({
         const payload = await response.json();
         if (!response.ok) throw new Error(payload.error || "Product could not be loaded");
         const nextProduct = payload.product as Product;
+        setSampleProduct((payload.sampleProduct as Product | null) || null);
+        setDetailsSettings((payload.settings as ProductDetailsSettings | null) || null);
         const initialVariant =
           nextProduct.variants.nodes.find((variant) => variant.availableForSale) ||
           nextProduct.variants.nodes[0];
@@ -149,6 +165,43 @@ function ProductQuickView({
     );
   }, [product, selected]);
 
+  const selectedColor = variant?.selectedOptions.find((option) => isColorOption(option.name));
+  const selectedVariantLabel = variant
+    ? [
+        ...variant.selectedOptions.filter((option) => isColorOption(option.name)),
+        ...variant.selectedOptions.filter(
+          (option) =>
+            option.name !== "Title" &&
+            !isColorOption(option.name) &&
+            !isWidthOption(option.name),
+        ),
+      ]
+        .map((option) => option.value)
+        .join(" and ")
+    : "";
+  const galleryImages = useMemo(() => {
+    if (!product) return [];
+    return [
+      product.featuredImage,
+      ...product.images.nodes,
+      ...product.variants.nodes.map((item) => item.image),
+    ]
+      .filter(
+        (image, index, all): image is ShopifyImage =>
+          Boolean(image) &&
+          all.findIndex((candidate) => candidate?.url === image?.url) === index,
+      )
+      .slice(0, 4);
+  }, [product]);
+  const thumbnailImages = galleryImages
+    .filter((image) => image.url !== activeImage?.url)
+    .slice(0, 3);
+  const sampleVariant = sampleProduct?.variants.nodes.find((item) => item.availableForSale);
+  const sampleSizeText = detailsSettings?.sampleSizeText || "Sample size is 10cm x 15cm";
+  const sampleShippingNote =
+    detailsSettings?.sampleShippingNote || "$3 AUD per sample, excluding shipping";
+  const sampleNoteParts = sampleShippingNote.trim().split(/\s+/);
+
   function selectOption(name: string, value: string) {
     const next = { ...selected, [name]: value };
     setSelected(next);
@@ -166,10 +219,27 @@ function ProductQuickView({
     setError("");
     try {
       const cartId = localStorage.getItem("shopify-cart-id");
+      const selectedWidth = variant.selectedOptions.find((option) =>
+        isWidthOption(option.name),
+      )?.value;
+      const attributes = [
+        ...(selectedColor ? [{ key: "Colour", value: selectedColor.value }] : []),
+        ...((selectedWidth || product?.fabricWidth?.value)
+          ? [{ key: "Width", value: formatWidth(selectedWidth || product?.fabricWidth?.value) || "" }]
+          : []),
+        ...(product?.composition?.value
+          ? [{ key: "Composition", value: product.composition.value }]
+          : []),
+      ];
       const response = await fetch("/api/cart", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ cartId, merchandiseId: variant.id, quantity }),
+        body: JSON.stringify({
+          cartId,
+          merchandiseId: variant.id,
+          quantity,
+          attributes: attributes.length ? attributes : undefined,
+        }),
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Cart could not be updated");
@@ -196,6 +266,60 @@ function ProductQuickView({
       setAction("idle");
     } finally {
       submitting.current = false;
+    }
+  }
+
+  async function purchaseSample() {
+    if (!product || !sampleVariant || sampleAction === "loading") return;
+    setSampleAction("loading");
+    try {
+      const selectedOptions = variant?.selectedOptions || [];
+      const selectedColorOption = selectedOptions.find((option) =>
+        isColorOption(option.name),
+      );
+      const selectedWidth = selectedOptions.find((option) =>
+        isWidthOption(option.name),
+      )?.value;
+      const selectedVariantAttributes = selectedOptions
+        .filter(
+          (option) =>
+            option.name !== "Title" &&
+            !isColorOption(option.name) &&
+            !isWidthOption(option.name),
+        )
+        .slice(0, 4)
+        .map((option) => ({ key: option.name, value: option.value }));
+      const response = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          cartId: localStorage.getItem("shopify-cart-id"),
+          merchandiseId: sampleVariant.id,
+          quantity: 1,
+          attributes: [
+            { key: "type", value: "sample" },
+            { key: "Main Product", value: product.title },
+            ...(selectedColorOption
+              ? [{ key: "Colour", value: selectedColorOption.value }]
+              : []),
+            ...((selectedWidth || product.fabricWidth?.value)
+              ? [{ key: "Width", value: formatWidth(selectedWidth || product.fabricWidth?.value) || "" }]
+              : []),
+            ...(product.composition?.value
+              ? [{ key: "Composition", value: product.composition.value }]
+              : []),
+            ...selectedVariantAttributes,
+            { key: "Sample size", value: "10cm x 15cm" },
+          ],
+        }),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "Sample could not be added");
+      localStorage.setItem("shopify-cart-id", payload.cart.id);
+      setSampleAction("idle");
+      window.dispatchEvent(new CustomEvent("cart:updated", { detail: payload.cart }));
+    } catch {
+      setSampleAction("error");
     }
   }
 
@@ -231,9 +355,9 @@ function ProductQuickView({
                   />
                 )}
               </div>
-              {product.images.nodes.length > 1 && (
+              {thumbnailImages.length > 0 && (
                 <div className={styles.thumbnails}>
-                  {product.images.nodes.slice(0, 5).map((image) => (
+                  {thumbnailImages.map((image) => (
                     <button
                       key={image.url}
                       className={activeImage?.url === image.url ? styles.thumbnailActive : styles.thumbnail}
@@ -248,11 +372,24 @@ function ProductQuickView({
             <div className={styles.productInfo}>
               <p className={styles.eyebrow}>{copy.eyebrow}</p>
               <h2>{product.title.toLocaleUpperCase("en-AU")}</h2>
-              {product.description && <p className={styles.description}>{product.description}</p>}
+              {product.descriptionHtml ? (
+                <div
+                  className={styles.description}
+                  dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
+                />
+              ) : product.description ? (
+                <p className={styles.description}>{product.description}</p>
+              ) : null}
               <div className={styles.priceRow}>
                 <strong>{variant ? formatMoney(variant.price) : formatMoney(product.priceRange.minVariantPrice)}</strong>
                 <span>{copy.perUnitLabel}</span>
               </div>
+              {selectedVariantLabel && (
+                <div className={styles.selectionSummary} aria-live="polite">
+                  <span>{detailsSettings?.selectedLabel || "Selected"}:</span>
+                  <strong>{selectedVariantLabel}</strong>
+                </div>
+              )}
               {(product.options || []).filter((option) => option.name !== "Title").map((option) => (
                 <fieldset className={styles.optionGroup} key={option.id} aria-label={option.name}>
                   {!isColorOption(option.name) && <legend>{option.name}</legend>}
@@ -297,16 +434,48 @@ function ProductQuickView({
                 {variant && <strong>{formatMoney({ amount: String(Number(variant.price.amount) * quantity), currencyCode: variant.price.currencyCode })}</strong>}
               </div>
               {!variant && <p className={styles.error}>{copy.unavailableText}</p>}
-              <div className={styles.actions}>
+              <div className={`${styles.actions} ${sampleProduct ? "" : styles.actionsWithoutSample}`}>
                 <button onClick={() => submit("buy")} disabled={!variant?.availableForSale || action === "buy" || action === "cart"} className={styles.buyButton}>
                   {action === "buy" ? copy.buyLoadingLabel : copy.buyNowLabel}
                 </button>
                 <button onClick={() => submit("cart")} disabled={!variant?.availableForSale || action === "cart" || action === "buy"} className={styles.cartButton}>
                   {action === "cart" ? copy.addingLabel : action === "added" ? <><Check size={16} /> {copy.addedLabel}</> : copy.addToCartLabel}
                 </button>
+                {sampleProduct && (
+                  <button
+                    type="button"
+                    className={styles.sampleButton}
+                    onClick={purchaseSample}
+                    disabled={!sampleVariant || sampleAction === "loading"}
+                  >
+                    {sampleAction === "loading" ? (
+                      <LoaderCircle className="animate-spin" size={17} />
+                    ) : (
+                      detailsSettings?.purchaseSampleLabel || "Purchase sample"
+                    )}
+                  </button>
+                )}
               </div>
               {!variant?.availableForSale && variant && <p className={styles.error}>{copy.soldOutText}</p>}
               {error && <p className={styles.error}>{error}</p>}
+              {sampleAction === "error" && (
+                <p className={styles.error}>
+                  {detailsSettings?.sampleErrorText ||
+                    "This sample is already in your cart, or the 10-sample limit has been reached."}
+                </p>
+              )}
+              {sampleProduct && (
+                <div className={styles.sampleInformation}>
+                  <h3>{detailsSettings?.sampleDetailsHeading || "Sample details"}</h3>
+                  <p>{sampleSizeText}</p>
+                  <p>
+                    <strong>{sampleNoteParts.slice(0, 2).join(" ")}</strong>
+                    {sampleNoteParts.length > 2
+                      ? ` ${sampleNoteParts.slice(2).join(" ")}`
+                      : ""}
+                  </p>
+                </div>
+              )}
               {[product.composition, product.fabricWeight, product.fabricWidth, product.care].some(Boolean) && (
                 <div className={styles.specifications}>
                   <h3>{copy.specificationsHeading}</h3>

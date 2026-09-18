@@ -43,7 +43,7 @@ const fabricRows = [
   ["TEXTURED CHIFFON","Delicate, flowing and softly luminous.","Airy chiffon movement meets a refined surface lustre.","Lightweight · Flowing · Softly lustrous","Dresses, overlays, sleeves, scarves and layers."],
   ["SOI CHIFFON","Airy, textured and full of movement.","A crinkled surface adds dimension while remaining light and flowing.","Lightweight · Textured · Flowing","Dresses, skirts, sleeves, overlays and layers."],
   ["SILK MIST","Sheer and delicate with an open construction.","Introduces transparency and texture alone or when layered.","Sheer · Lightweight · Delicate","Panels, sleeves, overlays and design details."],
-  ["Silk Midako","A distinctive Ivory Muse silk.","Refer to its product page for exact composition, finish and characteristics.","Product-specific","Uses depend on the individual fabric specification."],
+  ["Silk Mikado","A distinctive Ivory Muse silk.","Refer to its product page for exact composition, finish and characteristics.","Product-specific","Uses depend on the individual fabric specification."],
 ];
 const fabrics = keyed(fabricRows.map(([title, tagline, body, character, considerFor]) => ({ title, tagline, body, character, considerFor })), "fabric");
 const finderCards = keyed([

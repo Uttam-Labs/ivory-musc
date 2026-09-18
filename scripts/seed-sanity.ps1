@@ -33,7 +33,7 @@ $settings = @{
     @{_key="quick";heading="Quick Links";links=@(@{_key="h";label="Home";href="/"},@{_key="a";label="About";href="/about"},@{_key="s";label="Shop";href="/collections"},@{_key="c";label="Contact";href="/contact"},@{_key="g";label="Silk Guide";href="/silk-guide"})},
     @{_key="care";heading="Customer Care";links=@(@{_key="sh";label="Shipping";href="/shipping"},@{_key="r";label="Returns";href="/returns"},@{_key="p";label="Privacy Policy";href="/privacy"},@{_key="t";label="Terms & Conditions";href="/terms"},@{_key="f";label="FAQ";href="/faq"})}
   )
-  copyright="Ivory Muse. All Rights Reserved (c) 2026"
+  copyright="Ivory Muse. All Rights Reserved © 2026"
   theme=@{headingFont="Cormorant Garamond";bodyFont="Montserrat";background="#fbf4ec";foreground="#423732";accent="#a85650";surface="#fffaf5"}
 }
 $features = @(
