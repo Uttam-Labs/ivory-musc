@@ -24,3 +24,7 @@
 @media(prefers-reduced-motion:reduce){.thumbnail,.thumbnailActive{transition:none}}
 /* The sample section already supplies the divider above specifications. */
 .specifications{border-top:0}
+/* Keep every quick-view colour option evenly spaced and allow long names to wrap. */
+.swatchList{align-items:flex-start}
+.swatchChoice{width:5.6rem;min-width:5.6rem;align-content:start}
+.swatchChoice small{display:block;width:100%;min-height:2.4em;max-width:none;overflow:visible;line-height:1.2;text-align:center;text-overflow:clip;white-space:normal;overflow-wrap:anywhere}

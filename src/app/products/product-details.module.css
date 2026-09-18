@@ -18,3 +18,7 @@
 @media(max-width:480px){.description{font-size:1.35rem}.colorOptions{gap:.5rem}.swatch{min-width:5rem}.purchaseRow{gap:1rem}.total{padding-inline:1.2rem}.specifications>div{font-size:1.2rem}}
 @media(prefers-reduced-motion:reduce){.breadcrumb a,.optionButton,.buyButton,.cartButton,.sampleButton,.mainImage img,.zoomHint,.thumbnails button,.lightboxClose,.lightboxArrow{transition:none}.lightbox{animation:none}}
 .selectedSwatch>span{outline-color:#2f2f2f;outline-width:2px}.selectedSwatch small{color:#2f2f2f}.optionButton{border-color:#ded8d1}.optionButton:hover{border-color:#8f8881;color:#444}.selectedOption,.selectedOption:hover{border-color:#2f2f2f;color:#2f2f2f}
+/* Keep product-page colour options aligned with the quick view. */
+.colorOptions{align-items:flex-start}
+.swatch{width:6.4rem;min-width:6.4rem;align-content:start}
+.swatch small{display:block;width:100%;min-height:2.4em;max-width:none;overflow:visible;line-height:1.2;text-align:center;text-overflow:clip;white-space:normal;overflow-wrap:anywhere}
