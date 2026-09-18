@@ -5,7 +5,8 @@ import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 
 const INITIAL_LOADER_TIME = 800;
-const NAVIGATION_LOADER_TIME = 650;
+const INITIAL_LOADER_MAXIMUM = 1600;
+const NAVIGATION_REVEAL_DELAY = 400;
 
 export function GlobalLoader({
   logoUrl,
@@ -21,7 +22,6 @@ export function GlobalLoader({
   const [navigating, setNavigating] = useState(false);
   const previousRoute = useRef(routeKey);
   const previousPathname = useRef(pathname);
-  const navigationStartedAt = useRef(0);
   const navigationMaximumTimer = useRef<number | null>(null);
   const navigationDestination = useRef("");
 
@@ -36,6 +36,10 @@ export function GlobalLoader({
       pageLoaded = pageLoaded || document.readyState === "complete";
       finishWhenReady();
     }, INITIAL_LOADER_TIME);
+    const maximumTimer = window.setTimeout(
+      () => setInitialLoading(false),
+      INITIAL_LOADER_MAXIMUM,
+    );
     const handleLoad = () => {
       pageLoaded = true;
       finishWhenReady();
@@ -44,6 +48,7 @@ export function GlobalLoader({
     if (!pageLoaded) window.addEventListener("load", handleLoad, { once: true });
     return () => {
       window.clearTimeout(minimumTimer);
+      window.clearTimeout(maximumTimer);
       window.removeEventListener("load", handleLoad);
     };
   }, []);
@@ -68,35 +73,11 @@ export function GlobalLoader({
       previousPathname.current = pathname;
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     }
-    const elapsed = performance.now() - navigationStartedAt.current;
-    const remainingMinimum = Math.max(0, NAVIGATION_LOADER_TIME - elapsed);
-    let cancelled = false;
-    const minimumReady = new Promise<void>((resolve) => {
-      window.setTimeout(resolve, remainingMinimum);
-    });
-    const visualsReady = new Promise<void>((resolve) => {
-      window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
-        const pendingImages = Array.from(document.images).filter((image) => {
-          const rect = image.getBoundingClientRect();
-          return !image.complete && rect.bottom > 0 && rect.top < window.innerHeight;
-        });
-        Promise.all(pendingImages.map((image) => new Promise<void>((imageReady) => {
-          if (image.complete) {
-            imageReady();
-            return;
-          }
-          image.addEventListener("load", () => imageReady(), { once: true });
-          image.addEventListener("error", () => imageReady(), { once: true });
-        }))).then(() => resolve());
-      }));
-    });
-    const fontsReady = document.fonts?.ready || Promise.resolve();
-    Promise.all([minimumReady, visualsReady, fontsReady]).then(() => {
-      if (!cancelled) {
-        setNavigating(false);
-      }
-    });
-    return () => { cancelled = true; };
+    const revealTimer = window.setTimeout(
+      () => setNavigating(false),
+      NAVIGATION_REVEAL_DELAY,
+    );
+    return () => window.clearTimeout(revealTimer);
   }, [pathname, routeKey]);
 
   useEffect(() => {
@@ -123,7 +104,6 @@ export function GlobalLoader({
         destination.protocol === "tel:"
       ) return;
 
-      navigationStartedAt.current = performance.now();
       navigationDestination.current = `${destination.pathname}${destination.search}`;
       setNavigating(true);
       if (navigationMaximumTimer.current) {
