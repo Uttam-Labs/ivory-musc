@@ -109,10 +109,13 @@ export function GlobalLoader({
       }
       navigationMaximumTimer.current = window.setTimeout(
         () => {
-          setNavigating(false);
           const expected = navigationDestination.current;
           const current = `${window.location.pathname}${window.location.search}`;
-          if (expected && current !== expected) window.location.assign(expected);
+          if (expected && current !== expected) {
+            window.location.assign(expected);
+            return;
+          }
+          setNavigating(false);
         },
         8000,
       );
