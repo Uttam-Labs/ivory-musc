@@ -231,6 +231,9 @@ a {
     pointer-events: auto;
     transition-delay: 0s;
 }
+.global-loader--instant {
+    transition: none;
+}
 .global-loader__mark {
     display: grid;
     place-items: center;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 
@@ -105,7 +106,7 @@ export function GlobalLoader({
       ) return;
 
       navigationDestination.current = `${destination.pathname}${destination.search}`;
-      setNavigating(true);
+      flushSync(() => setNavigating(true));
       if (navigationMaximumTimer.current) {
         window.clearTimeout(navigationMaximumTimer.current);
       }
@@ -135,7 +136,7 @@ export function GlobalLoader({
 
   return (
       <div
-        className={`global-loader ${initialLoading || navigating ? "global-loader--visible" : ""}`}
+        className={`global-loader ${initialLoading || navigating ? "global-loader--visible" : ""} ${navigating && !initialLoading ? "global-loader--instant" : ""}`}
         aria-hidden={!(initialLoading || navigating)}
         aria-label="Loading Ivory Muse"
         role="status"
