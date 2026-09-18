@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -30,6 +31,8 @@ export function CollectionSlider({
   autoSlide?: boolean;
   slideInterval?: number;
 }) {
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const [arrowTop, setArrowTop] = useState<number>();
   const canLoop = products.length > 1;
   const loopProducts = canLoop && products.length <= 3
     ? Array.from({ length: Math.ceil(6 / products.length) }, () => products).flat()
@@ -47,8 +50,20 @@ export function CollectionSlider({
     { loop: canLoop, align: "start", slidesToScroll: 1 },
     plugins,
   );
+  useEffect(() => {
+    const slider = sliderRef.current;
+    const media = slider?.querySelector<HTMLElement>(".bestseller-image-frame");
+    if (!slider || !media) return;
+
+    const alignArrows = () => setArrowTop(media.offsetTop + media.offsetHeight / 2);
+    alignArrows();
+    const observer = new ResizeObserver(alignArrows);
+    observer.observe(slider);
+    observer.observe(media);
+    return () => observer.disconnect();
+  }, [products.length]);
   return (
-    <div className="relative">
+    <div ref={sliderRef} className="relative">
       <div ref={ref} className="overflow-hidden">
         <div className="bestseller-track -ml-3 flex sm:-ml-8">
           {loopProducts.map((p, index) => (
@@ -97,14 +112,16 @@ export function CollectionSlider({
           <button
             aria-label="Previous product"
             onClick={() => api?.scrollPrev()}
-            className="slider--button slider-button--prev cursor-pointer absolute left-8 lg:-left-12 top-[42%] flex size-14 lg:size-20 -translate-x-1/2 items-center justify-center rounded-full bg-[var(--accent)] text-white"
+            style={arrowTop === undefined ? undefined : { top: arrowTop }}
+            className="slider--button slider-button--prev cursor-pointer absolute left-8 lg:-left-12 top-[42%] flex size-14 lg:size-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[var(--accent)] text-white"
           >
             <ChevronLeft size={18} />
           </button>
           <button
             aria-label="Next product"
             onClick={() => api?.scrollNext()}
-            className="slider--button slider-button--next cursor-pointer absolute right-8 lg:-right-12 top-[42%] flex size-14 lg:size-20 translate-x-1/2 items-center justify-center rounded-full bg-[var(--accent)] text-white"
+            style={arrowTop === undefined ? undefined : { top: arrowTop }}
+            className="slider--button slider-button--next cursor-pointer absolute right-8 lg:-right-12 top-[42%] flex size-14 lg:size-20 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[var(--accent)] text-white"
           >
             <ChevronRight size={18} />
           </button>
