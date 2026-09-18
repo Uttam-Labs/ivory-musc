@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 
-const INITIAL_LOADER_TIME = 550;
-const NAVIGATION_LOADER_TIME = 350;
+const INITIAL_LOADER_TIME = 800;
+const NAVIGATION_LOADER_TIME = 650;
 
 export function GlobalLoader({
   logoUrl,
@@ -36,7 +36,6 @@ export function GlobalLoader({
       pageLoaded = pageLoaded || document.readyState === "complete";
       finishWhenReady();
     }, INITIAL_LOADER_TIME);
-    const maximumTimer = window.setTimeout(() => setInitialLoading(false), 1000);
     const handleLoad = () => {
       pageLoaded = true;
       finishWhenReady();
@@ -45,7 +44,6 @@ export function GlobalLoader({
     if (!pageLoaded) window.addEventListener("load", handleLoad, { once: true });
     return () => {
       window.clearTimeout(minimumTimer);
-      window.clearTimeout(maximumTimer);
       window.removeEventListener("load", handleLoad);
     };
   }, []);
@@ -59,22 +57,43 @@ export function GlobalLoader({
     if (previousRoute.current === routeKey) return;
     previousRoute.current = routeKey;
     navigationDestination.current = "";
+    if (navigationMaximumTimer.current) {
+      window.clearTimeout(navigationMaximumTimer.current);
+      navigationMaximumTimer.current = null;
+    }
     if (previousPathname.current !== pathname) {
       previousPathname.current = pathname;
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     }
     const elapsed = performance.now() - navigationStartedAt.current;
-    const timer = window.setTimeout(
-      () => {
+    const remainingMinimum = Math.max(0, NAVIGATION_LOADER_TIME - elapsed);
+    let cancelled = false;
+    const minimumReady = new Promise<void>((resolve) => {
+      window.setTimeout(resolve, remainingMinimum);
+    });
+    const visualsReady = new Promise<void>((resolve) => {
+      window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+        const pendingImages = Array.from(document.images).filter((image) => {
+          const rect = image.getBoundingClientRect();
+          return !image.complete && rect.bottom > 0 && rect.top < window.innerHeight;
+        });
+        Promise.all(pendingImages.map((image) => new Promise<void>((imageReady) => {
+          if (image.complete) {
+            imageReady();
+            return;
+          }
+          image.addEventListener("load", () => imageReady(), { once: true });
+          image.addEventListener("error", () => imageReady(), { once: true });
+        }))).then(() => resolve());
+      }));
+    });
+    const fontsReady = document.fonts?.ready || Promise.resolve();
+    Promise.all([minimumReady, visualsReady, fontsReady]).then(() => {
+      if (!cancelled) {
         setNavigating(false);
-        if (navigationMaximumTimer.current) {
-          window.clearTimeout(navigationMaximumTimer.current);
-          navigationMaximumTimer.current = null;
-        }
-      },
-      Math.max(0, NAVIGATION_LOADER_TIME - elapsed),
-    );
-    return () => window.clearTimeout(timer);
+      }
+    });
+    return () => { cancelled = true; };
   }, [pathname, routeKey]);
 
   useEffect(() => {
