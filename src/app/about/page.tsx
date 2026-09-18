@@ -130,7 +130,7 @@ export default async function AboutPage() {
                 />
                 <Button
                   label={hero.secondaryLabel}
-                  href={hero.secondaryHref}
+                  href="/"
                   className="about-hero-secondary-cta button custom-button btn-transparent"
                 />
               </div>
