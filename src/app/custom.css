@@ -199,6 +199,13 @@ a {
     width: 100%;
 }
 
+/* Prevent touch browsers from retaining the mobile drawer close-button hover state. */
+@media (hover: hover) and (pointer: fine) {
+    .mobile-menu-close:hover {
+        background: rgba(0, 0, 0, .05);
+    }
+}
+
 .global-loader {
     position: fixed;
     inset: 0;

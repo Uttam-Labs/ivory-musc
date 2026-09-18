@@ -500,7 +500,7 @@ export function Header({
               ref={menuCloseButton}
               aria-label={copy.closeMenuLabel}
               onClick={() => setMenuOpen(false)}
-              className="inline-flex size-10 items-center justify-center rounded-full transition-colors hover:bg-black/5 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2"
+              className="mobile-menu-close inline-flex size-10 items-center justify-center rounded-full transition-colors focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2"
             >
               <X size={21} />
             </button>
