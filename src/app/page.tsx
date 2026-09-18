@@ -318,7 +318,7 @@ export default async function Home() {
                     alt={section.heading || ""}
                     className="object-cover"
                     sizes="(min-width: 768px) 55vw, 100vw"
-                    quality={95}
+                    quality={85}
                   />
                 </div>
               )}
@@ -340,7 +340,7 @@ export default async function Home() {
                     alt={section.heading || ""}
                     className="object-cover object-center"
                     sizes="100vw"
-                    quality={95}
+                    quality={85}
                   />
                 )}
                 <div className="absolute inset-0 bg-black/15" />
@@ -384,7 +384,7 @@ export default async function Home() {
                     alt={section.heading || section.eyebrow || ""}
                     className="object-cover"
                     sizes="(min-width:768px) 50vw,100vw"
-                    quality={95}
+                    quality={85}
                   />
                 </div>
               )}

@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 
-const MINIMUM_LOADER_TIME = 1000;
+const INITIAL_LOADER_TIME = 550;
+const NAVIGATION_LOADER_TIME = 350;
 
 export function GlobalLoader({
   logoUrl,
@@ -34,8 +35,8 @@ export function GlobalLoader({
       minimumTimePassed = true;
       pageLoaded = pageLoaded || document.readyState === "complete";
       finishWhenReady();
-    }, MINIMUM_LOADER_TIME);
-    const maximumTimer = window.setTimeout(() => setInitialLoading(false), 1500);
+    }, INITIAL_LOADER_TIME);
+    const maximumTimer = window.setTimeout(() => setInitialLoading(false), 1000);
     const handleLoad = () => {
       pageLoaded = true;
       finishWhenReady();
@@ -71,7 +72,7 @@ export function GlobalLoader({
           navigationMaximumTimer.current = null;
         }
       },
-      Math.max(0, MINIMUM_LOADER_TIME - elapsed),
+      Math.max(0, NAVIGATION_LOADER_TIME - elapsed),
     );
     return () => window.clearTimeout(timer);
   }, [pathname, routeKey]);

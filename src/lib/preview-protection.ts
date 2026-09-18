@@ -25,7 +25,7 @@ export async function isPreviewPasswordProtected() {
     const response = await fetch(url, {
       headers,
       cache: "force-cache",
-      next: { revalidate: 30, tags: ["sanity", "preview-protection"] },
+      next: { revalidate: 60, tags: ["sanity", "preview-protection"] },
     });
     if (!response.ok) return envFallback();
     const payload = (await response.json()) as SanityBooleanResponse;
