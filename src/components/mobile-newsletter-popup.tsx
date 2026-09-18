@@ -41,7 +41,7 @@ export function MobileNewsletterPopup({
   closeLabel = "Close newsletter pop-up",
 }: MobileNewsletterPopupProps) {
   const pathname = usePathname();
-  const isPreviewLogin = pathname === "/preview-login";
+  const isHomepage = pathname === "/";
   const copy = {
     heading: textOr(heading, "JOIN OUR WORLD OF SILK"),
     body: textOr(body, "Receive exclusive access to new collections, design inspiration, and stories celebrating the artistry of fine silk."),
@@ -66,7 +66,7 @@ export function MobileNewsletterPopup({
   }, []);
 
   useEffect(() => {
-    if (isPreviewLogin) return;
+    if (!isHomepage) return;
     if (!window.matchMedia(MOBILE_QUERY).matches) return;
     try {
       if (window.localStorage.getItem(NEWSLETTER_SUBSCRIBED_KEY) === "true") return;
@@ -98,10 +98,10 @@ export function MobileNewsletterPopup({
       window.clearTimeout(timer);
       window.removeEventListener("scroll", checkScroll);
     };
-  }, [isPreviewLogin]);
+  }, [isHomepage]);
 
   useEffect(() => {
-    if (!open || isPreviewLogin) return;
+    if (!open || !isHomepage) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const closeOnEscape = (event: KeyboardEvent) => event.key === "Escape" && dismiss();
@@ -110,9 +110,9 @@ export function MobileNewsletterPopup({
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", closeOnEscape);
     };
-  }, [dismiss, isPreviewLogin, open]);
+  }, [dismiss, isHomepage, open]);
 
-  if (!open || isPreviewLogin) return null;
+  if (!open || !isHomepage) return null;
 
   return (
     <div className="mobile-newsletter-popup" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && dismiss()}>
