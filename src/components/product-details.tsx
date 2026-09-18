@@ -39,6 +39,8 @@ export type ProductDetailsSettings = {
   sampleDetailsHeading?: string; sampleSizeText?: string; sampleShippingNote?: string;
   selectedLabel?: string; unavailableText?: string; outOfStockText?: string; actionErrorText?: string;
   sampleErrorText?: string; zoomLabel?: string;
+  decreaseQuantityLabel?: string; increaseQuantityLabel?: string; closeZoomLabel?: string;
+  previousImageLabel?: string; nextImageLabel?: string; viewImageLabel?: string;
 };
 
 export function ProductDetails({ product, sampleProduct, initialSelection, settings, relatedHeading, relatedProducts, relatedGridContent }: { product: Product; sampleProduct: Product | null; initialSelection: Record<string, string>; settings?: ProductDetailsSettings; relatedHeading?: string; relatedProducts: Product[]; relatedGridContent?: ProductGridContent }) {
@@ -47,6 +49,8 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
     actionErrorText: "Please try again.", sampleErrorText: "This sample is already in your cart, or the 10-sample limit has been reached.",
     zoomLabel: "Click to zoom", sampleDetailsHeading: "Sample details", sampleSizeText: "Sample size is 10cm x 15cm",
     sampleShippingNote: "$3 AUD per sample, excluding shipping", ...settings,
+    decreaseQuantityLabel: "Decrease quantity", increaseQuantityLabel: "Increase quantity", closeZoomLabel: "Close zoom view",
+    previousImageLabel: "Previous product image", nextImageLabel: "Next product image", viewImageLabel: "View image", ...settings,
   };
   const sampleNoteParts = copy.sampleShippingNote.trim().split(/\s+/);
   const router = useRouter();
@@ -207,7 +211,7 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
             {activeImage && <Image src={activeImage.url} alt={activeImage.altText || product.title} fill preload quality={95} sizes="(min-width:768px) 50vw, 100vw" />}
             {activeImage && <span className={styles.zoomHint}><ZoomIn size={18} /> {copy.zoomLabel}</span>}
           </button>
-          {thumbnailImages.length > 0 && <div className={`${styles.thumbnails} product-details__thumbnails`}>{thumbnailImages.map((image) => <button key={image.url} aria-label={`View ${image.altText || product.title}`} onClick={() => setManualImage(image.url)}><Image src={image.url} alt={image.altText || product.title} fill quality={95} sizes="(min-width: 1200px) 16vw, (min-width: 768px) 20vw, 33vw" /></button>)}</div>}
+          {thumbnailImages.length > 0 && <div className={`${styles.thumbnails} product-details__thumbnails`}>{thumbnailImages.map((image) => <button key={image.url} aria-label={`${copy.viewImageLabel}: ${image.altText || product.title}`} onClick={() => setManualImage(image.url)}><Image src={image.url} alt={image.altText || product.title} fill quality={95} sizes="(min-width: 1200px) 16vw, (min-width: 768px) 20vw, 33vw" /></button>)}</div>}
         </div>
         <div className={`${styles.info} product-info-details__wrapper`}>
           <div className="product--info__container">
@@ -225,7 +229,7 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
             <div className={isColor(option.name) ? styles.colorOptions : styles.optionList}>{getCompatibleOptionValues(option, optionIndex, productOptions, product.variants.nodes, selected).map((value) => isColor(option.name) ? <button key={value.id} type="button" title={value.name} aria-label={`${option.name}: ${value.name}`} aria-pressed={selected[option.name] === value.name} className={`${styles.swatch} ${selected[option.name] === value.name ? styles.selectedSwatch : ""}`} onClick={() => choose(option.name, value.name)}><span style={swatchStyle(value)} /><small>{value.name}</small></button> : <button key={value.id} type="button" aria-pressed={selected[option.name] === value.name} className={`${styles.optionButton} ${selected[option.name] === value.name ? styles.selectedOption : ""}`} onClick={() => choose(option.name, value.name)}>{value.name}</button>)}</div>
           </fieldset>)}
           <div className={`${styles.purchaseRow} product-details__purchase-row`}>
-            <div className="product-details__options">{settings?.quantityLabel && <span className={`${styles.fieldLabel} option-label`}>{settings.quantityLabel}</span>}<div className={`${styles.quantityPicker} product-details__quantity`}><button onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label="Decrease quantity"><Minus size={15} /></button><output>{quantity}</output><button onClick={() => setQuantity((value) => Math.min(20, value + 1))} aria-label="Increase quantity"><Plus size={15} /></button></div></div>
+            <div className="product-details__options">{settings?.quantityLabel && <span className={`${styles.fieldLabel} option-label`}>{settings.quantityLabel}</span>}<div className={`${styles.quantityPicker} product-details__quantity`}><button onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label={copy.decreaseQuantityLabel}><Minus size={15} /></button><output>{quantity}</output><button onClick={() => setQuantity((value) => Math.min(20, value + 1))} aria-label={copy.increaseQuantityLabel}><Plus size={15} /></button></div></div>
             <div className={`${styles.total} product-details__total`}>{settings?.totalLabel && <span>{settings.totalLabel}</span>}<strong>{formatMoney(total)}</strong></div>
             {settings?.minimumPurchaseText && <p>{settings.minimumPurchaseText}</p>}
           </div>
@@ -249,10 +253,10 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
       {relatedProducts.length > 0 && <section className={styles.related}>{relatedHeading && <h2 className="common-heading">{relatedHeading}</h2>}<div className={styles.relatedGrid}><CollectionProductGrid products={relatedProducts} content={relatedGridContent} /></div></section>}
     </SiteContainer>
     {zoomOpen && activeImage && <div className={styles.lightbox} role="dialog" aria-modal="true" aria-label={`${product.title} image zoom`} onMouseDown={(event) => event.target === event.currentTarget && setZoomOpen(false)}>
-      <button type="button" className={styles.lightboxClose} onClick={() => setZoomOpen(false)} aria-label="Close zoom view"><X size={24} /></button>
-      {galleryImages.length > 1 && <button type="button" className={`${styles.lightboxArrow} ${styles.lightboxPrevious}`} onClick={() => moveGallery(-1)} aria-label="Previous product image"><ChevronLeft size={30} /></button>}
+      <button type="button" className={styles.lightboxClose} onClick={() => setZoomOpen(false)} aria-label={copy.closeZoomLabel}><X size={24} /></button>
+      {galleryImages.length > 1 && <button type="button" className={`${styles.lightboxArrow} ${styles.lightboxPrevious}`} onClick={() => moveGallery(-1)} aria-label={copy.previousImageLabel}><ChevronLeft size={30} /></button>}
       <div className={styles.lightboxImage}><Image src={activeImage.url} alt={activeImage.altText || product.title} fill quality={100} sizes="96vw" /></div>
-      {galleryImages.length > 1 && <button type="button" className={`${styles.lightboxArrow} ${styles.lightboxNext}`} onClick={() => moveGallery(1)} aria-label="Next product image"><ChevronRight size={30} /></button>}
+      {galleryImages.length > 1 && <button type="button" className={`${styles.lightboxArrow} ${styles.lightboxNext}`} onClick={() => moveGallery(1)} aria-label={copy.nextImageLabel}><ChevronRight size={30} /></button>}
       <p className={styles.lightboxCount}>{galleryImages.findIndex((image) => image.url === activeImage.url) + 1} / {galleryImages.length}</p>
     </div>}
   </main>;

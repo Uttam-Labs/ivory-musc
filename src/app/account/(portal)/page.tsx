@@ -56,6 +56,15 @@ export default async function AccountPage() {
       "Our customer care team is here to help with orders and products.",
     supportCardLabel: "Contact us",
     shopLabel: "Continue shopping",
+    accountHeading: "Your account",
+    supportKicker: "IVORY MUSE CARE",
+    singleOrderLabel: "recent order",
+    multipleOrdersLabel: "recent orders",
+    ordersCountLabel: "orders",
+    addressesCountLabel: "saved addresses",
+    errorTitle: "We couldn’t load your account",
+    errorMessage: "Your account information is temporarily unavailable. Your session has been kept securely signed in.",
+    retryLabel: "Try again",
     ...cms,
   };
   const customer = accountResult?.customer;
@@ -65,14 +74,15 @@ export default async function AccountPage() {
         <header className={styles.dashboardHeader}>
           <div>
             <p className={styles.eyebrow}>{c.eyebrow}</p>
-            <h1 className={styles.title}>Your account</h1>
+            <h1 className={styles.title}>{c.accountHeading}</h1>
             <p className={styles.portalIntro}>{c.intro}</p>
           </div>
         </header>
         <AccountDataError
           href="/account"
-          title="We couldn’t load your account"
-          message="Your account information is temporarily unavailable. Your session has been kept securely signed in."
+          title={c.errorTitle}
+          message={c.errorMessage}
+          retryLabel={c.retryLabel}
         />
       </>
     );
@@ -95,13 +105,13 @@ export default async function AccountPage() {
         <article className={styles.dashboardCard}>
           <div className={styles.dashboardCardHeading}>
             <h2>{c.ordersHeading}</h2>
-            <span className={styles.cardCount} aria-label={`${customer.orders.nodes.length} orders`}>
+            <span className={styles.cardCount} aria-label={`${customer.orders.nodes.length} ${c.ordersCountLabel}`}>
               {customer.orders.nodes.length}
             </span>
           </div>
           <p className={styles.muted}>
             {customer.orders.nodes.length
-              ? `${customer.orders.nodes.length} recent order${customer.orders.nodes.length === 1 ? "" : "s"}`
+              ? `${customer.orders.nodes.length} ${customer.orders.nodes.length === 1 ? c.singleOrderLabel : c.multipleOrdersLabel}`
               : c.noOrdersText}
           </p>
           <Link className={styles.cardLink} href="/account/orders">
@@ -111,7 +121,7 @@ export default async function AccountPage() {
         <article className={styles.dashboardCard}>
           <div className={styles.dashboardCardHeading}>
             <h2>{c.addressHeading}</h2>
-            <span className={styles.cardCount} aria-label={`${customer.addresses.nodes.length} saved addresses`}>
+            <span className={styles.cardCount} aria-label={`${customer.addresses.nodes.length} ${c.addressesCountLabel}`}>
               {customer.addresses.nodes.length}
             </span>
           </div>
@@ -135,7 +145,7 @@ export default async function AccountPage() {
           </Link>
         </article>
         <article className={styles.dashboardCard}>
-          <span className={styles.cardKicker}>IVORY MUSE CARE</span>
+          <span className={styles.cardKicker}>{c.supportKicker}</span>
           <h2>{c.supportCardTitle}</h2>
           <p className={styles.muted}>{c.supportCardText}</p>
           <Link className={styles.cardLink} href="/contact">

@@ -4,10 +4,12 @@ import styles from "./account.module.css";
 export function AccountDataError({
   title = "We couldn’t load this page",
   message = "Your account information is temporarily unavailable. Please try again.",
+  retryLabel = "Try again",
   href,
 }: {
   title?: string;
   message?: string;
+  retryLabel?: string;
   href: string;
 }) {
   return (
@@ -18,7 +20,7 @@ export function AccountDataError({
       <h2>{title}</h2>
       <p className={styles.orderEmptyText}>{message}</p>
       <a className={styles.orderEmptyAction} href={href}>
-        Try again
+        {retryLabel}
         <RefreshCw size={16} aria-hidden="true" />
       </a>
     </div>

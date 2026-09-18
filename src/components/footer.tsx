@@ -6,23 +6,26 @@ type Column = {
   links?: Array<{ label?: string; href?: string }>;
 };
 
-const IVORY_MUSE_INSTAGRAM_URL =
-  "https://www.instagram.com/ivorymuse.silkhaus/";
-
 export function Footer({
   contactHeading,
   email,
+  emailPrefix,
   socialHeading,
   instagram,
   facebook,
+  instagramLabel,
+  facebookLabel,
   columns = [],
   copyright,
 }: {
   contactHeading?: string;
   email?: string;
+  emailPrefix?: string;
   socialHeading?: string;
   instagram?: string;
   facebook?: string;
+  instagramLabel?: string;
+  facebookLabel?: string;
   columns?: Column[];
   copyright?: string;
 }) {
@@ -32,7 +35,7 @@ export function Footer({
     /\b(?:19|20)\d{2}\b/g,
     String(new Date().getFullYear()),
   );
-  const instagramUrl = IVORY_MUSE_INSTAGRAM_URL;
+  const instagramUrl = instagram;
   return (
     <footer className="footer bg-[#fff9f3] text-[var(--foreground)] pt-12 sm:pt-16 lg:pt-20">
       <div className="mx-auto max-w-[1920] px-6 sm:px-12 xl:px-24">
@@ -63,7 +66,7 @@ export function Footer({
                 <h3 className="mb-3 footer--heading text-base">{contactHeading}</h3>
               )}
               <p>
-                Email -{" "}
+                {emailPrefix || "Email"} -{" "}
                 <a
                   className="font-semibold !text-[#a8514b] transition-opacity hover:opacity-60"
                   href={`mailto:${email}`}
@@ -81,7 +84,7 @@ export function Footer({
               <div className="flex justify-center gap-3">
                 {facebook && (
                   <a
-                    aria-label="Facebook"
+                    aria-label={facebookLabel || "Facebook"}
                     className="inline-flex rounded-full transition duration-300 ease-out hover:-translate-y-1 hover:scale-105 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-stone-900 motion-reduce:transform-none"
                     href={facebook}
                     target="_blank"
@@ -92,7 +95,7 @@ export function Footer({
                 )}
                 {instagramUrl && (
                   <a
-                    aria-label="Instagram"
+                    aria-label={instagramLabel || "Instagram"}
                     className="inline-flex rounded-full transition duration-300 ease-out hover:-translate-y-1 hover:scale-105 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-stone-900 motion-reduce:transform-none"
                     href={instagramUrl}
                     target="_blank"

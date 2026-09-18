@@ -51,6 +51,12 @@ export const blogPage = defineType({
             defineField({ name: "recentHeading", title: "Recent articles heading", type: "string" }),
             defineField({ name: "readMoreLabel", title: "Read more label", type: "string" }),
             defineField({ name: "emptyMessage", title: "No results message", type: "string" }),
+            defineField({ name: "filtersLabel", title: "Article filters accessibility label", type: "string", initialValue: "Article tags" }),
+            defineField({ name: "searchLabel", title: "Search field accessibility label", type: "string", initialValue: "Search articles" }),
+            defineField({ name: "submitSearchLabel", title: "Search button accessibility label", type: "string", initialValue: "Submit search" }),
+            defineField({ name: "paginationLabel", title: "Pagination accessibility label", type: "string", initialValue: "Blog pagination" }),
+            defineField({ name: "previousPageLabel", title: "Previous page accessibility label", type: "string", initialValue: "Previous page" }),
+            defineField({ name: "nextPageLabel", title: "Next page accessibility label", type: "string", initialValue: "Next page" }),
             defineField({ name: "articlesPerPage", title: "Articles per page", type: "number", initialValue: 6, validation: (rule) => rule.min(2).max(24).integer() }),
             defineField({ name: "recentLimit", title: "Maximum recent articles", type: "number", initialValue: 7, validation: (rule) => rule.min(1).max(12).integer() }),
             defineField({

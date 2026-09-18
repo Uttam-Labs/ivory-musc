@@ -50,6 +50,7 @@ export const homePage = defineType({
         defineField({ name: "successMessage", title: "Success message", type: "string", initialValue: "Thank you for subscribing." }),
         defineField({ name: "alreadySubscribedMessage", title: "Existing subscriber message", type: "string", initialValue: "You are already subscribed." }),
         defineField({ name: "fallbackErrorMessage", title: "Fallback error message", type: "string", initialValue: "Please try again." }),
+        defineField({ name: "closeLabel", title: "Popup close button label", type: "string", initialValue: "Close newsletter popup" }),
         imageField,
       ] }),
     ] }),

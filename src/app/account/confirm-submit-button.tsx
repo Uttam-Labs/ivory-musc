@@ -8,11 +8,19 @@ export function ConfirmSubmitButton({
   children,
   className,
   matchFields,
+  title = "Please confirm",
+  cancelLabel = "Cancel",
+  confirmLabel = "Confirm",
+  passwordMismatchMessage = "Passwords do not match.",
 }: {
   message: string;
   children: React.ReactNode;
   className?: string;
   matchFields?: readonly [string, string];
+  title?: string;
+  cancelLabel?: string;
+  confirmLabel?: string;
+  passwordMismatchMessage?: string;
 }) {
   const [open, setOpen] = useState(false);
   const formRef = useRef<HTMLFormElement | null>(null);
@@ -41,7 +49,7 @@ export function ConfirmSubmitButton({
             ) as HTMLInputElement | null;
             second?.setCustomValidity("");
             if (first && second && first.value !== second.value) {
-              second.setCustomValidity("Passwords do not match.");
+              second.setCustomValidity(passwordMismatchMessage);
               second.reportValidity();
               return;
             }
@@ -66,7 +74,7 @@ export function ConfirmSubmitButton({
             onMouseDown={(event) => event.stopPropagation()}
           >
             <span className={styles.confirmMark}>IM</span>
-            <h2 id="account-confirm-title">Please confirm</h2>
+            <h2 id="account-confirm-title">{title}</h2>
             <p>{message}</p>
             <div className={styles.confirmActions}>
               <button
@@ -74,7 +82,7 @@ export function ConfirmSubmitButton({
                 className={styles.confirmCancel}
                 onClick={() => setOpen(false)}
               >
-                Cancel
+                {cancelLabel}
               </button>
               <button
                 type="button"
@@ -85,7 +93,7 @@ export function ConfirmSubmitButton({
                   formRef.current?.requestSubmit();
                 }}
               >
-                Confirm
+                {confirmLabel}
               </button>
             </div>
           </section>

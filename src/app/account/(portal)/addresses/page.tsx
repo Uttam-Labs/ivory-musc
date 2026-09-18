@@ -58,14 +58,15 @@ export default async function AddressesPage({
       <>
         <header className={styles.header}>
           <div>
-            <p className={styles.eyebrow}>Address book</p>
-            <h1 className={styles.title}>Your addresses</h1>
+            <p className={styles.eyebrow}>{cms.eyebrow || "Address book"}</p>
+            <h1 className={styles.title}>{cms.heading || "Your addresses"}</h1>
           </div>
         </header>
         <AccountDataError
           href="/account/addresses"
-          title="We couldn’t load your addresses"
-          message="Your saved addresses are temporarily unavailable. Your account is still signed in. Please try again."
+          title={cms.errorTitle || "We couldn’t load your addresses"}
+          message={cms.errorMessage || "Your saved addresses are temporarily unavailable. Your account is still signed in. Please try again."}
+          retryLabel={cms.retryLabel || "Try again"}
         />
       </>
     );
@@ -96,6 +97,15 @@ export default async function AddressesPage({
     confirmUpdateMessage: "Save these changes to your address?",
     confirmDefaultMessage: "Make this your default delivery address?",
     confirmDeleteMessage: "Delete this address? This action cannot be undone.",
+    confirmTitle: "Please confirm",
+    confirmLabel: "Confirm",
+    confirmCancelLabel: "Cancel",
+    errorTitle: "We couldn’t load your addresses",
+    errorMessage: "Your saved addresses are temporarily unavailable. Your account is still signed in. Please try again.",
+    retryLabel: "Try again",
+    feedbackErrorHeading: "Please check",
+    feedbackSuccessHeading: "Success",
+    feedbackDismissLabel: "Dismiss message",
     ...cms,
   };
   let edit: Address | undefined;
@@ -121,6 +131,9 @@ export default async function AddressesPage({
         key={params.error || params.success || "feedback"}
         success={params.success}
         error={params.error}
+        errorHeading={c.feedbackErrorHeading}
+        successHeading={c.feedbackSuccessHeading}
+        dismissLabel={c.feedbackDismissLabel}
         clearQuery
       />
       <div className={styles.addressGrid}>
@@ -148,6 +161,9 @@ export default async function AddressesPage({
                     <ConfirmSubmitButton
                       className={styles.secondary}
                       message={c.confirmDefaultMessage}
+                      title={c.confirmTitle}
+                      confirmLabel={c.confirmLabel}
+                      cancelLabel={c.confirmCancelLabel}
                     >
                       {c.setDefaultLabel}
                     </ConfirmSubmitButton>
@@ -158,6 +174,9 @@ export default async function AddressesPage({
                   <ConfirmSubmitButton
                     className={styles.danger}
                     message={c.confirmDeleteMessage}
+                    title={c.confirmTitle}
+                    confirmLabel={c.confirmLabel}
+                    cancelLabel={c.confirmCancelLabel}
                   >
                     {c.deleteLabel}
                   </ConfirmSubmitButton>
@@ -249,6 +268,9 @@ export default async function AddressesPage({
               <ConfirmSubmitButton
                 className={styles.primary}
                 message={c.confirmUpdateMessage}
+                title={c.confirmTitle}
+                confirmLabel={c.confirmLabel}
+                cancelLabel={c.confirmCancelLabel}
               >
                 {c.saveLabel}
               </ConfirmSubmitButton>

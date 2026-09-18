@@ -38,6 +38,8 @@ export type ProductGridContent = {
   buyNowLabel?: string; buyLoadingLabel?: string; addToCartLabel?: string; addingLabel?: string;
   addedLabel?: string; soldOutText?: string; specificationsHeading?: string; compositionLabel?: string;
   weightLabel?: string; widthLabel?: string; careLabel?: string; detailsLabel?: string; loadingProductLabel?: string;
+  quickViewLabel?: string; closeQuickViewLabel?: string; decreaseQuantityLabel?: string;
+  increaseQuantityLabel?: string; productImageAlt?: string; actionErrorText?: string;
 };
 const fallbackContent: Required<ProductGridContent> = {
   eyebrow: "IVORY MUSE · SILK COLLECTION", perUnitLabel: "per metre", quantityLabel: "Quantity",
@@ -46,6 +48,8 @@ const fallbackContent: Required<ProductGridContent> = {
   soldOutText: "This variant is currently sold out.", specificationsHeading: "Fabric specifications",
   compositionLabel: "Composition", weightLabel: "Weight", widthLabel: "Width", careLabel: "Care",
   detailsLabel: "View full product details", loadingProductLabel: "Loading product…",
+  quickViewLabel: "Quick view", closeQuickViewLabel: "Close quick view", decreaseQuantityLabel: "Decrease quantity",
+  increaseQuantityLabel: "Increase quantity", productImageAlt: "Product view", actionErrorText: "Please try again",
 };
 
 function metafieldText(metafield?: Product["specialTag"]) {
@@ -262,7 +266,7 @@ function ProductQuickView({
         }, 50);
       }
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : "Please try again");
+      setError(submitError instanceof Error ? submitError.message : copy.actionErrorText);
       setAction("idle");
     } finally {
       submitting.current = false;
@@ -328,11 +332,11 @@ function ProductQuickView({
       <section
         role="dialog"
         aria-modal="true"
-        aria-label={product ? `Quick view: ${product.title}` : "Product quick view"}
+        aria-label={product ? `${copy.quickViewLabel}: ${product.title}` : copy.quickViewLabel}
         className={styles.modal}
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <button className={styles.modalClose} onClick={onClose} aria-label="Close quick view">
+        <button className={styles.modalClose} onClick={onClose} aria-label={copy.closeQuickViewLabel}>
           <X size={22} />
         </button>
         {loading ? (
@@ -363,7 +367,7 @@ function ProductQuickView({
                       className={activeImage?.url === image.url ? styles.thumbnailActive : styles.thumbnail}
                       onClick={() => setActiveImage(image)}
                     >
-                      <Image src={image.url} alt={image.altText || "Product view"} fill quality={95} sizes="90px" className={styles.coverImage} />
+                      <Image src={image.url} alt={image.altText || copy.productImageAlt} fill quality={95} sizes="90px" className={styles.coverImage} />
                     </button>
                   ))}
                 </div>
@@ -427,9 +431,9 @@ function ProductQuickView({
               <div className={styles.quantityRow}>
                 <span>{copy.quantityLabel}</span>
                 <div className={styles.quantityPicker}>
-                  <button onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label="Decrease quantity"><Minus size={14} /></button>
+                  <button onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label={copy.decreaseQuantityLabel}><Minus size={14} /></button>
                   <output>{quantity}</output>
-                  <button onClick={() => setQuantity((value) => Math.min(20, value + 1))} aria-label="Increase quantity"><Plus size={14} /></button>
+                  <button onClick={() => setQuantity((value) => Math.min(20, value + 1))} aria-label={copy.increaseQuantityLabel}><Plus size={14} /></button>
                 </div>
                 {variant && <strong>{formatMoney({ amount: String(Number(variant.price.amount) * quantity), currencyCode: variant.price.currencyCode })}</strong>}
               </div>

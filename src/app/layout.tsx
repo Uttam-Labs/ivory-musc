@@ -145,9 +145,12 @@ type HeaderData = {
 type FooterData = {
   contactHeading?: string;
   contactEmail?: string;
+  emailPrefix?: string;
   socialHeading?: string;
   instagramUrl?: string;
   facebookUrl?: string;
+  instagramLabel?: string;
+  facebookLabel?: string;
   footerColumns?: Array<{
     heading?: string;
     links?: Array<{ label?: string; href?: string }>;
@@ -164,6 +167,7 @@ type HomeNewsletterData = {
   successMessage?: string;
   alreadySubscribedMessage?: string;
   fallbackErrorMessage?: string;
+  closeLabel?: string;
 } | null;
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const [settings, header, footer, homeNewsletter] = await Promise.all([
@@ -307,13 +311,17 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           successMessage={homeNewsletter?.successMessage}
           alreadySubscribedMessage={homeNewsletter?.alreadySubscribedMessage}
           fallbackErrorMessage={homeNewsletter?.fallbackErrorMessage}
+          closeLabel={homeNewsletter?.closeLabel}
         />
         <Footer
           contactHeading={footer?.contactHeading}
           email={footer?.contactEmail}
+          emailPrefix={footer?.emailPrefix}
           socialHeading={footer?.socialHeading}
           instagram={footer?.instagramUrl}
           facebook={footer?.facebookUrl}
+          instagramLabel={footer?.instagramLabel}
+          facebookLabel={footer?.facebookLabel}
           columns={footer?.footerColumns}
           copyright={footer?.copyright}
         />

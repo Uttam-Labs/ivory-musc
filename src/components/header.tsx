@@ -37,6 +37,10 @@ type Props = {
     sampleUnitLabel?: string; singleMetreLabel?: string; multipleMetresLabel?: string;
     sampleSizeLabel?: string; sampleSizeValue?: string; subtotalLabel?: string; viewBagLabel?: string;
     checkoutLabel?: string; checkoutLoadingLabel?: string;
+    openMenuLabel?: string; closeMenuLabel?: string; mobileNavigationLabel?: string;
+    searchIconLabel?: string; accountIconLabel?: string; cartIconLabel?: string;
+    closeSearchLabel?: string; shoppingCartLabel?: string; closeCartLabel?: string;
+    removeItemLabel?: string; cartUpdateError?: string; checkoutError?: string; logoAlt?: string;
   };
 };
 
@@ -58,7 +62,12 @@ export function Header({
     continueShoppingLabel: "Continue shopping", quantityLabel: "Quantity", sampleSizeLabel: "Sample size",
     sampleUnitLabel: "sample", singleMetreLabel: "meter", multipleMetresLabel: "meters",
     sampleSizeValue: "10cm x 15cm", subtotalLabel: "Subtotal", viewBagLabel: "View shopping bag",
-    checkoutLabel: "Checkout", checkoutLoadingLabel: "Preparing checkout…", ...uiContent,
+    checkoutLabel: "Checkout", checkoutLoadingLabel: "Preparing checkout…",
+    openMenuLabel: "Open menu", closeMenuLabel: "Close menu", mobileNavigationLabel: "Mobile navigation",
+    searchIconLabel: "Search", accountIconLabel: "Account", cartIconLabel: "Cart",
+    closeSearchLabel: "Close search", shoppingCartLabel: "Shopping cart", closeCartLabel: "Close cart",
+    removeItemLabel: "Remove item", cartUpdateError: "Please try again", checkoutError: "Please try again",
+    logoAlt: "Logo", ...uiContent,
   };
   const pathname = usePathname();
   const router = useRouter();
@@ -288,7 +297,7 @@ export function Header({
         new CustomEvent("cart:changed", { detail: payload.cart }),
       );
     } catch (error) {
-      setCartError(error instanceof Error ? error.message : "Please try again");
+      setCartError(error instanceof Error ? error.message : copy.cartUpdateError);
     } finally {
       changingLines.current.delete(lineId);
       setUpdatingLines((lines) => lines.filter((id) => id !== lineId));
@@ -312,7 +321,7 @@ export function Header({
       window.location.assign(payload.checkoutUrl);
     } catch (error) {
       setCartError(
-        error instanceof Error ? error.message : "Please try again",
+        error instanceof Error ? error.message : copy.checkoutError,
       );
       setCheckoutLoading(false);
     }
@@ -371,7 +380,7 @@ export function Header({
           </nav>
           {visibleNavigation.length > 0 && (
             <button
-              aria-label="Open menu"
+              aria-label={copy.openMenuLabel}
               aria-expanded={menuOpen}
               aria-controls="mobile-navigation-drawer"
               onClick={() => setMenuOpen(true)}
@@ -387,7 +396,7 @@ export function Header({
             {logoUrl ? (
               <Image
                 src={logoUrl}
-                alt={title || "Logo"}
+                alt={title || copy.logoAlt}
                 width={92}
                 height={86}
                 quality={95}
@@ -414,7 +423,7 @@ export function Header({
                   setSearching(false);
                   setSearchOpen(true);
                 }}
-                aria-label="Search"
+                aria-label={copy.searchIconLabel}
               >
                 <SearchIcon className="size-[18px]" />
               </button>
@@ -433,7 +442,7 @@ export function Header({
                 <Link
                   className={`${iconClass} header--icon icon-account`}
                   href={accountHref}
-                  aria-label="Account"
+                  aria-label={copy.accountIconLabel}
                 >
                   <AccountIcon className="size-[19px]" />
                 </Link>
@@ -443,7 +452,7 @@ export function Header({
               <button
                 className={`${iconClass} relative header--icon icon-cart`}
                 onClick={openCart}
-                aria-label="Cart"
+                aria-label={copy.cartIconLabel}
               >
                 <CartIcon className="h-[19px] w-[17px]" />
                 {cart?.totalQuantity ? (
@@ -474,7 +483,7 @@ export function Header({
       >
         <aside
           id="mobile-navigation-drawer"
-          aria-label="Mobile navigation"
+          aria-label={copy.mobileNavigationLabel}
           aria-modal="true"
           role="dialog"
           className={`flex h-dvh w-[84vw] max-w-[340px] flex-col bg-[#fff9f3] text-stone-900 shadow-[18px_0_45px_rgba(0,0,0,.2)] transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${
@@ -486,7 +495,7 @@ export function Header({
             <p className="font-heading text-xl text-[var(--accent)]">{copy.menuLabel}</p>
             <button
               ref={menuCloseButton}
-              aria-label="Close menu"
+              aria-label={copy.closeMenuLabel}
               onClick={() => setMenuOpen(false)}
               className="inline-flex size-10 items-center justify-center rounded-full transition-colors hover:bg-black/5 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2"
             >
@@ -546,7 +555,7 @@ export function Header({
                   {copy.searchTitle}
                 </p>
                 <button
-                  aria-label="Close search"
+                  aria-label={copy.closeSearchLabel}
                   onClick={() => setSearchOpen(false)}
                   className="rounded-full p-2 hover:bg-black/5"
                 >
@@ -621,7 +630,7 @@ export function Header({
         onMouseDown={() => setCartOpen(false)}
       >
         <aside
-          aria-label="Shopping cart"
+          aria-label={copy.shoppingCartLabel}
           aria-modal="true"
           role="dialog"
           className={`ml-auto flex h-dvh w-full max-w-[480px] flex-col bg-[#fffaf5] shadow-2xl transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${
@@ -634,7 +643,7 @@ export function Header({
               {copy.cartTitle} {cart?.totalQuantity ? `(${cart.totalQuantity})` : ""}
             </h2>
             <button
-              aria-label="Close cart"
+              aria-label={copy.closeCartLabel}
               onClick={() => setCartOpen(false)}
               className="cursor-pointer rounded-full p-2 transition hover:bg-black/5"
             >
@@ -695,7 +704,7 @@ export function Header({
                         <button
                           type="button"
                           aria-label={`Remove ${line.merchandise.product.title}`}
-                          title="Remove item"
+                          title={copy.removeItemLabel}
                           disabled={updatingLines.includes(line.id)}
                           onClick={() => changeCartLine(line.id)}
                           className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-full text-stone-500 transition hover:bg-red-50 hover:text-[#a95850] disabled:cursor-not-allowed disabled:opacity-40"

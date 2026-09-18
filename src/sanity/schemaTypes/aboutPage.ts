@@ -73,7 +73,7 @@ export const aboutPage = defineType({
               name: "items",
               title: "Icon blocks (optional)",
               description:
-                "Nature section-এর নিচের benefit blocks এখানে থাকবে।",
+                "Add the benefit blocks displayed below the Nature section here.",
               type: "array",
               of: [item],
             }),

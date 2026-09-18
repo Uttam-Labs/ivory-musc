@@ -28,6 +28,9 @@ type Copy = {
   viewDetailsLabel: string;
   previousLabel: string;
   nextLabel: string;
+  filterLabel: string;
+  cancelledLabel: string;
+  paginationLabel: string;
 };
 
 const PAGE_SIZE = 8;
@@ -78,7 +81,7 @@ export function OrderList({ orders, copy }: { orders: OrderListItem[]; copy: Cop
           <input value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder={copy.searchPlaceholder} />
         </label>
         <label className={styles.orderFilter}>
-          <span className="sr-only">Filter orders</span>
+          <span className="sr-only">{copy.filterLabel}</span>
           <select value={filter} onChange={(event) => changeFilter(event.target.value)}>
             <option value="all">{copy.filterAll}</option>
             <option value="open">{copy.filterOpen}</option>
@@ -91,14 +94,14 @@ export function OrderList({ orders, copy }: { orders: OrderListItem[]; copy: Cop
       {visible.length ? (
         <div className={styles.orderCards}>
           {visible.map((order) => {
-            const fulfilment = order.canceledAt ? "Cancelled" : readable(order.fulfillmentStatus);
+            const fulfilment = order.canceledAt ? copy.cancelledLabel : readable(order.fulfillmentStatus);
             return (
               <Link className={styles.orderCard} href={`/account/orders/${order.encodedId}`} key={order.id}>
                 <div className={styles.orderCardLead}>
                   <strong>{order.name}</strong>
                   <span>{new Intl.DateTimeFormat("en-AU", { dateStyle: "medium" }).format(new Date(order.processedAt))}</span>
                   <div className={styles.orderBadges}>
-                    {order.canceledAt && <span className={`${styles.orderBadge} ${styles.orderBadge_danger}`}>Cancelled</span>}
+                    {order.canceledAt && <span className={`${styles.orderBadge} ${styles.orderBadge_danger}`}>{copy.cancelledLabel}</span>}
                     <span className={`${styles.orderBadge} ${styles[`orderBadge_${financialTone(order.financialStatus)}`]}`}>{readable(order.financialStatus)}</span>
                     {!order.canceledAt && <span className={`${styles.orderBadge} ${styles[`orderBadge_${fulfillmentTone(order.fulfillmentStatus, false)}`]}`}>{fulfilment}</span>}
                   </div>
@@ -115,7 +118,7 @@ export function OrderList({ orders, copy }: { orders: OrderListItem[]; copy: Cop
         <div className={styles.orderNoResults}><h2>{copy.noResultsHeading}</h2><p>{copy.noResultsText}</p></div>
       )}
       {pages > 1 && (
-        <nav className={styles.orderPagination} aria-label="Order pages">
+        <nav className={styles.orderPagination} aria-label={copy.paginationLabel}>
           <button type="button" disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)}><ChevronLeft size={17} />{copy.previousLabel}</button>
           <span>{currentPage} / {pages}</span>
           <button type="button" disabled={currentPage === pages} onClick={() => setPage(currentPage + 1)}>{copy.nextLabel}<ChevronRight size={17} /></button>

@@ -89,6 +89,16 @@ export default async function ProfilePage({
     confirmDetailsMessage: "Save these changes to your profile?",
     confirmPasswordMessage:
       "Update your account password? You will use the new password next time you sign in.",
+    confirmTitle: "Please confirm",
+    confirmLabel: "Confirm",
+    cancelLabel: "Cancel",
+    passwordMismatchMessage: "Passwords do not match.",
+    errorTitle: "We couldn’t load your profile",
+    errorMessage: "Your personal details are temporarily unavailable. Your account is still signed in. Please try again.",
+    retryLabel: "Try again",
+    feedbackErrorHeading: "Please check",
+    feedbackSuccessHeading: "Success",
+    feedbackDismissLabel: "Dismiss message",
     ...cms,
   };
   const customer = profileResult?.customer;
@@ -104,8 +114,9 @@ export default async function ProfilePage({
         </header>
         <AccountDataError
           href="/account/profile"
-          title="We couldn’t load your profile"
-          message="Your personal details are temporarily unavailable. Your account is still signed in. Please try again."
+          title={c.errorTitle}
+          message={c.errorMessage}
+          retryLabel={c.retryLabel}
         />
       </>
     );
@@ -127,6 +138,9 @@ export default async function ProfilePage({
         key={params.error || params.success || "feedback"}
         success={params.success}
         error={params.error}
+        errorHeading={c.feedbackErrorHeading}
+        successHeading={c.feedbackSuccessHeading}
+        dismissLabel={c.feedbackDismissLabel}
         clearQuery
       />
       <div className={styles.profileStack}>
@@ -170,6 +184,9 @@ export default async function ProfilePage({
             <ConfirmSubmitButton
               className={`${styles.primary} ${styles.full}`}
               message={c.confirmDetailsMessage}
+              title={c.confirmTitle}
+              confirmLabel={c.confirmLabel}
+              cancelLabel={c.cancelLabel}
             >
               {c.saveDetailsLabel}
             </ConfirmSubmitButton>
@@ -197,6 +214,10 @@ export default async function ProfilePage({
               className={`${styles.primary} ${styles.full}`}
               message={c.confirmPasswordMessage}
               matchFields={["password", "confirmPassword"]}
+              title={c.confirmTitle}
+              confirmLabel={c.confirmLabel}
+              cancelLabel={c.cancelLabel}
+              passwordMismatchMessage={c.passwordMismatchMessage}
             >
               {c.savePasswordLabel}
             </ConfirmSubmitButton>

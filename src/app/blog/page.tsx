@@ -16,7 +16,7 @@ import styles from "./blog.module.css";
 type ImageData = SanityImageSource & { alt?: string };
 type HeroSection = { _type: "blogHero"; enabled?: boolean; image?: ImageData; heading?: string; body?: string; overlayOpacity?: number };
 type ListingVisibility = { showHeading?: boolean; showFilters?: boolean; showSearch?: boolean; showRecent?: boolean; showImages?: boolean; showDates?: boolean; showExcerpts?: boolean; showReadMore?: boolean; showPagination?: boolean };
-type ListingSettings = { _type: "blogListingSettings"; shopifyBlogHandle?: string; heading?: string; allLabel?: string; searchPlaceholder?: string; recentHeading?: string; readMoreLabel?: string; emptyMessage?: string; articlesPerPage?: number; recentLimit?: number; listingVisibility?: ListingVisibility };
+type ListingSettings = { _type: "blogListingSettings"; shopifyBlogHandle?: string; heading?: string; allLabel?: string; searchPlaceholder?: string; recentHeading?: string; readMoreLabel?: string; emptyMessage?: string; articlesPerPage?: number; recentLimit?: number; listingVisibility?: ListingVisibility; filtersLabel?: string; searchLabel?: string; submitSearchLabel?: string; paginationLabel?: string; previousPageLabel?: string; nextPageLabel?: string };
 type BlogPageData = { title?: string; seoDescription?: string; sections?: Array<HeroSection | ListingSettings> } | null;
 type BlogPageProps = { searchParams: Promise<{ tag?: string | string[]; q?: string | string[]; page?: string | string[] }> };
 
@@ -79,7 +79,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     </section>}
     <SiteContainer as="section" id="blog-listing" className={styles.listing}>
       {visibility?.showHeading !== false && settings?.heading && <h2 className={styles.sectionHeading}>{settings.heading}</h2>}
-      {visibility?.showFilters !== false && <nav className={styles.filters} aria-label="Article tags">
+      {visibility?.showFilters !== false && <nav className={styles.filters} aria-label={settings?.filtersLabel || "Article tags"}>
         <Link className={`${styles.filter} ${!activeTag ? styles.filterActive : ""}`} href={queryHref({ q: searchQuery })}>{settings?.allLabel || "All"}</Link>
         {tags.map((tag) => <Link key={tag} className={`${styles.filter} ${activeTag.toLocaleLowerCase() === tag.toLocaleLowerCase() ? styles.filterActive : ""}`} href={queryHref({ tag, q: searchQuery })}>{tag}</Link>)}
       </nav>}
@@ -96,8 +96,8 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         {(visibility?.showSearch !== false || visibility?.showRecent !== false) && <aside className={styles.sidebar}>
           {visibility?.showSearch !== false && <form className={styles.search} action="/blog" method="get">
             {activeTag && <input type="hidden" name="tag" value={activeTag} />}
-            <input type="search" name="q" defaultValue={searchQuery} placeholder={settings?.searchPlaceholder || "Search blogs..."} aria-label="Search articles" />
-            <button type="submit" aria-label="Submit search"><Search size={23} strokeWidth={1.5} /></button>
+            <input type="search" name="q" defaultValue={searchQuery} placeholder={settings?.searchPlaceholder || "Search blogs..."} aria-label={settings?.searchLabel || "Search articles"} />
+            <button type="submit" aria-label={settings?.submitSearchLabel || "Submit search"}><Search size={23} strokeWidth={1.5} /></button>
           </form>}
           {visibility?.showRecent !== false && settings?.recentHeading && <h2 className={styles.recentHeading}>{settings.recentHeading}</h2>}
           {visibility?.showRecent !== false && <div className={styles.recentList}>{recent.map((article) => <article className={styles.recentItem} key={article.id}>
@@ -106,12 +106,12 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           </article>)}</div>}
         </aside>}
       </div>
-      {visibility?.showPagination !== false && totalPages > 1 && <nav className={styles.pagination} aria-label="Blog pagination">
-        {currentPage > 1 && <Link className={styles.arrow} href={queryHref({ tag: activeTag, q: searchQuery, page: currentPage - 1 })} aria-label="Previous page">‹</Link>}
+      {visibility?.showPagination !== false && totalPages > 1 && <nav className={styles.pagination} aria-label={settings?.paginationLabel || "Blog pagination"}>
+        {currentPage > 1 && <Link className={styles.arrow} href={queryHref({ tag: activeTag, q: searchQuery, page: currentPage - 1 })} aria-label={settings?.previousPageLabel || "Previous page"}>‹</Link>}
         {pageStart > 1 && <><Link href={queryHref({ tag: activeTag, q: searchQuery, page: 1 })}>1</Link>{pageStart > 2 && <span>…</span>}</>}
         {visiblePages.map((item) => <Link key={item} className={item === currentPage ? styles.active : undefined} href={queryHref({ tag: activeTag, q: searchQuery, page: item })} aria-current={item === currentPage ? "page" : undefined}>{item}</Link>)}
         {visiblePages.at(-1)! < totalPages && <>{visiblePages.at(-1)! < totalPages - 1 && <span>…</span>}<Link href={queryHref({ tag: activeTag, q: searchQuery, page: totalPages })}>{totalPages}</Link></>}
-        {currentPage < totalPages && <Link className={styles.arrow} href={queryHref({ tag: activeTag, q: searchQuery, page: currentPage + 1 })} aria-label="Next page">›</Link>}
+        {currentPage < totalPages && <Link className={styles.arrow} href={queryHref({ tag: activeTag, q: searchQuery, page: currentPage + 1 })} aria-label={settings?.nextPageLabel || "Next page"}>›</Link>}
       </nav>}
     </SiteContainer>
   </main>;

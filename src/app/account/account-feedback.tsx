@@ -8,10 +8,16 @@ export function AccountFeedback({
   success,
   error,
   clearQuery = false,
+  errorHeading = "Please check",
+  successHeading = "Success",
+  dismissLabel = "Dismiss message",
 }: {
   success?: string;
   error?: string;
   clearQuery?: boolean;
+  errorHeading?: string;
+  successHeading?: string;
+  dismissLabel?: string;
 }) {
   const message = error || success;
   const [visible, setVisible] = useState(true);
@@ -40,12 +46,12 @@ export function AccountFeedback({
         {error ? <X size={18} /> : <Check size={18} />}
       </span>
       <div>
-        <strong>{error ? "Please check" : "Success"}</strong>
+        <strong>{error ? errorHeading : successHeading}</strong>
         <p>{message}</p>
       </div>
       <button
         type="button"
-        aria-label="Dismiss message"
+        aria-label={dismissLabel}
         onClick={() => setVisible(false)}
       >
         <X size={17} />
