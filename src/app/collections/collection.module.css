@@ -22,3 +22,5 @@
 .thumbnail,.thumbnailActive{transition:border-color .25s,box-shadow .25s,transform .25s}
 .thumbnail:hover,.thumbnailActive:hover{border-color:var(--collection-accent);box-shadow:0 1rem 2.5rem rgba(50,38,30,.1);transform:translateY(-2px)}
 @media(prefers-reduced-motion:reduce){.thumbnail,.thumbnailActive{transition:none}}
+/* The sample section already supplies the divider above specifications. */
+.specifications{border-top:0}
