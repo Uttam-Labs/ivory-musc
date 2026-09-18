@@ -36,6 +36,14 @@ export async function discoverApi(): Promise<{ graphql_api: string }> {
   return response.json() as Promise<{ graphql_api: string }>;
 }
 export function callbackUrl() { return new URL("/api/customer-account/callback", env.NEXT_PUBLIC_SITE_URL).toString(); }
+export async function createLogoutUrl(idToken: string) {
+  const config = await discoverAuth();
+  if (!config.end_session_endpoint) throw new Error("Shopify customer logout is unavailable");
+  const url = new URL(config.end_session_endpoint);
+  url.searchParams.set("id_token_hint", idToken);
+  url.searchParams.set("post_logout_redirect_uri", new URL("/", env.NEXT_PUBLIC_SITE_URL).toString());
+  return url;
+}
 export async function createAuthorizationUrl(next = "/account") {
   const config = await discoverAuth();
   const state = b64(randomBytes(24)); const nonce = b64(randomBytes(24)); const verifier = b64(randomBytes(48));

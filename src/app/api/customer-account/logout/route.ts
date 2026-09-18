@@ -4,8 +4,15 @@ import {
   clearCustomerSession,
   getCustomerSession,
 } from "@/lib/customer-account/session";
+import { createLogoutUrl } from "@/lib/customer-account/oauth";
 export async function POST(request: NextRequest) {
   const session = await getCustomerSession();
+  let destination = new URL("/", request.url);
+  if (session?.authMode === "customer-account-api" && session.idToken) {
+    try {
+      destination = await createLogoutUrl(session.idToken);
+    } catch {}
+  }
   if (session?.authMode !== "customer-account-api" && session)
     try {
       await storefrontCustomerFetch(
@@ -14,7 +21,7 @@ export async function POST(request: NextRequest) {
       );
     } catch {}
   await clearCustomerSession();
-  return NextResponse.redirect(new URL("/account/login", request.url), 303);
+  return NextResponse.redirect(destination, 303);
 }
 
 export async function GET(request: NextRequest) {
