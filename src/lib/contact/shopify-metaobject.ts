@@ -41,7 +41,7 @@ export async function storeContactEnquiry(input: ContactSubmission) {
           metaobject: {
             type: env.SHOPIFY_CONTACT_METAOBJECT_TYPE,
             fields: [
-              { key: "first_name", value: input.name },
+              { key: "name", value: input.name },
               { key: "email", value: input.email },
               { key: "phone", value: input.phone },
               { key: "message", value: input.message },
