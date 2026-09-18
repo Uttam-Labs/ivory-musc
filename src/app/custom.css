@@ -48,7 +48,13 @@ html.site-loading body {
     background: #fff9f3 !important;
 }
 
+body > :not(.global-loader) {
+    opacity: 1;
+    transition: opacity .32s ease;
+}
+
 html.site-loading body > :not(.global-loader) {
+    opacity: 0;
     visibility: hidden !important;
 }
 
@@ -217,7 +223,7 @@ a {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: opacity .15s ease, visibility 0s linear .15s;
+    transition: opacity .32s ease, visibility 0s linear .32s;
 }
 .global-loader--visible {
     opacity: 1;

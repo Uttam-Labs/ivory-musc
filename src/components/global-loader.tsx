@@ -50,7 +50,10 @@ export function GlobalLoader({
 
   useEffect(() => {
     if (initialLoading) return;
-    document.documentElement.classList.remove("site-loading");
+    const revealTimer = window.setTimeout(() => {
+      document.documentElement.classList.remove("site-loading");
+    }, 80);
+    return () => window.clearTimeout(revealTimer);
   }, [initialLoading]);
 
   useEffect(() => {
