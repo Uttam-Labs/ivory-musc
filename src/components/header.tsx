@@ -819,7 +819,7 @@ export function Header({
             ) : (
               <div className="flex h-full flex-col items-center justify-center text-center">
                 <CartIcon className="h-10 w-9 text-stone-400" />
-                <p className="mt-5 font-heading text-xl">{copy.emptyCartText}</p>
+                <p className="mt-7 font-heading text-xl">{copy.emptyCartText}</p>
                 <Link
                   href="/collections/shop"
                   onClick={() => setCartOpen(false)}
