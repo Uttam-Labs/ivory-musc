@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       );
     } catch {}
   await clearCustomerSession();
-  return NextResponse.redirect(new URL("/account/login", request.url));
+  return NextResponse.redirect(new URL("/account/login", request.url), 303);
 }
 
 export async function GET(request: NextRequest) {
