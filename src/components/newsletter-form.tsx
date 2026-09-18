@@ -69,7 +69,7 @@ export function NewsletterForm({
           className="field__input min-w-0 flex-1 bg-transparent px-1 py-3 text-[10px] outline-none placeholder:text-[var(--accent)]/80 disabled:opacity-60"
         />
         {submitLabel && (
-          <button disabled={status === "loading"} className="newsletter-button ml-4 min-w-[132px] border-l border-[var(--accent)]/70 px-4 text-[10px] uppercase tracking-[.06em] text-[var(--accent)] underline decoration-[1px] underline-offset-[3px] transition-opacity hover:opacity-60 disabled:cursor-wait disabled:opacity-50">
+          <button disabled={status === "loading"} className="newsletter-button ml-4 min-w-[132px] cursor-pointer border-l border-[var(--accent)]/70 px-4 text-[10px] uppercase tracking-[.06em] text-[var(--accent)] underline decoration-[1px] underline-offset-[3px] transition-opacity hover:opacity-60 disabled:cursor-wait disabled:opacity-50">
             {status === "loading" ? submittingLabel : submitLabel}
           </button>
         )}
