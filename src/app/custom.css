@@ -399,6 +399,23 @@ a {
     display: none;
 }
 
+/* Use the available horizontal space for the chosen-silk story on tablets in landscape. */
+@media (min-width: 768px) and (max-width: 1199px) and (orientation: landscape) {
+    .home-chosen {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        align-items: center;
+        padding-top: 3rem !important;
+        padding-bottom: 3rem !important;
+    }
+    .home-chosen .home-split-content {
+        padding: 2.5rem 3rem;
+    }
+    .home-chosen .home-split-innerbox {
+        width: 100%;
+        max-width: 48rem;
+    }
+}
+
 @media (max-width: 767px) {
     .about-hero {
         align-items: center;
