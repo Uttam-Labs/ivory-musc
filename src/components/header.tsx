@@ -93,6 +93,9 @@ export function Header({
   const [cartError, setCartError] = useState("");
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [customerName, setCustomerName] = useState("");
+  const customerAccountHref = customerName
+    ? accountHref
+    : "/api/customer-account/login?next=/account";
   const searchInput = useRef<HTMLInputElement>(null);
   const menuCloseButton = useRef<HTMLButtonElement>(null);
   const cartRefreshVersion = useRef(0);
@@ -431,7 +434,7 @@ export function Header({
             {showAccount && accountHref && (
               customerName ? (
                 <Link
-                  href={accountHref}
+                  href={customerAccountHref!}
                   aria-label={`Account for ${customerName}`}
                   title={customerName}
                   className="mx-[5px] grid size-[30px] place-items-center rounded-full bg-[#9b504a] text-[13px] font-medium uppercase leading-none text-white shadow-sm"
@@ -441,7 +444,7 @@ export function Header({
               ) : (
                 <Link
                   className={`${iconClass} header--icon icon-account`}
-                  href={accountHref}
+                  href={customerAccountHref!}
                   aria-label={copy.accountIconLabel}
                 >
                   <AccountIcon className="size-[19px]" />

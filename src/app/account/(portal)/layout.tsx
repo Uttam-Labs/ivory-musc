@@ -10,7 +10,7 @@ export default async function AccountPortalLayout({
   children: React.ReactNode;
 }) {
   const session = await getCustomerSession();
-  if (!session) redirect("/account/login");
+  if (!session) redirect("/api/customer-account/login?next=/account");
   const identity = await customerAccountFetch<{
     customer: { id: string } | null;
   }>(`query AccountIdentity { customer { id } }`).catch(() => undefined);
