@@ -262,7 +262,7 @@ export default async function Home() {
                         <div className="relative mx-auto size-[45px] xl:size-[90px]">
                           <Image
                             fill
-                            src={sanityImageUrl(feature.icon, 180)}
+                            src={sanityImageUrl(feature.icon, 720)}
                             alt=""
                             className="object-contain"
                             sizes="90px"
