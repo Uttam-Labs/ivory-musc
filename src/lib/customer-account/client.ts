@@ -1,6 +1,7 @@
 import "server-only";
 import { env, isShopifyConfigured } from "@/lib/env";
 import { getCustomerSession } from "./session";
+import { customerApiFetchWithToken } from "./oauth";
 type GraphqlResponse<T> = { data?: T; errors?: Array<{ message: string }> };
 
 export function isCustomerAccountConfigured() {
@@ -25,6 +26,7 @@ export async function storefrontCustomerFetch<T>(query: string, variables: Recor
 export async function customerAccountFetch<T>(query: string, variables: Record<string, unknown> = {}) {
   const session = await getCustomerSession();
   if (!session) throw new Error("CUSTOMER_AUTH_REQUIRED");
+  if (session.authMode === "customer-account-api") return customerApiFetchWithToken<T>(session.accessToken, query, variables);
   return storefrontCustomerFetch<T>(query, { ...variables, customerAccessToken: session.accessToken });
 }
 

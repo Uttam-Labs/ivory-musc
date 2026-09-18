@@ -14,6 +14,8 @@ export const CUSTOMER_SESSION_COOKIE = "ivory_customer_session";
 export type CustomerSession = {
   accessToken: string;
   idToken?: string;
+  refreshToken?: string;
+  authMode?: "legacy" | "customer-account-api";
   firstName?: string;
   remember?: boolean;
   expiresAt: number;
@@ -31,6 +33,10 @@ function key() {
   return createHash("sha256")
     .update(`ivory-muse:customer-session:v1:${secret}`)
     .digest();
+}
+
+export async function clearCustomerSession() {
+  (await cookies()).delete(CUSTOMER_SESSION_COOKIE);
 }
 
 export function encryptSession(value: CustomerSession) {

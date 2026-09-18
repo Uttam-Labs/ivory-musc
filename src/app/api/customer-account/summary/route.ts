@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { storefrontCustomerFetch } from "@/lib/customer-account/client";
+import { customerAccountFetch } from "@/lib/customer-account/client";
 import { getCustomerSession } from "@/lib/customer-account/session";
 
 export async function GET() {
@@ -11,12 +11,9 @@ export async function GET() {
     );
   let firstName = session.firstName;
   if (!firstName) {
-    const data = await storefrontCustomerFetch<{
+    const data = await customerAccountFetch<{
       customer?: { firstName?: string; displayName?: string };
-    }>(
-      `query HeaderCustomer($customerAccessToken:String!){customer(customerAccessToken:$customerAccessToken){firstName displayName}}`,
-      { customerAccessToken: session.accessToken },
-    ).catch(() => null);
+    }>(`query HeaderCustomer { customer { firstName displayName } }`).catch(() => null);
     firstName =
       data?.customer?.firstName || data?.customer?.displayName?.split(/\s+/)[0];
   }

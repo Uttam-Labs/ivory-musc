@@ -5,7 +5,7 @@ import {
 } from "libphonenumber-js";
 import { getAccountContent } from "@/lib/customer-account/content";
 import { PROFILE_QUERY } from "@/lib/customer-account/queries";
-import { updatePassword, updateProfile } from "../../profile-actions";
+import { updateProfile } from "../../profile-actions";
 import styles from "../../account.module.css";
 import { ConfirmSubmitButton } from "../../confirm-submit-button";
 import { AccountFeedback } from "../../account-feedback";
@@ -14,9 +14,8 @@ import { AccountDataError } from "../../account-data-error";
 type Customer = {
   firstName?: string;
   lastName?: string;
-  email: string;
-  phone?: string;
-  acceptsMarketing: boolean;
+  emailAddress?: { emailAddress?: string; marketingState?: string };
+  phoneNumber?: { phoneNumber?: string };
   defaultAddress?: { countryCodeV2?: string };
 };
 type Data = { customer: Customer | null };
@@ -122,7 +121,7 @@ export default async function ProfilePage({
     );
   }
   const phone = phoneDefaults(
-    customer.phone,
+    customer.phoneNumber?.phoneNumber,
     customer.defaultAddress?.countryCodeV2,
   );
   return (
@@ -164,20 +163,22 @@ export default async function ProfilePage({
               name="email"
               type="email"
               label={c.emailLabel}
-              value={customer.email}
+              value={customer.emailAddress?.emailAddress}
               required
+              readOnly
             />
             <PhoneField
               label={c.phoneLabel}
               countryCodeLabel={c.countryCodeLabel}
               countryIso={phone.countryIso}
               value={phone.number}
+              readOnly
             />
             <label className={`${styles.check} ${styles.full}`}>
               <input
                 type="checkbox"
                 name="acceptsMarketing"
-                defaultChecked={customer.acceptsMarketing}
+                defaultChecked={customer.emailAddress?.marketingState === "SUBSCRIBED"}
               />{" "}
               {c.marketingLabel}
             </label>
@@ -192,37 +193,6 @@ export default async function ProfilePage({
             </ConfirmSubmitButton>
           </form>
         </article>
-        <article className={styles.card}>
-          <h2>{c.securityHeading}</h2>
-          <form className={styles.form} action={updatePassword}>
-            <Field
-              full
-              name="password"
-              type="password"
-              label={c.passwordLabel}
-              required
-              hint={c.passwordHint}
-            />
-            <Field
-              full
-              name="confirmPassword"
-              type="password"
-              label={c.confirmPasswordLabel}
-              required
-            />
-            <ConfirmSubmitButton
-              className={`${styles.primary} ${styles.full}`}
-              message={c.confirmPasswordMessage}
-              matchFields={["password", "confirmPassword"]}
-              title={c.confirmTitle}
-              confirmLabel={c.confirmLabel}
-              cancelLabel={c.cancelLabel}
-              passwordMismatchMessage={c.passwordMismatchMessage}
-            >
-              {c.savePasswordLabel}
-            </ConfirmSubmitButton>
-          </form>
-        </article>
       </div>
     </>
   );
@@ -232,11 +202,13 @@ function PhoneField({
   countryCodeLabel,
   countryIso,
   value,
+  readOnly,
 }: {
   label: string;
   countryCodeLabel: string;
   countryIso: string;
   value: string;
+  readOnly?: boolean;
 }) {
   return (
     <div className={`${styles.field} ${styles.full}`}>
@@ -260,6 +232,7 @@ function PhoneField({
           inputMode="tel"
           autoComplete="tel-national"
           defaultValue={value}
+          readOnly={readOnly}
         />
       </div>
     </div>
@@ -273,6 +246,7 @@ function Field({
   required,
   full,
   hint,
+  readOnly,
 }: {
   name: string;
   label: string;
@@ -281,6 +255,7 @@ function Field({
   required?: boolean;
   full?: boolean;
   hint?: string;
+  readOnly?: boolean;
 }) {
   return (
     <div className={`${styles.field} ${full ? styles.full : ""}`}>
@@ -291,6 +266,7 @@ function Field({
         type={type}
         defaultValue={value || ""}
         required={required}
+        readOnly={readOnly}
       />
       {hint && <small>{hint}</small>}
     </div>

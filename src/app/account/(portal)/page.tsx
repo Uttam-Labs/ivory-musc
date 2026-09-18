@@ -21,7 +21,7 @@ type Order = {
 type Data = {
   customer: {
     displayName: string;
-    email?: string;
+    emailAddress?: { emailAddress?: string };
     defaultAddress?: Address;
     addresses: { nodes: Address[] };
     orders: { nodes: Order[] };
@@ -137,7 +137,7 @@ export default async function AccountPage() {
           </Link>
         </article>
         <article className={styles.dashboardCard}>
-          <span className={styles.cardKicker}>{customer.email}</span>
+          <span className={styles.cardKicker}>{customer.emailAddress?.emailAddress}</span>
           <h2>{c.profileCardTitle}</h2>
           <p className={styles.muted}>{c.profileCardText}</p>
           <Link className={styles.cardLink} href="/account/profile">

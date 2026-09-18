@@ -14,6 +14,7 @@ const schema = z.object({
   SHOPIFY_ADMIN_API_VERSION: stringWithDefault("2026-07"),
   SHOPIFY_CONTACT_METAOBJECT_TYPE: stringWithDefault("contact_enquiry"),
   CUSTOMER_ACCOUNT_SESSION_SECRET: z.string().min(32).optional(),
+  SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID: z.string().optional(),
   KLAVIYO_PRIVATE_API_KEY: z.string().optional(),
   KLAVIYO_WAITLIST_LIST_ID: z.string().optional(),
   KLAVIYO_API_REVISION: stringWithDefault("2026-07-15"),

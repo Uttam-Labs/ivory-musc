@@ -12,9 +12,9 @@ import { AccountDataError } from "../../../account-data-error";
 
 type Money = { amount: string; currencyCode: string };
 type Address = { formatted: string[] };
-type Item = { title: string; quantity: number; currentQuantity: number; originalTotalPrice: Money; discountedTotalPrice: Money; customAttributes: { key: string; value: string }[]; variant?: { id: string; title: string; sku?: string | null; image?: { url: string; altText?: string | null } | null; price: Money; product: { handle: string; title: string } } | null };
-type Fulfillment = { trackingCompany?: string | null; trackingInfo: { number?: string | null; url?: string | null }[] };
-type Order = { id: string; name: string; orderNumber: number; processedAt: string; canceledAt?: string | null; cancelReason?: string | null; currencyCode: string; email?: string | null; phone?: string | null; financialStatus: string; fulfillmentStatus: string; statusUrl: string; totalPrice: Money; subtotalPrice?: Money; totalShippingPrice: Money; totalTax?: Money; totalRefunded?: Money; shippingAddress?: Address | null; billingAddress?: Address | null; successfulFulfillments?: Fulfillment[] | null; lineItems: { nodes: Item[] } };
+type Item = { id: string; title: string; quantity: number; currentQuantity: number; originalTotalPrice: Money; discountedTotalPrice: Money; customAttributes: { key: string; value: string }[]; image?: { url: string; altText?: string | null } | null; sku?: string | null };
+type Fulfillment = { latestShipmentStatus?: string | null; trackingInformation: { number?: string | null; url?: string | null }[] };
+type Order = { id: string; name: string; orderNumber: number; processedAt: string; canceledAt?: string | null; cancelReason?: string | null; currencyCode: string; email?: string | null; phone?: string | null; financialStatus: string; fulfillmentStatus: string; statusUrl: string; totalPrice: Money; subtotalPrice?: Money; totalShippingPrice: Money; totalTax?: Money; totalRefunded?: Money; shippingAddress?: Address | null; billingAddress?: Address | null; fulfillments?: { nodes: Fulfillment[] } | null; lineItems: { nodes: Item[] } };
 type Data = { customer: { orders: { nodes: Order[] } } | null };
 const readable = (value: string) => value.replaceAll("_", " ").toLowerCase();
 const hasMoney = (money?: Money) => Boolean(money && Number(money.amount) > 0);
@@ -41,7 +41,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
   const isPaid = ["PAID", "PARTIALLY_REFUNDED", "REFUNDED"].includes(order.financialStatus);
   const isFulfilled = order.fulfillmentStatus === "FULFILLED";
   const paymentNeedsAttention = !["PAID", "PARTIALLY_REFUNDED", "REFUNDED", "VOIDED"].includes(order.financialStatus);
-  const tracking = (order.successfulFulfillments || []).flatMap((fulfillment) => fulfillment.trackingInfo.map((info) => ({ ...info, company: fulfillment.trackingCompany })));
+  const tracking = (order.fulfillments?.nodes || []).flatMap((fulfillment) => fulfillment.trackingInformation.map((info) => ({ ...info, company: fulfillment.latestShipmentStatus })));
   const steps = [{ label: c.placedLabel, done: true }, { label: c.paidLabel, done: isPaid }, { label: c.preparingLabel, done: isPaid && !order.canceledAt }, { label: c.fulfilledLabel, done: isFulfilled }];
 
   return <>
@@ -55,9 +55,9 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
     <div className={styles.orderDetailLayout}>
       <section className={styles.orderItemsCard}>
         <div className={styles.orderSectionTitle}><Package size={22} /><h2>{c.itemsHeading}</h2></div>
-        {order.lineItems.nodes.map((item, index) => <article className={styles.orderProduct} key={`${item.variant?.id || item.title}-${index}`}>
-          <div className={styles.orderProductImage}>{item.variant?.image ? <Image src={item.variant.image.url} alt={item.variant.image.altText || item.title} width={192} height={240} quality={95} sizes="96px" /> : <Package size={28} />}</div>
-          <div className={styles.orderProductInfo}>{item.variant?.product?.handle ? <Link href={`/products/${item.variant.product.handle}`}><strong>{item.title}</strong></Link> : <strong>{item.title}</strong>}{item.variant?.title && item.variant.title !== "Default Title" && <span>{item.variant.title}</span>}{item.variant?.sku && <span>{c.skuLabel}: {item.variant.sku}</span>}<span>{c.quantityLabel}: {item.quantity}</span>{item.customAttributes.map((attribute) => <span key={attribute.key}>{attribute.key}: {attribute.value}</span>)}</div>
+        {order.lineItems.nodes.map((item, index) => <article className={styles.orderProduct} key={`${item.id || item.title}-${index}`}>
+          <div className={styles.orderProductImage}>{item.image ? <Image src={item.image.url} alt={item.image.altText || item.title} width={192} height={240} quality={95} sizes="96px" /> : <Package size={28} />}</div>
+          <div className={styles.orderProductInfo}><strong>{item.title}</strong>{item.sku && <span>{c.skuLabel}: {item.sku}</span>}<span>{c.quantityLabel}: {item.quantity}</span>{item.customAttributes.map((attribute) => <span key={attribute.key}>{attribute.key}: {attribute.value}</span>)}</div>
           <div className={styles.orderProductPrice}>{item.originalTotalPrice.amount !== item.discountedTotalPrice.amount && <del>{formatMoney(item.originalTotalPrice)}</del>}<strong>{formatMoney(item.discountedTotalPrice)}</strong></div>
         </article>)}
         <div className={styles.orderSummary}><div><span>{c.subtotalLabel}</span><span>{formatMoney(order.subtotalPrice || zero)}</span></div><div><span>{c.shippingLabel}</span><span>{formatMoney(order.totalShippingPrice || zero)}</span></div><div><span>{c.taxLabel}</span><span>{formatMoney(order.totalTax || zero)}</span></div>{hasMoney(order.totalRefunded) && <div><span>{c.refundedLabel}</span><span>−{formatMoney(order.totalRefunded!)}</span></div>}<div className={styles.orderGrandTotal}><strong>{c.totalLabel}</strong><strong>{formatMoney(order.totalPrice)}</strong></div></div>

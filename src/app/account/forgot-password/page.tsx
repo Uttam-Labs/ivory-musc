@@ -1,11 +1,14 @@
 import { RecoverForm } from "../auth-form";
 import { getAccountContent, type RecoveryContent } from "@/lib/customer-account/content";
 import styles from "../account.module.css";
+import { redirect } from "next/navigation";
+import { customerAccountApiEnabled } from "@/lib/customer-account/oauth";
 
 const fallback:RecoveryContent={seoTitle:"Reset password | Ivory Muse",eyebrow:"Account recovery",heading:"Reset your password",description:"Enter the email address used for your Ivory Muse account.",emailLabel:"Email address",submitLabel:"Send reset instructions",submittingLabel:"Sending…",backLabel:"Back to sign in"};
 export async function generateMetadata(){const content=await getAccountContent<RecoveryContent>("accountRecoveryPage");return{title:content.seoTitle||fallback.seoTitle}}
 
 export default async function ForgotPasswordPage() {
+  if (customerAccountApiEnabled()) redirect("/api/customer-account/login?next=/account");
   const content={...fallback,...await getAccountContent<RecoveryContent>("accountRecoveryPage")};
   return (
     <main className={styles.authPage}>

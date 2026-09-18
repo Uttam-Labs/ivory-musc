@@ -4,6 +4,8 @@ import {
   type RegisterContent,
 } from "@/lib/customer-account/content";
 import styles from "../account.module.css";
+import { redirect } from "next/navigation";
+import { customerAccountApiEnabled } from "@/lib/customer-account/oauth";
 const fallback: RegisterContent = {
   seoTitle: "Create account | Ivory Muse",
   eyebrow: "New customer",
@@ -38,6 +40,7 @@ export async function generateMetadata() {
   return { title: content.seoTitle || fallback.seoTitle };
 }
 export default async function RegisterPage() {
+  if (customerAccountApiEnabled()) redirect("/api/customer-account/login?next=/account");
   const content = {
     ...fallback,
     ...(await getAccountContent<RegisterContent>("accountRegisterPage")),
