@@ -213,7 +213,7 @@ export default async function AboutPage() {
               <Paragraphs text={nature.body} />
             </div>
             {nature.items?.length ? (
-              <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-x-8 xl:gap-x-12 gap-y-8 lg:grid-cols-4">
+              <div className="about-nature-features mt-12 grid grid-cols-2 sm:grid-cols-4 gap-x-8 xl:gap-x-12 gap-y-8 lg:grid-cols-4">
                 {nature.items.map((item, i) => (
                   <article key={item._key || i} className="text-center">
                     {item.icon && (
@@ -236,7 +236,7 @@ export default async function AboutPage() {
             ) : null}
           </div>
           {nature.image && (
-            <div className="relative aspect-[1.43/1] w-full -order-1 lg:order-1">
+            <div className="about-nature-image relative aspect-[1.43/1] w-full -order-1 lg:order-1">
               <Image
                 fill
                 src={sanityImageUrl(nature.image, 3200)}
