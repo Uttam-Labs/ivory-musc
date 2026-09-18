@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -32,20 +32,26 @@ export function CollectionSlider({
   slideInterval?: number;
 }) {
   const sliderRef = useRef<HTMLDivElement>(null);
+  const autoplayResumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [arrowTop, setArrowTop] = useState<number>();
   const canLoop = products.length > 1;
   const loopProducts = canLoop && products.length < 8
     ? Array.from({ length: Math.ceil(8 / products.length) }, () => products).flat()
     : products;
-  const plugins = autoSlide
-    ? [
-      Autoplay({
+  const autoplayPlugin = useMemo(
+    () => autoSlide
+      ? Autoplay({
         delay: slideInterval,
         stopOnInteraction: false,
         stopOnMouseEnter: true,
-      }),
-    ]
-    : [];
+      })
+      : null,
+    [autoSlide, slideInterval],
+  );
+  const plugins = useMemo(
+    () => autoplayPlugin ? [autoplayPlugin] : [],
+    [autoplayPlugin],
+  );
   const [ref, api] = useEmblaCarousel(
     { loop: canLoop, align: "start", slidesToScroll: 1 },
     plugins,
@@ -62,6 +68,19 @@ export function CollectionSlider({
     observer.observe(media);
     return () => observer.disconnect();
   }, [products.length]);
+  useEffect(() => () => {
+    if (autoplayResumeTimer.current) clearTimeout(autoplayResumeTimer.current);
+  }, []);
+
+  function scrollManually(direction: "previous" | "next") {
+    autoplayPlugin?.stop();
+    if (direction === "previous") api?.scrollPrev();
+    else api?.scrollNext();
+    if (autoplayResumeTimer.current) clearTimeout(autoplayResumeTimer.current);
+    if (autoplayPlugin) {
+      autoplayResumeTimer.current = setTimeout(() => autoplayPlugin.play(), 5000);
+    }
+  }
   return (
     <div ref={sliderRef} className="relative">
       <div ref={ref} className="overflow-hidden">
@@ -111,7 +130,7 @@ export function CollectionSlider({
         <>
           <button
             aria-label="Previous product"
-            onClick={() => api?.scrollPrev()}
+            onClick={() => scrollManually("previous")}
             style={arrowTop === undefined ? undefined : { top: arrowTop }}
             className="slider--button slider-button--prev cursor-pointer absolute left-8 lg:-left-12 top-[42%] flex size-14 lg:size-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[var(--accent)] text-white"
           >
@@ -119,7 +138,7 @@ export function CollectionSlider({
           </button>
           <button
             aria-label="Next product"
-            onClick={() => api?.scrollNext()}
+            onClick={() => scrollManually("next")}
             style={arrowTop === undefined ? undefined : { top: arrowTop }}
             className="slider--button slider-button--next cursor-pointer absolute right-8 lg:-right-12 top-[42%] flex size-14 lg:size-20 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[var(--accent)] text-white"
           >
