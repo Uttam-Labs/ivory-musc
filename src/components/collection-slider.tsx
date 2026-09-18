@@ -34,8 +34,8 @@ export function CollectionSlider({
   const sliderRef = useRef<HTMLDivElement>(null);
   const [arrowTop, setArrowTop] = useState<number>();
   const canLoop = products.length > 1;
-  const loopProducts = canLoop && products.length <= 3
-    ? Array.from({ length: Math.ceil(6 / products.length) }, () => products).flat()
+  const loopProducts = canLoop && products.length < 8
+    ? Array.from({ length: Math.ceil(8 / products.length) }, () => products).flat()
     : products;
   const plugins = autoSlide
     ? [
