@@ -1314,6 +1314,12 @@ a {
     }
 }
 
+@media screen and (min-width: 768px) and (min-height: 700px) {
+    .product-info-details__gallery {
+        top: 10.8rem;
+    }
+}
+
 @media screen and (min-width:1200px){
     .product__details .product-details__thumbnails {
         margin-top: 2rem;
