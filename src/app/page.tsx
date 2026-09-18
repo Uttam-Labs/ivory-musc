@@ -150,7 +150,7 @@ export default async function Home() {
                     />
                     <Button
                       label={section.secondaryButtonLabel}
-                      href={section.secondaryButtonHref}
+                      href={section.secondaryButtonHref || "/about"}
                       className="button custom-button btn-transparent"
                       light
                       variant="secondary"
@@ -165,7 +165,7 @@ export default async function Home() {
                     />
                     <Button
                       label={section.mobileContent?.secondaryButtonLabel || section.secondaryButtonLabel}
-                      href={section.mobileContent?.secondaryButtonHref || section.secondaryButtonHref}
+                      href={section.mobileContent?.secondaryButtonHref || section.secondaryButtonHref || "/about"}
                       className="home-hero-secondary-cta button custom-button btn-transparent"
                       light
                       variant="secondary"
