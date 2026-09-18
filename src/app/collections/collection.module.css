@@ -18,3 +18,7 @@
 @media(max-width:1100px){.loadingGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:800px){.loadingGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:5rem 1.6rem}}
 @media(prefers-reduced-motion:reduce){.loadingHeading,.loadingImage,.loadingLine{animation:none}}
+/* Match the product-page thumbnail interaction in the shop quick view. */
+.thumbnail,.thumbnailActive{transition:border-color .25s,box-shadow .25s,transform .25s}
+.thumbnail:hover,.thumbnailActive:hover{border-color:var(--collection-accent);box-shadow:0 1rem 2.5rem rgba(50,38,30,.1);transform:translateY(-2px)}
+@media(prefers-reduced-motion:reduce){.thumbnail,.thumbnailActive{transition:none}}
