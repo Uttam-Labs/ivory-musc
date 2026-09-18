@@ -1,6 +1,5 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -11,10 +10,8 @@ import {
 } from "libphonenumber-js";
 import { customerAccountFetch } from "@/lib/customer-account/client";
 import {
-  CUSTOMER_SESSION_COOKIE,
-  customerCookieOptions,
-  encryptSession,
   getCustomerSession,
+  setCustomerSession,
 } from "@/lib/customer-account/session";
 
 type UpdateResult = {
@@ -57,13 +54,7 @@ async function updateCustomer(input: Record<string, unknown>) {
   const firstName =
     typeof input.firstName === "string" ? input.firstName : session.firstName;
   const remember = session.remember !== false;
-  (await cookies()).set(
-    CUSTOMER_SESSION_COOKIE,
-    encryptSession({ accessToken, firstName, remember, expiresAt }),
-    remember
-      ? { ...customerCookieOptions, expires: new Date(expiresAt) }
-      : customerCookieOptions,
-  );
+  await setCustomerSession({ accessToken, firstName, remember, expiresAt });
 }
 
 export async function updateProfile(formData: FormData) {

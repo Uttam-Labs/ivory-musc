@@ -7,6 +7,7 @@ import {
 } from "crypto";
 import { cookies } from "next/headers";
 import { env } from "@/lib/env";
+import { customerSessionPersistence } from "./session-policy";
 
 export const CUSTOMER_SESSION_COOKIE = "ivory_customer_session";
 
@@ -65,6 +66,15 @@ function decryptSession(value: string): CustomerSession | null {
 export async function getCustomerSession() {
   const value = (await cookies()).get(CUSTOMER_SESSION_COOKIE)?.value;
   return value ? decryptSession(value) : null;
+}
+
+export async function setCustomerSession(session: CustomerSession) {
+  const cookieStore = await cookies();
+  cookieStore.delete(CUSTOMER_SESSION_COOKIE);
+  cookieStore.set(CUSTOMER_SESSION_COOKIE, encryptSession(session), {
+    ...customerCookieOptions,
+    ...customerSessionPersistence(session.remember === true, session.expiresAt),
+  });
 }
 
 export const customerCookieOptions = {

@@ -49,7 +49,7 @@ export function LoginForm({ content }: { content: LoginContent }) {
       <InlineFeedback error={state.error} />
       <div className={styles.formMeta}>
         <label className={styles.check}>
-          <input type="checkbox" name="remember" /> {content.rememberLabel}
+          <input type="checkbox" name="remember" value="true" /> {content.rememberLabel}
         </label>
         <Link href="/account/forgot-password">
           {content.forgotPasswordLabel}

@@ -1,13 +1,11 @@
 "use server";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { storefrontCustomerFetch } from "@/lib/customer-account/client";
 import { sendAccountInviteIfInactive } from "@/lib/customer-account/admin";
 import {
-  CUSTOMER_SESSION_COOKIE,
-  customerCookieOptions,
-  encryptSession,
+  setCustomerSession,
 } from "@/lib/customer-account/session";
+import { isRememberMeEnabled } from "@/lib/customer-account/session-policy";
 import {
   EMAIL_PATTERN,
   isPrivateRecoveryResult,
@@ -52,13 +50,7 @@ async function createSession(
     profile?.customer?.firstName ||
     profile?.customer?.displayName?.split(/\s+/)[0];
   const expiresAt = new Date(result.customerAccessToken.expiresAt).getTime();
-  (await cookies()).set(
-    CUSTOMER_SESSION_COOKIE,
-    encryptSession({ accessToken, firstName, remember, expiresAt }),
-    remember
-      ? { ...customerCookieOptions, expires: new Date(expiresAt) }
-      : customerCookieOptions,
-  );
+  await setCustomerSession({ accessToken, firstName, remember, expiresAt });
 }
 
 export async function loginAction(
@@ -69,7 +61,7 @@ export async function loginAction(
     .trim()
     .toLowerCase();
   const password = String(formData.get("password") || "");
-  const remember = formData.get("remember") === "on";
+  const remember = isRememberMeEnabled(formData.get("remember"));
   const fieldErrors = validateLoginInput(email, password);
   if (Object.keys(fieldErrors).length) return { fieldErrors };
   try {

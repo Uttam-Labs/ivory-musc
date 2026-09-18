@@ -524,7 +524,7 @@ export function Header({
           </nav>
 
           {title && (
-            <div className="border-t border-stone-900/10 px-6 py-6 text-center font-heading text-sm tracking-[.16em] text-stone-500 uppercase">
+            <div className="shrink-0 border-t border-stone-900/10 px-6 pb-[calc(3rem+env(safe-area-inset-bottom))] pt-8 text-center font-heading text-[22px] leading-none tracking-[.06em] text-[var(--accent)]">
               {title}
             </div>
           )}
