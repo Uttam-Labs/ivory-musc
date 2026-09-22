@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { Search } from "lucide-react";
 import { CollectionProductGrid, type ProductGridContent } from "@/components/collection-product-grid";
+import { SearchIcon } from "@/components/header-icons";
 import { SiteContainer } from "@/components/site-container";
 import { getProducts } from "@/lib/shopify";
 import { isSanityConfigured } from "@/lib/env";
@@ -52,7 +52,6 @@ export default async function SearchPage({
           </div>
           <form className={styles.form} action="/search">
             <label className={styles.inputWrap} htmlFor="q">
-              <Search size={20} strokeWidth={1.5} aria-hidden="true" />
               <span className="sr-only">{copy.inputLabel}</span>
               <input
                 id="q"
@@ -62,8 +61,13 @@ export default async function SearchPage({
                 autoComplete="off"
               />
             </label>
-            <button className={styles.submit} type="submit">
-              {copy.submitLabel}
+            <button
+              className={styles.submit}
+              type="submit"
+              aria-label={copy.submitLabel}
+              title={copy.submitLabel}
+            >
+              <SearchIcon className={styles.submitIcon} />
             </button>
           </form>
         </header>
