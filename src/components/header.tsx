@@ -13,11 +13,10 @@ import { AccountIcon, CartIcon, SearchIcon } from "./header-icons";
 
 type NavItem = { label?: string; href?: string; isVisible?: boolean };
 type CartLine = Cart["lines"]["nodes"][number];
-const isSampleLine = (line: CartLine) => line.attributes.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample");
-const sampleOptionAttributes = (line: CartLine, label: string, value: string) => [
-  ...line.attributes.filter((attribute) => Boolean(attribute.value.trim()) && attribute.key.toLowerCase() !== "sample size"),
-  { key: label, value },
-];
+const normalizedAttributeKey = (key: string) => key.replace(/^_+/, "").trim().toLowerCase();
+const isSampleLine = (line: CartLine) => line.attributes.some((attribute) => normalizedAttributeKey(attribute.key) === "type" && attribute.value.toLowerCase() === "sample");
+const sampleOptionAttributes = (line: CartLine) =>
+  line.attributes.filter((attribute) => Boolean(attribute.value.trim()) && !/^(?:type|sample size)$/i.test(normalizedAttributeKey(attribute.key)));
 const sampleAttributeLabel = (key: string) => key.charAt(0).toUpperCase() + key.slice(1);
 type Props = {
   title?: string;
@@ -730,9 +729,9 @@ export function Header({
                         {isSampleLine(line) ? (
                           <div className="min-w-0">
                             <p className="text-[14px] font-semibold leading-snug text-stone-900">{line.merchandise.product.title}</p>
-                            {sampleOptionAttributes(line, copy.sampleSizeLabel, copy.sampleSizeValue).length > 0 && (
+                            {sampleOptionAttributes(line).length > 0 && (
                               <dl className="mt-2 grid gap-1">
-                                {sampleOptionAttributes(line, copy.sampleSizeLabel, copy.sampleSizeValue).map((attribute) => (
+                                {sampleOptionAttributes(line).map((attribute) => (
                                   <div key={attribute.key} className="grid grid-cols-[auto_1fr] items-baseline gap-1 text-[12px] leading-relaxed">
                                     <dt className="text-stone-500">{sampleAttributeLabel(attribute.key)}:</dt>
                                     <dd className="m-0 text-stone-600">{formatCartAttributeValue(attribute.key, attribute.value)}</dd>

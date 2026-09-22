@@ -180,13 +180,12 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
           merchandiseId: sampleVariant.id,
           quantity: 1,
           attributes: [
-            { key: "type", value: "sample" },
+            { key: "_type", value: "sample" },
             { key: "Main Product", value: product.title },
             ...(selectedColorOption ? [{ key: "Colour", value: selectedColorOption.value }] : []),
             ...((selectedWidth || product.fabricWidth?.value) ? [{ key: "Width", value: formatWidth(selectedWidth || product.fabricWidth?.value) || "" }] : []),
             ...(product.composition?.value ? [{ key: "Composition", value: product.composition.value }] : []),
             ...selectedVariantAttributes,
-            { key: "Sample size", value: "10cm x 15cm" },
           ],
         }),
       });

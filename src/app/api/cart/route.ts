@@ -40,6 +40,7 @@ const buyerIp = (request: Request) =>
   request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
   request.headers.get("x-real-ip") ||
   undefined;
+const normalizedAttributeKey = (key: string) => key.replace(/^_+/, "").trim().toLowerCase();
 
 export async function GET(request: Request) {
   const cartId = new URL(request.url).searchParams.get("id");
@@ -78,12 +79,12 @@ async function cartHasCompletedOrder(cartId: string) {
 export async function POST(request: Request) {
   try {
     const body = bodySchema.parse(await request.json());
-    const isSample = body.attributes?.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample") || false;
+    const isSample = body.attributes?.some((attribute) => normalizedAttributeKey(attribute.key) === "type" && attribute.value.toLowerCase() === "sample") || false;
     if (isSample && body.quantity !== 1)
       return NextResponse.json({ error: "Only one sample can be purchased." }, { status: 400 });
     if (isSample && body.cartId) {
       const existing = await shopifyFetch<{ cart: Cart | null }>({ query: CART_QUERY, variables: { id: body.cartId }, revalidate: false, tags: [], buyerIp: buyerIp(request) }).catch(() => ({ cart: null }));
-      const sampleLines = existing.cart?.lines.nodes.filter((line) => line.attributes.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample")) || [];
+      const sampleLines = existing.cart?.lines.nodes.filter((line) => line.attributes.some((attribute) => normalizedAttributeKey(attribute.key) === "type" && attribute.value.toLowerCase() === "sample")) || [];
       const requestedMainProduct = body.attributes?.find((attribute) => attribute.key.toLowerCase() === "main product")?.value.trim().toLowerCase();
       const alreadyAdded = sampleLines.some((line) => {
         const lineMainProduct = line.attributes.find((attribute) => attribute.key.toLowerCase() === "main product")?.value.trim().toLowerCase();
@@ -174,7 +175,7 @@ export async function PATCH(request: Request) {
     if (body.action === "update") {
       const current = await shopifyFetch<{ cart: Cart | null }>({ query: CART_QUERY, variables: { id: body.cartId }, revalidate: false, tags: [], buyerIp: buyerIp(request) });
       const line = current.cart?.lines.nodes.find((item) => item.id === body.lineId);
-      const sample = line?.attributes.some((attribute) => attribute.key.toLowerCase() === "type" && attribute.value.toLowerCase() === "sample");
+      const sample = line?.attributes.some((attribute) => normalizedAttributeKey(attribute.key) === "type" && attribute.value.toLowerCase() === "sample");
       if (sample && body.quantity !== 1)
         return NextResponse.json({ error: "Sample quantity cannot be changed." }, { status: 400 });
     }
