@@ -3,19 +3,20 @@ import { notFound } from "next/navigation";
 import { ProductDetails, type ProductDetailsSettings } from "@/components/product-details";
 import type { ProductGridContent } from "@/components/collection-product-grid";
 import { isSanityConfigured } from "@/lib/env";
-import { getProduct, getProductRecommendations, isSampleProduct } from "@/lib/shopify";
+import { getHiddenProductHandles, isProductHidden } from "@/lib/product-visibility";
+import { getProduct, getProductRecommendations } from "@/lib/shopify";
 import { sanityFetch } from "@/sanity/lib/client";
 import { COLLECTION_PAGE_QUERY, PRODUCT_PAGE_QUERY } from "@/sanity/lib/queries";
 
 type ProductPageProps = { params: Promise<{ handle: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
 type ProductPageData = { sections?: Array<({ _type: "productDetailsSettings" } & ProductDetailsSettings) | { _type: "relatedProductsSettings"; heading?: string; productLimit?: number }> } | null;
 
-export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> { const { handle } = await params; const product = await getProduct(handle); return product && !isSampleProduct(product) ? { title: product.title, description: product.description.slice(0, 160), openGraph: { images: product.featuredImage ? [product.featuredImage.url] : [] } } : {}; }
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> { const { handle } = await params; const [product, hiddenHandles] = await Promise.all([getProduct(handle), getHiddenProductHandles()]); return product && !isProductHidden(product, hiddenHandles) ? { title: product.title, description: product.description.slice(0, 160), openGraph: { images: product.featuredImage ? [product.featuredImage.url] : [] } } : {}; }
 
 export default async function ProductPage({ params, searchParams }: ProductPageProps) {
   const { handle } = await params;
-  const product = await getProduct(handle);
-  if (!product || isSampleProduct(product)) notFound();
+  const [product, hiddenHandles] = await Promise.all([getProduct(handle), getHiddenProductHandles()]);
+  if (!product || isProductHidden(product, hiddenHandles)) notFound();
   const [pageData, collectionSettings, recommendations] = await Promise.all([
     isSanityConfigured ? sanityFetch<ProductPageData>(PRODUCT_PAGE_QUERY) : null,
     isSanityConfigured ? sanityFetch<{ productGridContent?: ProductGridContent } | null>(COLLECTION_PAGE_QUERY) : null,

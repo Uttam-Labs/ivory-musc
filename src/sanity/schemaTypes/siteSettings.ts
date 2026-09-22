@@ -24,6 +24,21 @@ export const siteSettings = defineType({
     defineField({ name: "allowIndex", title: "Allow search engines to index the site", type: "boolean", initialValue: true }),
     defineField({ name: "allowFollow", title: "Allow search engines to follow links", type: "boolean", initialValue: true }),
     defineField({
+      name: "hiddenProductHandles",
+      title: "Hidden product handles",
+      description: "Enter Shopify product handles separated by commas. These products will be hidden from search results, shop and collection listings, related products, quick views, and their individual product pages. Use this for internal products such as the shared sample product that should only be available through another product's Purchase Sample option.",
+      type: "string",
+      initialValue: "sample-proudct",
+      validation: (rule) =>
+        rule.custom((value) => {
+          if (!value?.trim()) return true;
+          const handles = value.split(",").map((handle) => handle.trim());
+          return handles.every((handle) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(handle))
+            ? true
+            : "Use comma-separated Shopify handles containing only lowercase letters, numbers and hyphens.";
+        }),
+    }),
+    defineField({
       name: "previewPasswordProtected",
       title: "Enable website password protection",
       description: "When enabled, visitors must sign in through the private preview page. Disable it to make the website publicly accessible.",

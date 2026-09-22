@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { ProductDetailsSettings } from "@/components/product-details";
 import { isSanityConfigured } from "@/lib/env";
+import { getHiddenProductHandles, isProductHidden } from "@/lib/product-visibility";
 import { getProduct } from "@/lib/shopify";
 import { sanityFetch } from "@/sanity/lib/client";
 import { PRODUCT_PAGE_QUERY } from "@/sanity/lib/queries";
@@ -14,11 +15,12 @@ export async function GET(
   { params }: RouteContext<"/api/products/[handle]">,
 ) {
   const { handle } = await params;
-  const [product, pageData] = await Promise.all([
+  const [product, pageData, hiddenHandles] = await Promise.all([
     getProduct(handle),
     isSanityConfigured ? sanityFetch<ProductPageData>(PRODUCT_PAGE_QUERY) : null,
+    getHiddenProductHandles(),
   ]);
-  if (!product) {
+  if (!product || isProductHidden(product, hiddenHandles)) {
     return NextResponse.json({ error: "Product not found" }, { status: 404 });
   }
   const settings = pageData?.sections?.find(
