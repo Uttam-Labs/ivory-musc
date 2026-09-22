@@ -33,7 +33,7 @@ type Props = {
   cartHref?: string;
   uiContent?: {
     menuLabel?: string; searchTitle?: string; searchPlaceholder?: string; searchSubmitLabel?: string;
-    searchHint?: string; searchLoadingLabel?: string; searchSuggestionsLabel?: string;
+    searchLoadingLabel?: string; searchSuggestionsLabel?: string;
     viewAllSearchResultsLabel?: string; noSearchResults?: string;
     cartTitle?: string; emptyCartText?: string; continueShoppingLabel?: string; quantityLabel?: string;
     sampleUnitLabel?: string; singleMetreLabel?: string; multipleMetresLabel?: string;
@@ -60,7 +60,7 @@ export function Header({
 }: Props) {
   const copy = {
     menuLabel: "Menu", searchTitle: "Search products", searchPlaceholder: "What are you looking for?",
-    searchSubmitLabel: "Search", searchHint: "Type at least 2 characters to see product suggestions.",
+    searchSubmitLabel: "Search",
     searchLoadingLabel: "Searching…", searchSuggestionsLabel: "Suggested products", viewAllSearchResultsLabel: "View all results",
     noSearchResults: "No products found.", cartTitle: "Your cart", emptyCartText: "Your cart is empty",
     continueShoppingLabel: "Continue shopping", quantityLabel: "Quantity", sampleSizeLabel: "Sample size",
@@ -246,7 +246,7 @@ export function Header({
   }, [menuOpen]);
 
   useEffect(() => {
-    if (!searchOpen || query.trim().length < 2) {
+    if (!searchOpen || !query.trim()) {
       return;
     }
     const controller = new AbortController();
@@ -586,13 +586,12 @@ export function Header({
                       onChange={(event) => {
                         const nextQuery = event.target.value;
                         setQuery(nextQuery);
-                        if (nextQuery.trim().length < 2) {
+                        if (!nextQuery.trim()) {
                           setResults([]);
                           setSearching(false);
                         }
                       }}
                       placeholder={copy.searchPlaceholder}
-                      aria-describedby="header-search-help"
                       className="min-w-0 flex-1 bg-transparent py-3 text-[16px] outline-none placeholder:text-stone-400"
                     />
                     {searching && (
@@ -609,15 +608,11 @@ export function Header({
                     <SearchIcon className="size-[19px]" />
                   </button>
                 </form>
-                <p
-                  id="header-search-help"
-                  className="mt-2 text-[13px] leading-[1.4] text-stone-500"
-                  aria-live="polite"
-                >
-                  {query.trim().length < 2 ? copy.searchHint : searching ? copy.searchLoadingLabel : ""}
-                </p>
+                <span className="sr-only" aria-live="polite">
+                  {searching ? copy.searchLoadingLabel : ""}
+                </span>
               </div>
-              {query.trim().length >= 2 && !searching && (
+              {query.trim().length >= 1 && !searching && (
                 <div className="mt-7">
                   {results.length > 0 && (
                     <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 pb-3">
@@ -667,7 +662,7 @@ export function Header({
                   </div>
                 </div>
               )}
-              {query.trim().length >= 2 && !searching && !results.length && (
+              {query.trim().length >= 1 && !searching && !results.length && (
                 <p className="py-12 text-center text-sm text-stone-500">
                   {copy.noSearchResults}
                 </p>

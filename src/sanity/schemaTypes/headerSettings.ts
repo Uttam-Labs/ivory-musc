@@ -65,7 +65,6 @@ export const headerSettings = defineType({
         defineField({ name: "searchTitle", title: "Search panel heading", type: "string", initialValue: "Search products" }),
         defineField({ name: "searchPlaceholder", title: "Search placeholder", type: "string", initialValue: "What are you looking for?" }),
         defineField({ name: "searchSubmitLabel", title: "Search button", type: "string", initialValue: "Search" }),
-        defineField({ name: "searchHint", title: "Search guidance", type: "string", initialValue: "Type at least 2 characters to see product suggestions." }),
         defineField({ name: "searchLoadingLabel", title: "Search loading message", type: "string", initialValue: "Searching…" }),
         defineField({ name: "searchSuggestionsLabel", title: "Search suggestions heading", type: "string", initialValue: "Suggested products" }),
         defineField({ name: "viewAllSearchResultsLabel", title: "View all search results link", type: "string", initialValue: "View all results" }),
