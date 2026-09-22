@@ -48,9 +48,18 @@ type Section = {
   successMessage?: string;
   alreadySubscribedMessage?: string;
   fallbackErrorMessage?: string;
-  features?: Array<{ title?: string; icon?: SanityImageSource }>;
+  features?: Array<{ _key?: string; title?: string; icon?: SanityImageSource }>;
 };
 type HomeContent = { sections?: Section[] } | null;
+
+const HIDDEN_FEATURE_SYMBOLS = new Set(["retail", "oeko-tex-certification"]);
+
+function isVisibleFeature(feature: { _key?: string; title?: string }) {
+  const values = [feature._key, feature.title]
+    .filter((value): value is string => Boolean(value))
+    .map((value) => value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-"));
+  return !values.some((value) => HIDDEN_FEATURE_SYMBOLS.has(value));
+}
 
 function Button({
   label,
@@ -230,7 +239,8 @@ export default async function Home() {
             </section>
           );
         }
-        if (section._type === "featureGuide")
+        if (section._type === "featureGuide") {
+          const visibleFeatures = section.features?.filter(isVisibleFeature) || [];
           return (
             <section
               key={key}
@@ -254,9 +264,9 @@ export default async function Home() {
                   variant="solid"
                 />
               </div>
-              {section.features?.length ? (
-                <div className="text-icons mt-12 lg:mt-36 grid grid-cols-2 gap-8 lg:gap-12 sm:grid-cols-3 lg:grid-cols-6">
-                  {section.features.map((feature, i) => (
+              {visibleFeatures.length ? (
+                <div className="text-icons mx-auto mt-12 grid max-w-[1200px] grid-cols-2 gap-8 sm:grid-cols-4 lg:mt-36 lg:gap-12">
+                  {visibleFeatures.map((feature, i) => (
                     <div key={feature.title || i}>
                       {feature.icon && (
                         <div className="relative mx-auto size-[45px] xl:size-[90px]">
@@ -281,6 +291,7 @@ export default async function Home() {
               ) : null}
             </section>
           );
+        }
         if (section._type === "newsletter")
           return (
             <section
