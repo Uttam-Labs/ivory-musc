@@ -555,68 +555,68 @@ export function Header({
           onMouseDown={() => setSearchOpen(false)}
         >
           <section
-            className="search-panel-enter max-h-[88vh] overflow-y-auto bg-[#fffaf5] px-6 pb-10 pt-6 shadow-2xl"
+            className="search-panel-enter max-h-[88vh] overflow-y-auto bg-[#fffaf5] px-4 pb-8 pt-5 shadow-2xl sm:px-6 sm:pb-10 sm:pt-6"
             onMouseDown={(event) => event.stopPropagation()}
           >
-            <div className="mx-auto w-full max-w-[1180px]">
-              <div className="flex items-center justify-between">
-                <p className="font-heading text-xl text-[var(--accent)]">
+            <div className="relative mx-auto w-full max-w-[1180px]">
+              <button
+                aria-label={copy.closeSearchLabel}
+                onClick={() => setSearchOpen(false)}
+                className="absolute right-0 top-0 grid size-10 cursor-pointer place-items-center rounded-full transition hover:bg-black/5"
+              >
+                <X size={21} />
+              </button>
+              <div className="mx-auto w-full max-w-[760px] px-8 sm:px-12">
+                <p className="text-center font-heading text-[20px] leading-tight text-[var(--accent)]">
                   {copy.searchTitle}
                 </p>
-                <button
-                  aria-label={copy.closeSearchLabel}
-                  onClick={() => setSearchOpen(false)}
-                  className="rounded-full p-2 hover:bg-black/5"
+                <form
+                  onSubmit={submitSearch}
+                  role="search"
+                  className="mt-4 flex w-full border border-stone-300 bg-white shadow-[0_3px_14px_rgba(76,55,43,.06)] transition focus-within:border-[var(--accent)] focus-within:ring-2 focus-within:ring-[var(--accent)]/10"
                 >
-                  <X size={22} />
-                </button>
+                  <label className="flex min-w-0 flex-1 items-center px-4">
+                    <span className="sr-only">{copy.searchTitle}</span>
+                    <input
+                      ref={searchInput}
+                      type="search"
+                      inputMode="search"
+                      autoComplete="off"
+                      value={query}
+                      onChange={(event) => {
+                        const nextQuery = event.target.value;
+                        setQuery(nextQuery);
+                        if (nextQuery.trim().length < 2) {
+                          setResults([]);
+                          setSearching(false);
+                        }
+                      }}
+                      placeholder={copy.searchPlaceholder}
+                      aria-describedby="header-search-help"
+                      className="min-w-0 flex-1 bg-transparent py-3 text-[16px] outline-none placeholder:text-stone-400"
+                    />
+                    {searching && (
+                      <LoaderCircle className="size-5 shrink-0 animate-spin text-[var(--accent)]" />
+                    )}
+                  </label>
+                  <button
+                    type="submit"
+                    disabled={!query.trim()}
+                    aria-label={copy.searchSubmitLabel}
+                    title={copy.searchSubmitLabel}
+                    className="grid size-[48px] shrink-0 cursor-pointer place-items-center border-l border-[var(--accent)] bg-[var(--accent)] text-white transition hover:bg-[#84423d] disabled:cursor-not-allowed disabled:bg-[#cba7a3]"
+                  >
+                    <SearchIcon className="size-[19px]" />
+                  </button>
+                </form>
+                <p
+                  id="header-search-help"
+                  className="mt-2 text-[13px] leading-[1.4] text-stone-500"
+                  aria-live="polite"
+                >
+                  {query.trim().length < 2 ? copy.searchHint : searching ? copy.searchLoadingLabel : ""}
+                </p>
               </div>
-              <form
-                onSubmit={submitSearch}
-                role="search"
-                className="mt-5 flex w-full max-w-[680px] border border-stone-300 bg-white transition focus-within:border-[var(--accent)] focus-within:ring-2 focus-within:ring-[var(--accent)]/10"
-              >
-                <label className="flex min-w-0 flex-1 items-center px-4">
-                  <span className="sr-only">{copy.searchTitle}</span>
-                  <input
-                    ref={searchInput}
-                    type="search"
-                    inputMode="search"
-                    autoComplete="off"
-                    value={query}
-                    onChange={(event) => {
-                      const nextQuery = event.target.value;
-                      setQuery(nextQuery);
-                      if (nextQuery.trim().length < 2) {
-                        setResults([]);
-                        setSearching(false);
-                      }
-                    }}
-                    placeholder={copy.searchPlaceholder}
-                    aria-describedby="header-search-help"
-                    className="min-w-0 flex-1 bg-transparent py-4 text-base outline-none placeholder:text-stone-400"
-                  />
-                  {searching && (
-                    <LoaderCircle className="size-5 shrink-0 animate-spin text-[var(--accent)]" />
-                  )}
-                </label>
-                <button
-                  type="submit"
-                  disabled={!query.trim()}
-                  aria-label={copy.searchSubmitLabel}
-                  title={copy.searchSubmitLabel}
-                  className="grid size-[52px] shrink-0 cursor-pointer place-items-center border-l border-[var(--accent)] bg-[var(--accent)] text-white transition hover:bg-[#84423d] disabled:cursor-not-allowed disabled:opacity-45"
-                >
-                  <SearchIcon className="size-[20px]" />
-                </button>
-              </form>
-              <p
-                id="header-search-help"
-                className="mt-2 max-w-[680px] text-xs text-stone-500"
-                aria-live="polite"
-              >
-                {query.trim().length < 2 ? copy.searchHint : searching ? copy.searchLoadingLabel : ""}
-              </p>
               {query.trim().length >= 2 && !searching && (
                 <div className="mt-7">
                   {results.length > 0 && (
