@@ -2,9 +2,18 @@ import { shopifyFetch } from "./client";
 import { ARTICLE_QUERY, ARTICLES_QUERY, COLLECTION_QUERY, COLLECTIONS_QUERY, PRODUCT_QUERY, PRODUCT_RECOMMENDATIONS_QUERY, PRODUCTS_QUERY } from "./queries";
 import type { Collection, Product, ShopifyArticle } from "./types";
 
+const SAMPLE_PRODUCT_HANDLES = new Set(["sample-product", "sample-proudct"]);
+
+export function isSampleProduct(product: Pick<Product, "handle" | "title">) {
+  return (
+    SAMPLE_PRODUCT_HANDLES.has(product.handle.toLowerCase()) ||
+    product.title.trim().toLowerCase() === "sample product"
+  );
+}
+
 export async function getProducts(first = 12, query?: string) {
   const data = await shopifyFetch<{ products: { nodes: Product[] } }>({ query: PRODUCTS_QUERY, variables: { first, query }, tags: ["shopify", "products"] });
-  return data.products.nodes;
+  return data.products.nodes.filter((product) => !isSampleProduct(product));
 }
 export async function getProduct(handle: string) {
   const data = await shopifyFetch<{ product: Product | null }>({ query: PRODUCT_QUERY, variables: { handle }, tags: ["shopify", `product:${handle}`] });
@@ -16,7 +25,7 @@ export async function getProductRecommendations(productId: string) {
     variables: { productId },
     tags: ["shopify", "product-recommendations", `product:${productId}`],
   });
-  return data.productRecommendations;
+  return data.productRecommendations.filter((product) => !isSampleProduct(product));
 }
 export async function getCollections(first = 20) {
   const data = await shopifyFetch<{ collections: { nodes: Collection[] } }>({ query: COLLECTIONS_QUERY, variables: { first }, tags: ["shopify", "collections"] });
@@ -24,7 +33,14 @@ export async function getCollections(first = 20) {
 }
 export async function getCollection(handle: string, first = 24) {
   const data = await shopifyFetch<{ collection: (Collection & { products: { nodes: Product[] } }) | null }>({ query: COLLECTION_QUERY, variables: { handle, first }, tags: ["shopify", `collection:${handle}`] });
-  return data.collection;
+  if (!data.collection) return null;
+  return {
+    ...data.collection,
+    products: {
+      ...data.collection.products,
+      nodes: data.collection.products.nodes.filter((product) => !isSampleProduct(product)),
+    },
+  };
 }
 export async function getArticles() {
   const articles: ShopifyArticle[] = [];
