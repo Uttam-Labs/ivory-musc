@@ -32,7 +32,9 @@ type Props = {
   showCart?: boolean;
   cartHref?: string;
   uiContent?: {
-    menuLabel?: string; searchTitle?: string; searchPlaceholder?: string; noSearchResults?: string;
+    menuLabel?: string; searchTitle?: string; searchPlaceholder?: string; searchSubmitLabel?: string;
+    searchHint?: string; searchLoadingLabel?: string; searchSuggestionsLabel?: string;
+    viewAllSearchResultsLabel?: string; noSearchResults?: string;
     cartTitle?: string; emptyCartText?: string; continueShoppingLabel?: string; quantityLabel?: string;
     sampleUnitLabel?: string; singleMetreLabel?: string; multipleMetresLabel?: string;
     sampleSizeLabel?: string; sampleSizeValue?: string; subtotalLabel?: string; viewBagLabel?: string;
@@ -58,6 +60,8 @@ export function Header({
 }: Props) {
   const copy = {
     menuLabel: "Menu", searchTitle: "Search products", searchPlaceholder: "What are you looking for?",
+    searchSubmitLabel: "Search", searchHint: "Type at least 2 characters to see product suggestions.",
+    searchLoadingLabel: "Searching…", searchSuggestionsLabel: "Suggested products", viewAllSearchResultsLabel: "View all results",
     noSearchResults: "No products found.", cartTitle: "Your cart", emptyCartText: "Your cart is empty",
     continueShoppingLabel: "Continue shopping", quantityLabel: "Quantity", sampleSizeLabel: "Sample size",
     sampleUnitLabel: "sample", singleMetreLabel: "meter", multipleMetresLabel: "meters",
@@ -567,50 +571,95 @@ export function Header({
               </div>
               <form
                 onSubmit={submitSearch}
-                className="mt-5 flex border-b border-stone-400"
+                role="search"
+                className="mt-5 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]"
               >
-                <SearchIcon className="mr-4 size-5 shrink-0 self-center" />
-                <input
-                  ref={searchInput}
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder={copy.searchPlaceholder}
-                  className="min-w-0 flex-1 bg-transparent py-4 text-base outline-none placeholder:text-stone-400"
-                />
-                {searching && (
-                  <LoaderCircle className="size-5 self-center animate-spin" />
-                )}
+                <label className="flex min-w-0 items-center border border-stone-300 bg-white px-4 transition focus-within:border-[var(--accent)] focus-within:ring-2 focus-within:ring-[var(--accent)]/10">
+                  <span className="sr-only">{copy.searchTitle}</span>
+                  <SearchIcon className="mr-3 size-5 shrink-0 text-stone-500" />
+                  <input
+                    ref={searchInput}
+                    type="search"
+                    inputMode="search"
+                    autoComplete="off"
+                    value={query}
+                    onChange={(event) => {
+                      const nextQuery = event.target.value;
+                      setQuery(nextQuery);
+                      if (nextQuery.trim().length < 2) {
+                        setResults([]);
+                        setSearching(false);
+                      }
+                    }}
+                    placeholder={copy.searchPlaceholder}
+                    aria-describedby="header-search-help"
+                    className="min-w-0 flex-1 bg-transparent py-4 text-base outline-none placeholder:text-stone-400"
+                  />
+                  {searching && (
+                    <LoaderCircle className="size-5 shrink-0 animate-spin text-[var(--accent)]" />
+                  )}
+                </label>
+                <button
+                  type="submit"
+                  disabled={!query.trim()}
+                  className="min-h-[56px] min-w-32 bg-[var(--accent)] px-7 text-sm font-medium uppercase tracking-[.1em] text-white transition hover:bg-[#84423d] disabled:cursor-not-allowed disabled:opacity-45"
+                >
+                  {copy.searchSubmitLabel}
+                </button>
               </form>
+              <p
+                id="header-search-help"
+                className="mt-2 text-xs text-stone-500"
+                aria-live="polite"
+              >
+                {query.trim().length < 2 ? copy.searchHint : searching ? copy.searchLoadingLabel : ""}
+              </p>
               {query.trim().length >= 2 && !searching && (
-                <div className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                  {results.map((product) => (
-                    <Link
-                      onClick={() => setSearchOpen(false)}
-                      href={`/products/${product.handle}`}
-                      key={product.id}
-                      className="group grid grid-cols-[72px_1fr] gap-3 lg:block"
-                    >
-                      {product.featuredImage && (
-                        <Image
-                          src={product.featuredImage.url}
-                          alt={product.featuredImage.altText || product.title}
-                          width={240}
-                          height={300}
-                          quality={95}
-                          sizes="(max-width: 1023px) 72px, 240px"
-                          className="aspect-[4/5] w-[72px] object-cover lg:w-full"
-                        />
-                      )}
-                      <div className="lg:mt-3">
-                        <p className="font-heading text-base text-[var(--accent)]">
-                          {product.title}
-                        </p>
-                        <p className="mt-1 text-[11px]">
-                          {formatMoney(product.priceRange.minVariantPrice)}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
+                <div className="mt-7">
+                  {results.length > 0 && (
+                    <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 pb-3">
+                      <p className="text-sm font-medium text-stone-700">
+                        {copy.searchSuggestionsLabel}
+                      </p>
+                      <Link
+                        href={`/search?q=${encodeURIComponent(query.trim())}`}
+                        onClick={() => setSearchOpen(false)}
+                        className="text-xs font-medium uppercase tracking-[.08em] text-[var(--accent)] underline-offset-4 hover:underline"
+                      >
+                        {copy.viewAllSearchResultsLabel}
+                      </Link>
+                    </div>
+                  )}
+                  <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                    {results.map((product) => (
+                      <Link
+                        onClick={() => setSearchOpen(false)}
+                        href={`/products/${product.handle}`}
+                        key={product.id}
+                        className="group grid grid-cols-[72px_1fr] gap-3 lg:block"
+                      >
+                        {product.featuredImage && (
+                          <Image
+                            src={product.featuredImage.url}
+                            alt={product.featuredImage.altText || product.title}
+                            width={240}
+                            height={300}
+                            quality={95}
+                            sizes="(max-width: 1023px) 72px, 240px"
+                            className="aspect-[4/5] w-[72px] object-cover lg:w-full"
+                          />
+                        )}
+                        <div className="lg:mt-3">
+                          <p className="font-heading text-base text-[var(--accent)]">
+                            {product.title}
+                          </p>
+                          <p className="mt-1 text-[11px]">
+                            {formatMoney(product.priceRange.minVariantPrice)}
+                          </p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               )}
               {query.trim().length >= 2 && !searching && !results.length && (
