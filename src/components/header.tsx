@@ -558,7 +558,7 @@ export function Header({
             className="search-panel-enter max-h-[88vh] overflow-y-auto bg-[#fffaf5] px-4 pb-8 pt-5 shadow-2xl sm:px-6 sm:pb-10 sm:pt-6"
             onMouseDown={(event) => event.stopPropagation()}
           >
-            <div className="mx-auto w-full max-w-[1180px]">
+            <div className="mx-auto w-full max-w-[840px]">
               <div className="relative w-full pr-12 sm:pr-14 xl:pr-0">
                 <form
                   onSubmit={submitSearch}
