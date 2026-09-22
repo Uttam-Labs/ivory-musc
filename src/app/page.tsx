@@ -48,13 +48,14 @@ type Section = {
   successMessage?: string;
   alreadySubscribedMessage?: string;
   fallbackErrorMessage?: string;
-  features?: Array<{ _key?: string; title?: string; icon?: SanityImageSource }>;
+  features?: Array<{ _key?: string; title?: string; icon?: SanityImageSource; showOnWebsite?: boolean }>;
 };
 type HomeContent = { sections?: Section[] } | null;
 
 const HIDDEN_FEATURE_SYMBOLS = new Set(["retail", "oeko-tex-certification"]);
 
-function isVisibleFeature(feature: { _key?: string; title?: string }) {
+function isVisibleFeature(feature: { _key?: string; title?: string; showOnWebsite?: boolean }) {
+  if (typeof feature.showOnWebsite === "boolean") return feature.showOnWebsite;
   const values = [feature._key, feature.title]
     .filter((value): value is string => Boolean(value))
     .map((value) => value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-"));
