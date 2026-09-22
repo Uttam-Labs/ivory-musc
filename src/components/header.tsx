@@ -336,8 +336,10 @@ export function Header({
 
   function submitSearch(event: FormEvent) {
     event.preventDefault();
-    if (query.trim())
+    if (query.trim()) {
+      setSearchOpen(false);
       router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+    }
   }
 
   if (!title && !logoUrl && !visibleNavigation.length) return null;
@@ -424,7 +426,7 @@ export function Header({
           <div className="header__icons flex justify-self-end gap-0.5">
             {showSearch && (
               <button
-                className={`${iconClass} header--icon search-button`}
+                className={`${iconClass} header--icon search-button cursor-pointer hover:scale-105`}
                 onClick={() => {
                   setResults([]);
                   setSearching(false);
