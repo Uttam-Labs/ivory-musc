@@ -558,22 +558,12 @@ export function Header({
             className="search-panel-enter max-h-[88vh] overflow-y-auto bg-[#fffaf5] px-4 pb-8 pt-5 shadow-2xl sm:px-6 sm:pb-10 sm:pt-6"
             onMouseDown={(event) => event.stopPropagation()}
           >
-            <div className="relative mx-auto w-full max-w-[1180px]">
-              <button
-                aria-label={copy.closeSearchLabel}
-                onClick={() => setSearchOpen(false)}
-                className="absolute right-0 top-0 grid size-10 cursor-pointer place-items-center rounded-full transition hover:bg-black/5"
-              >
-                <X size={21} />
-              </button>
-              <div className="mx-auto w-full max-w-[760px] px-8 sm:px-12">
-                <p className="text-center font-heading text-[20px] leading-tight text-[var(--accent)]">
-                  {copy.searchTitle}
-                </p>
+            <div className="mx-auto w-full max-w-[1180px]">
+              <div className="mx-auto flex w-full max-w-[840px] items-center gap-3 sm:gap-4">
                 <form
                   onSubmit={submitSearch}
                   role="search"
-                  className="mt-4 flex w-full border border-stone-300 bg-white shadow-[0_3px_14px_rgba(76,55,43,.06)] transition focus-within:border-[var(--accent)] focus-within:ring-2 focus-within:ring-[var(--accent)]/10"
+                  className="flex min-w-0 flex-1 border border-stone-300 bg-white shadow-[0_3px_14px_rgba(76,55,43,.06)] transition focus-within:border-[var(--accent)] focus-within:ring-2 focus-within:ring-[var(--accent)]/10"
                 >
                   <label className="flex min-w-0 flex-1 items-center px-4">
                     <span className="sr-only">{copy.searchTitle}</span>
@@ -608,6 +598,13 @@ export function Header({
                     <SearchIcon className="size-[19px]" />
                   </button>
                 </form>
+                <button
+                  aria-label={copy.closeSearchLabel}
+                  onClick={() => setSearchOpen(false)}
+                  className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-full transition hover:bg-black/5 sm:size-11"
+                >
+                  <X size={21} />
+                </button>
                 <span className="sr-only" aria-live="polite">
                   {searching ? copy.searchLoadingLabel : ""}
                 </span>
