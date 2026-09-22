@@ -559,11 +559,11 @@ export function Header({
             onMouseDown={(event) => event.stopPropagation()}
           >
             <div className="mx-auto w-full max-w-[1180px]">
-              <div className="mx-auto flex w-full max-w-[840px] items-center gap-3 sm:gap-4">
+              <div className="relative w-full pr-12 sm:pr-14 xl:pr-0">
                 <form
                   onSubmit={submitSearch}
                   role="search"
-                  className="flex min-w-0 flex-1 border border-stone-300 bg-white shadow-[0_3px_14px_rgba(76,55,43,.06)] transition focus-within:border-[var(--accent)] focus-within:ring-2 focus-within:ring-[var(--accent)]/10"
+                  className="flex w-full min-w-0 border border-stone-300 bg-white shadow-[0_3px_14px_rgba(76,55,43,.06)] transition focus-within:border-[var(--accent)] focus-within:ring-2 focus-within:ring-[var(--accent)]/10"
                 >
                   <label className="flex min-w-0 flex-1 items-center px-4">
                     <span className="sr-only">{copy.searchTitle}</span>
@@ -601,7 +601,7 @@ export function Header({
                 <button
                   aria-label={copy.closeSearchLabel}
                   onClick={() => setSearchOpen(false)}
-                  className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-full transition hover:bg-black/5 sm:size-11"
+                  className="absolute right-0 top-1/2 grid size-10 -translate-y-1/2 cursor-pointer place-items-center rounded-full transition hover:bg-black/5 sm:size-11 xl:-right-14"
                 >
                   <X size={21} />
                 </button>
