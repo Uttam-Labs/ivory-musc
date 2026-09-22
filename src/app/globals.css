@@ -2,9 +2,9 @@
 
 /* Header SVGs keep a reliable intrinsic footprint even if an arbitrary-size
    utility is not emitted by the CSS build. */
-header :is(a, button)[aria-label="Search"],
-header :is(a, button)[aria-label="Account"],
-header :is(a, button)[aria-label="Cart"] {
+.header__icons :is(a, button)[aria-label="Search"],
+.header__icons :is(a, button)[aria-label="Account"],
+.header__icons :is(a, button)[aria-label="Cart"] {
   display: inline-flex;
   width: 36px;
   height: 36px;
@@ -13,14 +13,14 @@ header :is(a, button)[aria-label="Cart"] {
   flex: 0 0 36px;
 }
 
-header :is(a, button)[aria-label="Search"] svg,
-header :is(a, button)[aria-label="Account"] svg {
+.header__icons :is(a, button)[aria-label="Search"] svg,
+.header__icons :is(a, button)[aria-label="Account"] svg {
   display: block;
   width: 20px;
   height: 20px;
 }
 
-header :is(a, button)[aria-label="Cart"] svg {
+.header__icons :is(a, button)[aria-label="Cart"] svg {
   display: block;
   width: 18px;
   height: 20px;
