@@ -556,7 +556,7 @@ export function Header({
             className="search-panel-enter max-h-[88vh] overflow-y-auto bg-[#fffaf5] px-6 pb-10 pt-6 shadow-2xl"
             onMouseDown={(event) => event.stopPropagation()}
           >
-            <div className="mx-auto max-w-5xl">
+            <div className="mx-auto w-full max-w-[1180px]">
               <div className="flex items-center justify-between">
                 <p className="font-heading text-xl text-[var(--accent)]">
                   {copy.searchTitle}
@@ -617,8 +617,8 @@ export function Header({
               {query.trim().length >= 2 && !searching && (
                 <div className="mt-7">
                   {results.length > 0 && (
-                    <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 pb-3">
-                      <p className="text-sm font-medium text-stone-700">
+                    <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 pb-3">
+                      <p className="text-[16px] font-medium leading-tight text-stone-700">
                         {copy.searchSuggestionsLabel}
                       </p>
                       <Link
@@ -630,30 +630,32 @@ export function Header({
                       </Link>
                     </div>
                   )}
-                  <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="grid gap-x-4 gap-y-7 sm:grid-cols-2 lg:grid-cols-4">
                     {results.map((product) => (
                       <Link
                         onClick={() => setSearchOpen(false)}
                         href={`/products/${product.handle}`}
                         key={product.id}
-                        className="group grid grid-cols-[72px_1fr] gap-3 lg:block"
+                        className="group grid min-w-0 grid-cols-[72px_minmax(0,1fr)] gap-3 lg:block"
                       >
                         {product.featuredImage && (
-                          <Image
-                            src={product.featuredImage.url}
-                            alt={product.featuredImage.altText || product.title}
-                            width={240}
-                            height={300}
-                            quality={95}
-                            sizes="(max-width: 1023px) 72px, 240px"
-                            className="aspect-[4/5] w-[72px] object-cover lg:w-full"
-                          />
+                          <span className="block overflow-hidden bg-stone-100">
+                            <Image
+                              src={product.featuredImage.url}
+                              alt={product.featuredImage.altText || product.title}
+                              width={300}
+                              height={375}
+                              quality={95}
+                              sizes="(max-width: 639px) 72px, (max-width: 1023px) 45vw, 280px"
+                              className="aspect-[4/5] w-[72px] object-cover transition-transform duration-300 group-hover:scale-[1.025] lg:w-full"
+                            />
+                          </span>
                         )}
-                        <div className="lg:mt-3">
-                          <p className="font-heading text-base text-[var(--accent)]">
+                        <div className="min-w-0 lg:mt-3">
+                          <p className="line-clamp-2 min-h-[34px] break-words font-heading text-[14px] leading-[1.2] text-[var(--accent)]">
                             {product.title}
                           </p>
-                          <p className="mt-1 text-[11px]">
+                          <p className="mt-1 text-[13px] leading-tight text-stone-700">
                             {formatMoney(product.priceRange.minVariantPrice)}
                           </p>
                         </div>
