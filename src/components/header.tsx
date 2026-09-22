@@ -574,11 +574,10 @@ export function Header({
               <form
                 onSubmit={submitSearch}
                 role="search"
-                className="mt-5 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]"
+                className="mt-5 flex w-full max-w-[680px] border border-stone-300 bg-white transition focus-within:border-[var(--accent)] focus-within:ring-2 focus-within:ring-[var(--accent)]/10"
               >
-                <label className="flex min-w-0 items-center border border-stone-300 bg-white px-4 transition focus-within:border-[var(--accent)] focus-within:ring-2 focus-within:ring-[var(--accent)]/10">
+                <label className="flex min-w-0 flex-1 items-center px-4">
                   <span className="sr-only">{copy.searchTitle}</span>
-                  <SearchIcon className="mr-3 size-5 shrink-0 text-stone-500" />
                   <input
                     ref={searchInput}
                     type="search"
@@ -604,14 +603,16 @@ export function Header({
                 <button
                   type="submit"
                   disabled={!query.trim()}
-                  className="min-h-[56px] min-w-32 bg-[var(--accent)] px-7 text-sm font-medium uppercase tracking-[.1em] text-white transition hover:bg-[#84423d] disabled:cursor-not-allowed disabled:opacity-45"
+                  aria-label={copy.searchSubmitLabel}
+                  title={copy.searchSubmitLabel}
+                  className="grid size-[52px] shrink-0 cursor-pointer place-items-center border-l border-[var(--accent)] bg-[var(--accent)] text-white transition hover:bg-[#84423d] disabled:cursor-not-allowed disabled:opacity-45"
                 >
-                  {copy.searchSubmitLabel}
+                  <SearchIcon className="size-[20px]" />
                 </button>
               </form>
               <p
                 id="header-search-help"
-                className="mt-2 text-xs text-stone-500"
+                className="mt-2 max-w-[680px] text-xs text-stone-500"
                 aria-live="polite"
               >
                 {query.trim().length < 2 ? copy.searchHint : searching ? copy.searchLoadingLabel : ""}
