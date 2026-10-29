@@ -6,6 +6,7 @@ import { Check, LoaderCircle, Minus, Plus, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ProductDetailsSettings } from "@/components/product-details";
 import { formatMoney } from "@/lib/format";
+import { displayFabricWeight } from "@/lib/shopify/product-display";
 import type {
   Product,
   ProductOptionValue,
@@ -483,7 +484,7 @@ function ProductQuickView({
                 <div className={styles.specifications}>
                   <h3>{copy.specificationsHeading}</h3>
                   {product.composition && <div><span>{copy.compositionLabel}</span><strong>{product.composition.value}</strong></div>}
-                  {product.fabricWeight && <div><span>{copy.weightLabel}</span><strong>{product.fabricWeight.value}</strong></div>}
+                  {product.fabricWeight && <div><span>{copy.weightLabel}</span><strong>{displayFabricWeight(product, variant)}</strong></div>}
                   {product.fabricWidth && <div><span>{copy.widthLabel}</span><strong>{product.fabricWidth.value}</strong></div>}
                   {product.care && <div><span>{copy.careLabel}</span><strong>{product.care.value}</strong></div>}
                 </div>

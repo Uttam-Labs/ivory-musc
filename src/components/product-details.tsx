@@ -9,6 +9,7 @@ import { CollectionProductGrid, type ProductGridContent } from "@/components/col
 import { SiteContainer } from "@/components/site-container";
 import { formatMoney } from "@/lib/format";
 import { SHOP_HREF } from "@/lib/navigation";
+import { displayFabricWeight } from "@/lib/shopify/product-display";
 import type { Product, ProductOption, ProductOptionValue, ProductVariant } from "@/lib/shopify/types";
 import styles from "@/app/products/product-details.module.css";
 
@@ -91,7 +92,7 @@ export function ProductDetails({ product, sampleProduct, initialSelection, setti
   const thumbnailImages = galleryImages.filter((image) => image.url !== activeImage?.url);
   const price = variant?.price || product.priceRange.minVariantPrice;
   const total = { ...price, amount: String(Number(price.amount) * quantity) };
-  const specifications = [[settings?.compositionLabel, product.composition?.value], [settings?.weightLabel, product.fabricWeight?.value], [settings?.widthLabel, formatWidth(product.fabricWidth?.value)], [settings?.careLabel, product.care?.value]].filter((item): item is [string, string] => Boolean(item[0] && item[1]));
+  const specifications = [[settings?.compositionLabel, product.composition?.value], [settings?.weightLabel, displayFabricWeight(product, variant)], [settings?.widthLabel, formatWidth(product.fabricWidth?.value)], [settings?.careLabel, product.care?.value]].filter((item): item is [string, string] => Boolean(item[0] && item[1]));
   const sampleVariant = sampleProduct?.variants.nodes.find((item) => item.availableForSale);
   const breadcrumbItems = [
     settings?.homeLabel?.trim() ? { label: settings.homeLabel.trim(), href: settings.homeHref?.trim() || "/" } : null,
